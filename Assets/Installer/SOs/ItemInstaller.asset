@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0540645c75045819099a412df845804, type: 3}
+  m_Name: ItemInstaller
+  m_EditorClassIdentifier: 
+  DamageModDefinition:
+    Type: 0
+    Stack: 1
+    DroppedFrom: 
+    DropChance: 10
+  PoisonModDefinition:
+    Type: 6
+    Stack: 1
+    DroppedFrom: 
+    DropChance: 10
+  TestRelicDefinition:
+    Type: 1
+    Stack: 1
+    DroppedFrom: 08000000
+    DropChance: 20
+  HealthPotionDefinition:
+    Type: 7
+    Stack: 1
+    DroppedFrom: 
+    DropChance: 0
+  MonsterResourceDefinition:
+    Type: 2
+    Stack: 1
+    DroppedFrom: 02000000090000000e0000000300000004000000
+    DropChance: 40
+  PlantResourceDefinition:
+    Type: 3
+    Stack: 1
+    DroppedFrom: 1400000003000000
+    DropChance: 40
+  StoneResourceDefinition:
+    Type: 4
+    Stack: 1
+    DroppedFrom: 0b0000000f0000000c00000005000000
+    DropChance: 40
+  WoodResourceDefinition:
+    Type: 5
+    Stack: 1
+    DroppedFrom: 060000000a0000000d000000
+    DropChance: 40
+  TestArmor:
+    Type: 8
+    Stack: 0
+    DroppedFrom: 
+    DropChance: 0
+  TestFace:
+    Type: 10
+    Stack: 0
+    DroppedFrom: 
+    DropChance: 0
+  TestHelmet:
+    Type: 9
+    Stack: 0
+    DroppedFrom: 
+    DropChance: 0
+  damageModSprite: {fileID: 21300000, guid: 8f1af5a095a7741a19581995fd593498, type: 3}
+  poisonModSprite: {fileID: 21300000, guid: 48a3432fcbad64997a25cd7ae7b59a67, type: 3}
+  testRelictSprite: {fileID: 21300000, guid: 5ff1144c7f8c8944ab52b78b21e7aa53, type: 3}
+  HealthPotionSprite: {fileID: 21300000, guid: f1e9be9a7155a4879a26d50aebdd9325, type: 3}
+  MonsterResource: {fileID: 21300000, guid: c74e1fb42925ae049a19de9b814a3f51, type: 3}
+  PlantResource: {fileID: 21300000, guid: 5428229ac351288409eb848765d80f3c, type: 3}
+  WoodResource: {fileID: 21300000, guid: 1d502d64599815443a2ba29ccc8fc1a3, type: 3}
+  StoneResource: {fileID: 21300000, guid: eeb6d2b8362336a4e88ddaf84539ec11, type: 3}
+  TestArmorSprite: {fileID: 21300000, guid: 0e59df3a9c5272f45896fe54e9ed1fdc, type: 3}
+  TestFaceSprite: {fileID: 21300000, guid: b379630ecd955be4aaa5513ccec574ec, type: 3}
+  TestHelmetSprite: {fileID: 21300000, guid: 00884e6b9aabd154587ffc9d91c8e8bd, type: 3}

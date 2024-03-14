@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d372e79a9038495bb40e12edd2c4d53a, type: 3}
+  m_Name: LootInstaller
+  m_EditorClassIdentifier: 
+  lootViewPrefab: {fileID: 7896982757354300994, guid: 1c8aabeb348e1405994249a517e82dc3,
+    type: 3}
+  goldCoinPrefab: {fileID: 4052733709484219761, guid: 0531457ef9f174ee08dda2e1023f1845,
+    type: 3}
+  goldMaterial: {fileID: 2100000, guid: b8120b2d0908e4d948e21dd111f3e4da, type: 2}
+  modMaterial: {fileID: 2100000, guid: 12b0045ba881a486ea8c1814ae5729e1, type: 2}
+  itemMaterial: {fileID: 2100000, guid: e669c04fc80fd465fa3c71c5bee05fe6, type: 2}
+  resourceMaterial: {fileID: 2100000, guid: aca5a642e66ee4d99b4fe1c9dc43bba4, type: 2}
+  goldSprite: {fileID: 21300000, guid: 8698f740cf8a44cbdab86f021a952b94, type: 3}

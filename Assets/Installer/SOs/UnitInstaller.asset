@@ -1,0 +1,250 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3203028d46454cf6abf3afeed6edd446, type: 3}
+  m_Name: UnitInstaller
+  m_EditorClassIdentifier: 
+  _playerPrefab: {fileID: 798789943918534757, guid: 5cae77b53cae246dabc65f9e3d60468d,
+    type: 3}
+  _obstaclePrefab: {fileID: 6051671917287591104, guid: 3f62e551ef0384378937746ac3ab54ea,
+    type: 3}
+  _destructiblePrefabs:
+  - {fileID: 3743214925162097025, guid: b9aa6cc14cce8458999494c5b4c5c361, type: 3}
+  - {fileID: 838090306596223311, guid: 4e1234921cd05488f97125102a1f5f30, type: 3}
+  - {fileID: 1651488878535765702, guid: c64ff8ea8c61c470494a211d3d37ab16, type: 3}
+  - {fileID: 5721883194595358124, guid: 66c772c486d314a7999f37f846b643ca, type: 3}
+  - {fileID: 6606058479457096494, guid: b61b99316964d42e0833e6799abdfdd0, type: 3}
+  - {fileID: 2708618914665542998, guid: eb8feff9af35348a4b11290fd7fbd127, type: 3}
+  _helmPrefab: {fileID: 7296463533887481696, guid: c531f0c8356164ad4a53664f68fc41fd,
+    type: 3}
+  _chestPrefab: {fileID: 8481061648413099346, guid: b978ba0947215489a943de42a85b59ea,
+    type: 3}
+  _spiderPrefab: {fileID: 1761697935048354840, guid: 6c1736239fbb54fad8d1466b87082c21,
+    type: 3}
+  _mushroomPrefab: {fileID: 4288259664413643435, guid: c389f7ac3336941be97e9894d1ff72f0,
+    type: 3}
+  _ratPrefab: {fileID: 7881910688332835323, guid: fd623d2d6383a48369b6a627eb252122,
+    type: 3}
+  _orcPrefab: {fileID: 7217388085724856396, guid: 7e0b2c655ee9b4ccebcb2fbe48caae63,
+    type: 3}
+  _wolfPrefab: {fileID: 17080348046386130, guid: 75ca713e16f214495934f24f7f437c07,
+    type: 3}
+  _golemPrefab: {fileID: 273459720342862461, guid: 6583be1217b48465f8df96f0739eefbd,
+    type: 3}
+  _specterPrefab: {fileID: 3238677329275740137, guid: 1ad8e9b09cacf45d9820679a8713eace,
+    type: 3}
+  _fishermanPrefab: {fileID: 2391974155817857777, guid: 78a9813ddf282459380c32969061c97a,
+    type: 3}
+  _werewolfPrefab: {fileID: 1591330497665675633, guid: 05f5f746ba62940a086589eb4a5d2294,
+    type: 3}
+  _unitUIPrefab: {fileID: 1777521787662592727, guid: f5acba62b065045539add983bb79a5ec,
+    type: 3}
+  _unitHealthUIPrefab: {fileID: 1537314856726751626, guid: 37b784effef504f71aed6570734795eb,
+    type: 3}
+  enemyTurnDelayUIPrefab: {fileID: 9116884748389907684, guid: 116b469075a474270823bf63adb23efb,
+    type: 3}
+  enemyTurnClockUIPrefab: {fileID: 4262561161974054664, guid: 1f1b977670f5b467c93a224b68bc88d0,
+    type: 3}
+  _enemyStateUIPrefab: {fileID: 397070358651327445, guid: f7072f46ed4854d56adeb02e404a0dcb,
+    type: 3}
+  _interactableUIPrefab: {fileID: 7029866548729505452, guid: 33ecfd4827d5040dba763cee19484954,
+    type: 3}
+  _xpBarUIPrefab: {fileID: 6421722430859455272, guid: d940b3352b663461fa24e45d40746d21,
+    type: 3}
+  _playerUIPrefab: {fileID: 6321765108990706805, guid: 6c7a2a6255c194a97b15ebb16afe4e91,
+    type: 3}
+  _idleSprite: {fileID: 21300000, guid: 5a454ac5ca5c9bf489205b48584dd9b9, type: 3}
+  _targetFoundSprite: {fileID: 21300000, guid: 8522d4fa7a3bcce4594c53a5e4a1bdd2, type: 3}
+  _aimAtTargetSprite: {fileID: 21300000, guid: 10585b6dc7d4543d792e3dddc36bf352, type: 3}
+  _testEnemyDefinition:
+    Unit:
+      Type: 1
+      MaxHealth: 1
+      Invincible: 0
+      DropXp: 0
+    AttackRange: 1
+    ScanRange: 5
+    TurnDelay: 1
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 1
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  _spiderDefinition_1:
+    Unit:
+      Type: 2
+      MaxHealth: 1
+      Invincible: 0
+      DropXp: 2
+    AttackRange: 1
+    ScanRange: 3
+    TurnDelay: 0
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 0
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  _mushroomDefinition_1:
+    Unit:
+      Type: 3
+      MaxHealth: 2
+      Invincible: 0
+      DropXp: 2
+    AttackRange: 1
+    ScanRange: 5
+    TurnDelay: 1
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 0
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  _ratDefinition_1:
+    Unit:
+      Type: 4
+      MaxHealth: 3
+      Invincible: 0
+      DropXp: 4
+    AttackRange: 1
+    ScanRange: 3
+    TurnDelay: 1
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 0
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  _orcDefinition_1:
+    Unit:
+      Type: 9
+      MaxHealth: 3
+      Invincible: 0
+      DropXp: 4
+    AttackRange: 1
+    ScanRange: 5
+    TurnDelay: 1
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 0
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  _wolfDefinition_1:
+    Unit:
+      Type: 14
+      MaxHealth: 2
+      Invincible: 0
+      DropXp: 2
+    AttackRange: 3
+    ScanRange: 4
+    TurnDelay: 0
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 1
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  _golemDefinition_1:
+    Unit:
+      Type: 15
+      MaxHealth: 5
+      Invincible: 0
+      DropXp: 6
+    AttackRange: 2
+    ScanRange: 5
+    TurnDelay: 1
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 0
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  _specterDefinition:
+    Unit:
+      Type: 16
+      MaxHealth: 1
+      Invincible: 0
+      DropXp: 1
+    AttackRange: 1
+    ScanRange: 8
+    TurnDelay: 0
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 0
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  _fishermanDefinition:
+    Unit:
+      Type: 17
+      MaxHealth: 4
+      Invincible: 0
+      DropXp: 6
+    AttackRange: 2
+    ScanRange: 8
+    TurnDelay: 0
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 0
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  _werewolfDefinition:
+    Unit:
+      Type: 18
+      MaxHealth: 6
+      Invincible: 0
+      DropXp: 12
+    AttackRange: 2
+    ScanRange: 10
+    TurnDelay: 0
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 0
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  _obstacleDefinition:
+    Type: 5
+    MaxHealth: 1
+    Invincible: 1
+    DropXp: 0
+  _destructibleDefinition:
+    Type: 6
+    MaxHealth: 1
+    Invincible: 0
+    DropXp: 0
+  _helmDefinition:
+    Unit:
+      Type: 7
+      MaxHealth: 1
+      Invincible: 1
+      DropXp: 0
+    InteractButtonText: Set Sail
+  _chestDefinition:
+    Unit:
+      Type: 8
+      MaxHealth: 1
+      Invincible: 0
+      DropXp: 0
+    InteractButtonText: Open

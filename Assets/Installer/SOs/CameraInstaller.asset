@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec74478bebb348aba82104fdf5b65ebf, type: 3}
+  m_Name: CameraInstaller
+  m_EditorClassIdentifier: 
+  _cameraViewPrefab: {fileID: 4876196934664092470, guid: c4ed285189d854ffd85f91b0b087f501,
+    type: 3}
+  _cameraRotationUIPrefab: {fileID: 8900111469881946887, guid: 586c2326f4a304b8cae73bd005f7165c,
+    type: 3}

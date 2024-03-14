@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b97feac132a4398a57bcc2360c7166f, type: 3}
+  m_Name: ModalInstaller
+  m_EditorClassIdentifier: 
+  _enemyInfoModalPrefab: {fileID: 6482904678991986730, guid: b5a9a4265592249fdb4d26e3e0ca50bb,
+    type: 3}
+  _deathModalPrefab: {fileID: 7814208706168943023, guid: b4e00382ea9904169aaca796e8e370b3,
+    type: 3}
+  _characterCreationModalPrefab: {fileID: 6858065559005256869, guid: 32152c4372b8d4bd9bb8f09cdc822e2d,
+    type: 3}
+  _choiceModalPrefab: {fileID: 838328380475719874, guid: ae23473b0292d403684412012ecea9ef,
+    type: 3}
+  craftModalUIPrefab: {fileID: 1806556492834795386, guid: 9892045303eaa4c4195a89eb1b702844,
+    type: 3}
+  _unlockRecipeUIPrefab: {fileID: 9117847949292215577, guid: 538de92d867924f63ab488bbe64930d2,
+    type: 3}
+  NextIslandChoice:
+    Icon: {fileID: 21300000, guid: 0155b3c43d8ae4647901c44516fa5216, type: 3}
+    CardText: Next Island
+  ToShipChoice:
+    Icon: {fileID: 21300000, guid: 666eb5393fe20274fb4af49f04eab151, type: 3}
+    CardText: Return to Ship
+  IncreaseHealthChoice:
+    Icon: {fileID: 21300000, guid: 574945229bfba460da3e6cfcb65abd26, type: 3}
+    CardText: Health Up
+  IncreaseDamageChoice:
+    Icon: {fileID: 21300000, guid: 898a891d03d184a568f9a7f5af83dd58, type: 3}
+    CardText: Damage Up
