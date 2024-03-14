@@ -62,6 +62,7 @@ namespace Models
 
         public bool IsEdgeTile => Neighbours.Count < 6;
         public bool HasUnit => CurrentUnit.Value != null;
+        public bool HasAliveUnit => CurrentUnit.Value != null && CurrentUnit.Value.Health.Value > 0;
         public bool IsStartTile => _island.StartTile == this;
         public bool IsEndTile => _island.EndTile == this;
 

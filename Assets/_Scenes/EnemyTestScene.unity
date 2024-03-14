@@ -781,6 +781,21 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  attackRotateDuration: 0
+  toIdleDuration: 0
+  disappearFX: {fileID: 0}
+  appearFX: {fileID: 0}
+  scaleDuration: 0
+  travelDuration: 0
+  bounceHeight: 0
+  bounceDuration: 0
+  bounceCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  bounceFX: {fileID: 0}
 --- !u!4 &467924521
 Transform:
   m_ObjectHideFlags: 0

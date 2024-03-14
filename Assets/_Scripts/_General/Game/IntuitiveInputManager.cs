@@ -61,11 +61,9 @@ namespace Game
             }
 
             bool returnWeapon = InWeaponMode && !_playerManager.Weapon.HasAttackCharge;
-            if (GameStateContainer.TurnState.Value == TurnState.IslandTurn && returnWeapon)
-            {
-                //_playerManager.Weapon.ReturnToHolster();
-                InWeaponMode = false;
-            }
+            //if (GameStateContainer.TurnState.Value == TurnState.IslandTurn && returnWeapon) // Move to Actual End
+            //    InWeaponMode = false;
+            
         }
 
         private void HandleInput(Vector3 swipeVector)

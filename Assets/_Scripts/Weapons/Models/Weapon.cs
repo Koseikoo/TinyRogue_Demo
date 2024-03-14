@@ -40,6 +40,7 @@ namespace Models
         public BoolReactiveProperty IsDestroyed = new();
         
         public bool FixToHolster = new();
+        public bool BounceBack;
 
         public IntReactiveProperty Xp = new();
         public IntReactiveProperty Level = new();
@@ -140,14 +141,15 @@ namespace Models
 
             sequence.OnComplete(() =>
             {
-                if (!HasAttackCharge)
+                BounceBack = tiles[^1].HasAliveUnit;
+                if (!HasAttackCharge || BounceBack)
                     ReturnToHolster();
 
             });
             
             sequence.Play();
         }
-        
+
         public void ReturnToHolster()
         {
             Vector3 worldSwipeVector = Owner.Tile.Value.WorldPosition - Tile.Value.WorldPosition;
@@ -210,6 +212,8 @@ namespace Models
                 Tile.Value.WeaponOnTile.Value = false;
             Tile.Value = tappedTile;
             Tile.Value.WeaponOnTile.Value = true;
+
+            BounceBack = false;
         }
     }
 }
