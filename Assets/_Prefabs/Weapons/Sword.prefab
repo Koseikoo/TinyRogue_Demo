@@ -24895,8 +24895,8 @@ MonoBehaviour:
   toIdleDuration: 0.4
   disappearFX: {fileID: 8884061925616145084}
   appearFX: {fileID: 3453482970510279530}
-  scaleDuration: 0.2
-  travelDuration: 0.3
+  scaleDuration: 0.1
+  travelDuration: 0.1
   bounceHeight: 4
   bounceDuration: 0.7
   bounceCurve:

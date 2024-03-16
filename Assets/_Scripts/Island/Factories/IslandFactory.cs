@@ -6,6 +6,7 @@ using Models;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Views;
 using Zenject;
 using Random = UnityEngine.Random;
 using Tile = Models.Tile;
@@ -20,13 +21,16 @@ namespace Factories
         [Inject] private PolygonFactory _polygonFactory;
         [Inject] private HexGridFactory _hexGridFactory;
         [Inject] private IslandInitializer _islandInitializer;
-        [Inject] private UnitFactory _unitFactory;
-        [Inject] private EnemyDefinitionContainer _enemyDefinitionContainer;
         
         [Inject] private IslandViewFactory _islandViewFactory;
         [Inject] private SegmentContainer _segmentContainer;
+        [Inject] private SegmentFactory _segmentFactory;
 
         [Inject] private DiContainer _container;
+        
+        #if UNITY_EDITOR
+        [Inject(Id = "Sphere")] private GameObject _debugSphere;
+        #endif
 
         
         public Island CreateIsland(int level)
@@ -196,8 +200,8 @@ namespace Factories
             List<Tile> islandTiles = new(island.Tiles);
             Vector3[] checkDirections = GetCheckDirections();
         
-            Segment startSegment = CreateSegment(island.StartTile, _segmentContainer.StartSegment);
-            Segment endSegment = CreateSegment(island.EndTile, _segmentContainer.EndSegment);
+            Segment startSegment = _segmentFactory.CreateSegment(_segmentContainer.StartSegment, island.StartTile);
+            Segment endSegment = _segmentFactory.CreateSegment(_segmentContainer.EndSegment, island.EndTile);
 
             List<Segment> spacedSegments = new()
             {
@@ -218,15 +222,20 @@ namespace Factories
                 {
                     for (int j = 0; j < checkDirections.Length; j++)
                     {
-                        SegmentDefinition segmentDefinition = _segmentContainer.SegmentPool.PickRandom();
-                        float distance = currentSegments[i].Radius + segmentDefinition.Radius + Segment.SegmentDistance;
+                        SegmentView prefab = _segmentContainer.SegmentPool.PickRandom();
+                        
+                        float distance = currentSegments[i].Radius.GetSegmentDistance(prefab.Radius);
                         Vector3 checkPosition = currentSegments[i].Position + (checkDirections[j] * distance);
                         Tile centerTile = islandTiles.GetTileClosestToPosition(checkPosition);
+
+                        var sphere = _container.InstantiatePrefab(_debugSphere);
+                        sphere.transform.position = checkPosition;
+                        
                         if(centerTile == null)
                             continue;
                         
                         checkPosition = centerTile.WorldPosition;
-                        Segment segment = CreateSegment(centerTile, segmentDefinition);
+                        Segment segment = _segmentFactory.CreateSegment(prefab, centerTile);
                         
                         bool isWithinPolygon = segment.IsWithinPolygon(polygon, checkPosition);
                         bool isInisideSegment = segment.IsInsideSegment(spacedSegments);
@@ -281,25 +290,18 @@ namespace Factories
             List<Tile> islandTiles = new(island.Tiles);
         
             Tile centerTile = islandTiles.GetTileClosestToPosition(island.StartTile.WorldPosition);
-            SegmentDefinition segmentDefinition = _segmentContainer.StartSegment;
-            Segment startSegment = CreateSegment(centerTile, segmentDefinition);
+            SegmentView segmentDefinition = _segmentContainer.StartSegment;
+            Segment startSegment = _segmentFactory.CreateSegment(segmentDefinition, centerTile);
         
             Tile tile = islandTiles.GetTileClosestToPosition(default);
-            SegmentDefinition definition = _segmentContainer.BossSegments.PickRandom();
-            Segment segment = CreateSegment(tile, definition);
+            SegmentView definition = _segmentContainer.BossSegments.PickRandom();
+            Segment segment = _segmentFactory.CreateSegment(definition, tile);
             
             island.AddSegments(new List<Segment>()
             {
                 startSegment,
                 segment
             });
-        }
-
-        private Segment CreateSegment(Tile centerTile, SegmentDefinition definition)
-        {
-            Segment segment = definition.CreateSegment(_container);
-            segment.Position = centerTile.WorldPosition;
-            return segment;
         }
 
         private GrassType GetPathType(List<Tile> path, int index)

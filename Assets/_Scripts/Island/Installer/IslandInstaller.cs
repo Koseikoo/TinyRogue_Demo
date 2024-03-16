@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Container;
 using Factories;
 using Models;
@@ -18,14 +19,10 @@ namespace Installer
         
         [SerializeField] private PolygonConfig _polygonConfig;
 
-        [Header("Segment Definitions")]
-        [SerializeField] private SegmentDefinition _startDefinition;
-        [SerializeField] private SegmentDefinition _endDefinition;
-        [SerializeField] private SegmentDefinition _forrestDefinition;
-        [SerializeField] private SegmentDefinition _enemyCampDefinition;
-        [SerializeField] private SegmentDefinition _villageDefinition;
-        [SerializeField] private SegmentDefinition _ruinDefinition;
-        [SerializeField] private SegmentDefinition _bossDefinition;
+        [SerializeField] private SegmentView[] Segments;
+        [SerializeField] private SegmentView StartSegment;
+        [SerializeField] private SegmentView EndSegment;
+        [SerializeField] private SegmentView[] BossSegments;
 
         [Header("Tile Visuals")]
         [Header("Grass")]
@@ -49,6 +46,11 @@ namespace Installer
         [SerializeField] private GameObject _topPrefab;
         [SerializeField] private GameObject _topSurfacePrefab;
         
+        #if UNITY_EDITOR
+        [Header("DEBUG")]
+        [SerializeField] private GameObject DEBUG_SPHERE;
+        #endif
+        
         public override void InstallBindings()
         {
             BindPrefabs();
@@ -63,6 +65,10 @@ namespace Installer
             Container.Bind<TileView>().FromInstance(_tilePrefab).AsSingle();
             Container.Bind<IslandView>().FromInstance(_islandPrefab).AsSingle();
             Container.Bind<PolygonConfig>().FromInstance(_polygonConfig).AsSingle();
+
+#if UNITY_EDITOR
+            Container.Bind<GameObject>().WithId("Sphere").FromInstance(DEBUG_SPHERE).AsSingle();
+#endif
         }
 
         private void BindContainer()
@@ -90,14 +96,7 @@ namespace Installer
 
             Container.Bind<TileActionContainer>().AsSingle();
 
-            Container.Bind<SegmentContainer>().FromInstance(new(
-                _startDefinition, 
-                _endDefinition, 
-                _forrestDefinition, 
-                _enemyCampDefinition, 
-                _villageDefinition,
-                _ruinDefinition,
-                _bossDefinition)).AsSingle();
+            Container.Bind<SegmentContainer>().FromInstance(new(Segments, StartSegment, EndSegment, BossSegments)).AsSingle();
         }
 
         private void BindFactories()
@@ -112,57 +111,41 @@ namespace Installer
 
     public class SegmentContainer
     {
-        public List<SegmentDefinition> SegmentPool;
-        public SegmentDefinition StartSegment;
-        public SegmentDefinition EndSegment;
-        public List<SegmentDefinition> BossSegments;
-        private Dictionary<SegmentType, SegmentView> _segmentPrefabs = new();
+        public List<SegmentView> SegmentPool;
+        public SegmentView StartSegment;
+        public SegmentView EndSegment;
+        public List<SegmentView> BossSegments;
 
         public SegmentContainer(
-            SegmentDefinition start, 
-            SegmentDefinition end, 
-            SegmentDefinition forrest, 
-            SegmentDefinition enemyCamp, 
-            SegmentDefinition village,
-            SegmentDefinition ruin,
-            SegmentDefinition boss)
+            SegmentView[] segmentDefinitions, 
+            SegmentView start, 
+            SegmentView end, 
+            SegmentView[] bossDefinitions)
         {
-            _segmentPrefabs = new(new Dictionary<SegmentType, SegmentView>()
-            {
-                { SegmentType.Forrest, forrest.Prefab },
-                { SegmentType.EnemyCamp, enemyCamp.Prefab },
-                { SegmentType.Village , village.Prefab},
-                { SegmentType.Ruin , ruin.Prefab},
-                { SegmentType.Boss , boss.Prefab},
-            });
+            SegmentPool = new(segmentDefinitions.ToList());
+            
+            StartSegment = start;
+            EndSegment = end;
 
-            SegmentPool = new()
-            {
-                new(forrest),
-                new(enemyCamp),
-                new(ruin),
-                new(village),
-            };
-
-            StartSegment = new(start);
-            EndSegment = new(end);
-
-            BossSegments = new()
-            {
-                new(boss)
-            };
+            BossSegments = new(bossDefinitions.ToList());
         }
 
-        public SegmentView GetSegmentPrefab(SegmentType type)
+        public SegmentView GetPrefab(SegmentType type)
         {
             if (type == SegmentType.Start)
-                return StartSegment.Prefab;
+                return StartSegment;
             if (type == SegmentType.End)
-                return EndSegment.Prefab;
+                return EndSegment;
             
-            if (!_segmentPrefabs.ContainsKey(type))
-                throw new Exception($"no prefab for segment {type}");
-            return _segmentPrefabs[type];
+            SegmentView prefab = SegmentPool.FirstOrDefault(p => p.Type == type);
+            if (prefab != null)
+                return prefab;
+
+            prefab = BossSegments.FirstOrDefault(p => p.Type == type);
+            if (prefab != null)
+                return prefab;
+
+            throw new Exception($"No Segment Prefab of Type {type} in SegmentContainer");
         }
     }
 }

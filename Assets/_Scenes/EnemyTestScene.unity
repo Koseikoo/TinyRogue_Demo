@@ -1248,7 +1248,7 @@ MonoBehaviour:
   _playerDefinition:
     Unit:
       Type: 0
-      MaxHealth: 6
+      MaxHealth: 3
       Invincible: 0
       DropXp: 0
   _weaponDefinition:

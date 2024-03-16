@@ -38,8 +38,10 @@ namespace Views
                 //healthImages[i].color = activeColor;
 
                 bool disableCell = i >= unit.MaxHealth && healthViews[i].gameObject.activeSelf;
-                bool showCell = i < unit.Health.Value && !healthViews[i].gameObject.activeSelf;
+                bool showCell = i < unit.MaxHealth && !healthViews[i].gameObject.activeSelf;
                 bool dropCellAnimation = i >= unit.Health.Value && healthViews[i].gameObject.activeSelf;
+                
+                healthViews[i].Health.gameObject.SetActive(unit.Health.Value > i);
 
                 if (disableCell)
                 {

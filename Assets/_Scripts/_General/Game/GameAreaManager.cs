@@ -32,7 +32,7 @@ namespace Game
         {
             foreach (var segment in island.Segments)
             {
-                _segmentFactory.CreateSegment(segment);
+                _segmentFactory.CreateSegmentView(segment);
             }
         }
 

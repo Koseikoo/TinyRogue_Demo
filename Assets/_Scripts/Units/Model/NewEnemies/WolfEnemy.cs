@@ -5,7 +5,7 @@ namespace Models
 {
     public class WolfEnemy : Enemy
     {
-        private const int LeapTurnDelay = 3;
+        private const int LeapTurnDelay = 2;
         private const int BaseTurnDelay = 0;
         
         private List<Tile> _leapPath = new();

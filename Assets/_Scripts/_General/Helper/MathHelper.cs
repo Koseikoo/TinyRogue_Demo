@@ -52,4 +52,12 @@ public static class MathHelper
         Vector2 rotatedVector = rotation * vector;
         return rotatedVector;
     }
+    
+    public static Vector3 GetIntersectionPoint(Vector3 start, Vector3 direction)
+    {
+        float t = -start.y / direction.y;
+        Vector3 intersectionPoint = start + t * direction;
+
+        return intersectionPoint;
+    }
 }

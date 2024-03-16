@@ -36,7 +36,7 @@ namespace _Testing
         
         [Header("Segment Spawning")]
         
-        [SerializeField] private SegmentDefinition segmentToSpawn;
+        [SerializeField] private SegmentView segmentToSpawn;
         [SerializeField] private bool spawnSegment;
         [SerializeField] private bool destroySegment;
         private Tile _segmentSpawnTile;
@@ -77,6 +77,8 @@ namespace _Testing
         private void CreatePlayer()
         {
             _playerManager.SpawnPlayerWithWeapon(_weaponDefinition, _playerDefinition);
+            
+            _playerManager.Weapon.AddXp(20);
         }
 
         private void SpawnUnit()
@@ -116,23 +118,23 @@ namespace _Testing
         {
             if (_currentSegment != null)
             {
-                foreach (SegmentUnit unit in _currentSegment.Units)
+                foreach (Unit unit in _currentSegment.Units)
                 {
-                    unit.Unit.Death();
+                    unit.Death();
                 }
                 _currentSegment.IsDestroyed.Value = true;
             }
                 
         }
         
-        private Segment CreateSegment(Tile centerTile, SegmentDefinition definition)
+        private Segment CreateSegment(Tile centerTile, SegmentView prefab)
         {
-            Segment segment = definition.CreateSegment(_container);
+            Segment segment = _segmentFactory.CreateSegment(prefab, centerTile);
             segment.Position = centerTile.WorldPosition;
             
             var tiles = _gameAreaManager.Island.GetSegmentTiles(segment);
             segment.SetTiles(tiles);
-            _segmentFactory.CreateSegment(segment);
+            //_segmentFactory.CreateSegment(segment);
             return segment;
         }
     }

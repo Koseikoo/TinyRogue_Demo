@@ -52,35 +52,9 @@ namespace Factories
             Unit unit = CreateUnitModel(definition, spawnTile);
             unit.Loot = _itemContainer.GetRandomUnitLoot(unit, unit.Level + 1);
             UnitView view = _unitViewFactory.CreateUnitView(unit);
+            _unitDeathActionContainer.SetDeathActionFor(unit);
             _unitUIFactory.CreateUI(unit, view.transform)
                 .AddHealth(unit);
-            return unit;
-        }
-
-        public Unit CreateSegmentUnit(SegmentUnitDefinition definition, Segment segment)
-        {
-            Unit unit = definition.Unit.GetInstance();
-            unit.Loot = _itemContainer.GetRandomUnitLoot(unit, unit.Level + 1);
-            _unitDeathActionContainer.SetDeathActionFor(unit);
-            Island island = segment.Tiles[0].Island;
-            List<Tile> unitTiles = new();
-            for (int i = 0; i < definition.Points.Count; i++)
-            {
-                Tile tile = island.Tiles.GetClosestTileFromPosition(definition.Points[i].position);
-                tile.CurrentUnit.Value = unit;
-                unitTiles.Add(tile);
-                
-                if(i == 0)
-                    unit.Tile.Value = unitTiles[i];
-                else
-                    unit.AdditionalTiles.Add(unitTiles[i]);
-            }
-            
-            
-            island.AddUnit(unit);
-            segment.AddUnit(unit, false, unitTiles);
-            
-            definition.View.Initialize(unit);
             return unit;
         }
 

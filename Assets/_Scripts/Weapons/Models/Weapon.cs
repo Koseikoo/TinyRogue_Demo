@@ -199,7 +199,7 @@ namespace Models
             if (tileUnit != null && tileUnit != GameStateContainer.Player) {
                 tileUnit.Attack(ModSlots.GetMods(), attackDirection, Owner);
                 _cameraModel.AttackShakeCommand.Execute();
-                if (tileUnit.IsDead.Value && tileUnit is Enemy)
+                if (tileUnit.IsDead.Value)
                 {
                     RecoverAttackCharge();
                 }

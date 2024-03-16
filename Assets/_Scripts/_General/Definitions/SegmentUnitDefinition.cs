@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Views;
 
 [System.Serializable]
 
 public class SegmentUnitDefinition
 {
-    public List<Transform> Points;
-    public UnitView View;
-    public UnitDefinition Unit;
+    public Transform Point;
+    public UnitType Type;
 }

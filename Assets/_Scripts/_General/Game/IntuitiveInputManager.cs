@@ -156,11 +156,18 @@ namespace Game
             CloseOpenUIElements();
             if (GameStateContainer.GameState.Value == GameState.Ship)
                 return;
-
+            
             Tile startTile = _playerManager.Weapon.Tile.Value;
             Tile endTile = _gameAreaManager.TileCollection.GetClosestTileFromPosition(startTile.WorldPosition + swipeVector);
             List<Tile> tiles = GetSwipedTiles(startTile, endTile);
             List<Tile> attackTiles = new();
+            
+            if (endTile.HasUnit)
+            {
+                Debug.Log("End Tile Occupied Feedback");
+                InWeaponMode = false;
+                return;
+            }
 
             int attackDamage = _playerManager.Weapon.GetAttackDamage();
 
@@ -183,12 +190,6 @@ namespace Game
 
             InWeaponMode = !bounceBack;
 
-            if (!bounceBack && endTile.HasUnit)
-            {
-                Debug.Log("End Tile Occupied Feedback");
-                return;
-            }
-            
             _playerManager.Weapon.AttackDirection.Value = swipeVector.normalized;
             _playerManager.Weapon.AttackTiles(attackTiles, startTile);
             _playerManager.Weapon.UseAttackCharge();

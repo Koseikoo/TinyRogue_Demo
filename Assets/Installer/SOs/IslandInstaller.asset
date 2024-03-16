@@ -21,55 +21,13 @@ MonoBehaviour:
     Size: 4
     Distortion: 5
     LastPointWeight: 0.8
-  _startDefinition:
-    Type: 4
-    Radius: 3
-    MaxUnits: 0
-    Prefab: {fileID: 4046348125292851383, guid: 0c4fb6282885049dc907b3e9abaa5c1a,
-      type: 3}
-    SegmentUnitDefinitions: []
-  _endDefinition:
-    Type: 5
-    Radius: 3
-    MaxUnits: 0
-    Prefab: {fileID: 1183987975935004050, guid: 215dc811633484464ac5ff014ce74677,
-      type: 3}
-    SegmentUnitDefinitions: []
-  _forrestDefinition:
-    Type: 0
-    Radius: 3
-    MaxUnits: 4
-    Prefab: {fileID: 4895337504762156119, guid: 01d66fdeb03a843e7b3a0fea4c596c58,
-      type: 3}
-    SegmentUnitDefinitions: []
-  _enemyCampDefinition:
-    Type: 1
-    Radius: 4
-    MaxUnits: 4
-    Prefab: {fileID: 1598845185457252850, guid: e9135777ec958486697e55db5af42c5c,
-      type: 3}
-    SegmentUnitDefinitions: []
-  _villageDefinition:
-    Type: 2
-    Radius: 4
-    MaxUnits: 2
-    Prefab: {fileID: 6536024236957421079, guid: c0b78f7e039c4481ca870461e1dd0b65,
-      type: 3}
-    SegmentUnitDefinitions: []
-  _ruinDefinition:
-    Type: 3
-    Radius: 3
-    MaxUnits: 1
-    Prefab: {fileID: 1997351819284492762, guid: 30ef90eee7fb34bf38798bc20fe0b6fe,
-      type: 3}
-    SegmentUnitDefinitions: []
-  _bossDefinition:
-    Type: 6
-    Radius: 1
-    MaxUnits: 1
-    Prefab: {fileID: 1997351819284492762, guid: 6f5c0a5c8f0244302a65d803ab82932b,
-      type: 3}
-    SegmentUnitDefinitions: []
+  Segments:
+  - {fileID: 4895337504762156119, guid: 01d66fdeb03a843e7b3a0fea4c596c58, type: 3}
+  StartSegment: {fileID: 4046348125292851383, guid: 0c4fb6282885049dc907b3e9abaa5c1a,
+    type: 3}
+  EndSegment: {fileID: 1183987975935004050, guid: 215dc811633484464ac5ff014ce74677,
+    type: 3}
+  BossSegments: []
   _basePrefab: {fileID: 3935859009403347093, guid: dccd15ffc06e84fc1bafbe09f55b453d,
     type: 3}
   _boardPrefab: {fileID: 3935859009403347093, guid: bd15c8ca3c4994aa7929036b2a139fa2,
@@ -97,4 +55,6 @@ MonoBehaviour:
   _topPrefab: {fileID: 2636663731325711598, guid: ff162b0b8fb704d3c889858497c4ac6a,
     type: 3}
   _topSurfacePrefab: {fileID: 3935859009403347093, guid: 3df72fba40a5f4e5298b2628aa855bf3,
+    type: 3}
+  DEBUG_SPHERE: {fileID: 2231585923342052213, guid: b413be727a80a4647a3abba2a31a1e39,
     type: 3}

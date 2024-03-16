@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Factories;
 using UniRx;
 using UnityEngine;
+using Views;
 
 namespace Models
 {
@@ -18,31 +19,29 @@ namespace Models
     }
     public class Segment
     {
-        public const float SegmentDistance = 2f;
-        
         public BoolReactiveProperty IsDestroyed = new();
         public BoolReactiveProperty IsCompleted = new();
         public SegmentType Type;
         public Vector3 Position;
-        public float Radius;
-        public int MaxUnits;
+        public int Size;
+
+        public float Radius => Size * Island.TileDistance;
 
         public List<Tile> Tiles;
-        public List<SegmentUnit> Units = new();
+        public List<Unit> Units = new();
 
         private IDisposable _GameStateSubscription;
 
-        public Segment(SegmentDefinition definition, Vector3 position = default)
+        public Segment(SegmentView definition, Vector3 position = default)
         {
             Type = definition.Type;
-            Radius = definition.Radius;
-            MaxUnits = definition.MaxUnits;
+            Size = definition.Size;
             Position = position;
         }
 
         protected virtual void CheckSegmentCompleteCondition()
         {
-            var units = Units.FindAll(u => u.TrackUnit && u?.Unit != null && !u.Unit.IsDead.Value);
+            var units = Units.FindAll(u => u is Enemy && !u.IsDead.Value);
             if (units.Count == 0)
             {
                 IsCompleted.Value = true;
@@ -55,9 +54,9 @@ namespace Models
             
         }
 
-        public void AddUnit(Unit unit, bool trackUnit = false, List<Tile> unitTiles = null)
+        public void AddUnit(Unit unit)
         {
-            Units.Add(new(unit, unitTiles, trackUnit));
+            Units.Add(unit);
         }
 
         public void SetTiles(List<Tile> tiles)
@@ -95,7 +94,7 @@ namespace Models
         {
             for (int i = 0; i < segments.Count; i++)
             {
-                if (Vector3.Distance(segments[i].Position, Position) < segments[i].Radius + Radius + SegmentDistance)
+                if (Vector3.Distance(segments[i].Position, Position) < segments[i].Radius.GetSegmentDistance(Radius))
                     return true;
             }
             return false;

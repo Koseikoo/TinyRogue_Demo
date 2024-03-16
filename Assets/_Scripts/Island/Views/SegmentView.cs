@@ -10,8 +10,12 @@ namespace Views
 {
     public class SegmentView : MonoBehaviour
     {
-        public float Size;
-        [SerializeField] SegmentUnitDefinition[] segmentUnitDefinitions;
+        public SegmentType Type;
+        public int Size;
+
+        public float Radius => Size * Island.TileDistance;
+        
+        public SegmentUnitDefinition[] SegmentUnitDefinitions;
         
         [SerializeField] private bool DestroySegmentOnCompletion;
         [SerializeField] private Transform segmentParent;
@@ -23,8 +27,6 @@ namespace Views
         [Inject] private TextFactory _textFactory;
 
         private Segment _segment;
-
-        public SegmentUnitDefinition[] SegmentUnitDefinitions => segmentUnitDefinitions;
         public void Initialize(Segment segment)
         {
             _segment = segment;
@@ -51,7 +53,7 @@ namespace Views
 
         private void OnDrawGizmosSelected()
         {
-            Gizmos.DrawWireSphere(transform.position + (Vector3.up * 2), Size);
+            Gizmos.DrawWireSphere(transform.position + (Vector3.up * 2), Size * Island.TileDistance);
         }
 
         private void CompleteSegmentAnimation()

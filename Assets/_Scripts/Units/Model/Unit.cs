@@ -73,7 +73,7 @@ namespace Models
 
             if (_lastAttacker == GameStateContainer.Player)
             {
-                if(this is Enemy)
+                if(this is not Interactable)
                     GameStateContainer.Player.Weapon.ActiveCombo.Add(this);
                 GameStateContainer.Player.Weapon.AddXp(DropXp);
             }

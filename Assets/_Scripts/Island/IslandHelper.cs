@@ -35,6 +35,11 @@ public static class IslandHelper
         return default;
     }
 
+    public static float GetSegmentDistance(this float baseSegmentRadius, float segmentRadius)
+    {
+        return baseSegmentRadius + segmentRadius + Island.TileDistance;
+    }
+
     public static Tile GetClosestTileFromPosition(this List<Tile> tiles, Vector3 worldPosition)
     {
         Tile closest = null;

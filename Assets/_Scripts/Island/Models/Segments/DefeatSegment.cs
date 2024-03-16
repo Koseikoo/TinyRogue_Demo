@@ -2,6 +2,7 @@ using System.Linq;
 using Container;
 using Factories;
 using UnityEngine;
+using Views;
 using Zenject;
 
 namespace Models
@@ -10,7 +11,7 @@ namespace Models
     {
         [Inject] private UnitFactory _unitFactory;
         [Inject] private InteractableDefinitionContainer _interactableDefinitionContainer;
-        public DefeatSegment(SegmentDefinition definition, Vector3 position = default) : base(definition, position)
+        public DefeatSegment(SegmentView definition, Vector3 position = default) : base(definition, position)
         {
             
         }
