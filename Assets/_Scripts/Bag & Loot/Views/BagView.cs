@@ -35,15 +35,12 @@ namespace Views
             _bag = bag;
             _bag.SetBagPoint(lootTransform);
 
-            IslandLootContainer.DropLoot.Subscribe(dropDelayed =>
+            IslandLootContainer.DropLoot.Subscribe(_ =>
             {
                 List<Loot> toRemove = new();
                 
                 foreach (Loot loot in IslandLootContainer.DroppedLoot)
                 {
-                    if(loot.DelayDrop && !dropDelayed)
-                        continue;
-                    
                     if (loot.RewardedTo == _bag.Owner)
                     {
                         NewVisualLootClaim(loot);

@@ -84,9 +84,18 @@ namespace Factories
             unit.Health.Value = definition.MaxHealth;
             unit.IsInvincible.Value = definition.Invincible;
             unit.DropXp = definition.DropXp;
+            unit.IncreaseComboWithDeath = true;
             
             _unitDeathActionContainer.SetDeathActionFor(unit);
             unit.Loot = _itemContainer.GetRandomUnitLoot(unit, unit.Level + 1);
+            return;
+            
+            unit.DeathActions.Add(tile =>
+            {
+                var recipe = _unitRecipeDropContainer.TryUnlockRecipe(unit.Type);
+                if (recipe != null)
+                    _modalFactory.CreateUnlockRecipeModal(recipe.Output);
+            });
         }
 
         private void AssignEnemyData(Enemy enemy, EnemyDefinition definition)

@@ -8,7 +8,7 @@ using Zenject;
 public static class IslandLootContainer
 {
     public static List<Loot> DroppedLoot = new();
-    public static ReactiveCommand<bool> DropLoot = new();
+    public static ReactiveCommand DropLoot = new();
 
     public static void AddToLootDrops(Loot loot)
     {

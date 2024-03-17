@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Container;
 using Factories;
+using Factory;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -15,6 +16,7 @@ namespace Models
         public Loot Loot;
         public int DropXp;
         public UnitType Type;
+        public bool IncreaseComboWithDeath;
         public ReactiveProperty<int> Health = new();
         public ReactiveProperty<Tile> Tile = new();
         public List<Tile> AdditionalTiles = new();
@@ -25,12 +27,14 @@ namespace Models
         public BoolReactiveProperty IsDamaged = new();
         public ReactiveCollection<StatusEffect> ActiveStatusEffects = new();
         public BoolReactiveProperty IsInvincible = new();
+
         
         public ReactiveProperty<Vector3> AttackDirection = new();
         public List<Action<Tile>> DeathActions = new();
         private Unit _lastAttacker;
 
-        [Inject] private UnitDeathActionContainer _unitDeathActionContainer;
+        [Inject] private UnitRecipeDropContainer _unitRecipeDropContainer;
+        [Inject] private ModalFactory _modalFactory;
 
         public virtual void Attack(IEnumerable<Mod> mods, Vector3 attackVector, Unit attacker = null)
         {
@@ -73,13 +77,13 @@ namespace Models
         {
             if (_lastAttacker != null)
             {
-                Loot?.RewardTo(_lastAttacker, Tile.Value.WorldPosition, false);
+                Loot?.RewardTo(_lastAttacker, Tile.Value.WorldPosition);
             }
-            IslandLootContainer.DropLoot.Execute(false);
+            IslandLootContainer.DropLoot.Execute();
 
             if (_lastAttacker == GameStateContainer.Player)
             {
-                if(this is not Interactable)
+                if(IncreaseComboWithDeath)
                     GameStateContainer.Player.Weapon.ActiveCombo.Add(this);
                 GameStateContainer.Player.Weapon.AddXp(DropXp);
             }

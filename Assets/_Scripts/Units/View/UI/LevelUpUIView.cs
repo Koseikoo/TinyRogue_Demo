@@ -7,7 +7,7 @@ namespace Views
 {
     public class LevelUpUIView : MonoBehaviour
     {
-        private static readonly int Popup = Animator.StringToHash("Popup");
+        private static readonly int Popup = Animator.StringToHash("LevelUp");
         
         [SerializeField] private TextMeshProUGUI _comboText;
         [SerializeField] private Animator _animator;

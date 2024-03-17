@@ -87,7 +87,7 @@ public static class IslandHelper
 
     public static List<Tile> OrderByDistanceToPosition(this List<Tile> tiles, Vector3 referencePosition)
     {
-        List<Tile> orderedTiles = tiles.OrderByDescending(tile => Vector3.Distance(tile.WorldPosition, referencePosition)).ToList();
+        List<Tile> orderedTiles = tiles.OrderBy(tile => Vector3.Distance(tile.WorldPosition, referencePosition)).ToList();
         return orderedTiles;
     }
 
@@ -149,6 +149,6 @@ public static class IslandHelper
     public static Tile GetTileFurthestAway(this Tile referenceTile)
     {
         var orderedTiles = referenceTile.Island.Tiles.OrderByDistanceToPosition(referenceTile.WorldPosition);
-        return orderedTiles[0];
+        return orderedTiles[^1];
     }
 }

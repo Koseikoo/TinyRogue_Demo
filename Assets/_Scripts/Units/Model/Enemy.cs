@@ -5,6 +5,7 @@ using Factories;
 using UniRx;
 using Unity.Burst.CompilerServices;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using Zenject;
 
 public enum EnemyState
@@ -104,9 +105,8 @@ namespace Models
         protected virtual bool IsAttackPathTile(Tile tile)
         {
             var tileUnit = tile.CurrentUnit.Value;
-            if (tile.HasUnit && (tileUnit.IsInvincible.Value || tileUnit is Enemy))
-                return false;
-            return true;
+            bool ignoreTile = tile.HasUnit && (tileUnit.IsInvincible.Value || tileUnit is Enemy);
+            return !ignoreTile && !tile.WeaponOnTile.Value;
         }
         
         protected EnemyState ScanSurroundingTiles()

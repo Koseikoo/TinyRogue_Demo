@@ -79,8 +79,6 @@ namespace _Testing
         private void CreatePlayer()
         {
             _playerManager.SpawnPlayerWithWeapon(_weaponDefinition, _playerDefinition);
-            
-            _playerManager.Weapon.AddXp(20);
         }
 
         private void SpawnUnit()

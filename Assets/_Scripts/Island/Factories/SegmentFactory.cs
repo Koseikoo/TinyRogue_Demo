@@ -28,6 +28,7 @@ namespace Factories
         public SegmentFactory()
         {
             _segmentSpawnActions[SegmentType.EnemyCamp] = CreateEnemyCampSegment;
+            _segmentSpawnActions[SegmentType.End] = CreateEndSegment;
         }
 
         public SegmentView CreateSegmentView(Segment segment)
@@ -43,7 +44,8 @@ namespace Factories
 
                 Unit unit = null;
 
-                if (definition.Type.ToString().ToLower().Contains("enemy"))
+                if (definition.Type.ToString().ToLower().Contains("enemy") ||
+                    definition.Type.ToString().ToLower().Contains("boss"))
                 {
                     unit =
                         _unitFactory.CreateEnemy(_unitContainer.GetEnemyDefinition(definition.Type), tile);
@@ -107,9 +109,17 @@ namespace Factories
 
         private void CreateEndSegment(Segment segment)
         {
-            var miniBossDefinition = _unitContainer.GetEnemyDefinition(UnitType.FishermanMiniBoss);
-            Enemy enemy = _unitFactory.CreateEnemy(miniBossDefinition, segment.Tiles[0].Island.EndTile);
-            enemy.DeathActions.Add(_unitDeathActionContainer.UnlockEndTileAction);
+            try
+            {
+                Unit unit = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.FishermanMiniBoss);
+                unit.DeathActions.Add(_unitDeathActionContainer.UnlockEndTileAction);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("No Mini Boss in End Segment");
+            }
+            
+            
         }
         
         private void CreateBossSegment(Segment segment)

@@ -24,12 +24,17 @@ namespace Views
         [SerializeField] private Image _innerBorder;
         [SerializeField] private float _buttonPressDuration;
         
-        private Sequence _buttonTween;
+        private Sequence _downSequence;
+        private Sequence _upSequence;
+        private bool _buttonPressed;
         
         private void Update()
         {
             float lerp = Mathf.InverseLerp(IdlePositionY, PressedPositionY, _buttonRect.anchoredPosition.y);
             _innerBorder.fillAmount = lerp;
+            
+            if(_buttonPressed)
+                ClearOldTween();
         }
 
         public void SetText(string text)
@@ -46,17 +51,23 @@ namespace Views
         public void TriggerButtonEvent(Action buttonLogic)
         {
             ClearOldTween();
-            _buttonTween = DOTween.Sequence();
+            if(_buttonPressed)
+                return;
+            _downSequence = DOTween.Sequence();
             
-            _buttonTween.Insert(0f, _buttonRect.DOAnchorPos(new Vector2(0f, PressedPositionY), _buttonPressDuration)
+            
+            
+            _downSequence.Insert(0f, _buttonRect.DOAnchorPos(new Vector2(0f, PressedPositionY), _buttonPressDuration)
                 .SetEase(Ease.InCubic)
                 .OnComplete(() =>
                 {
                     _cameraModel.UnitDeathShakeCommand.Execute();
                     _animator.SetTrigger("Shrink");
-                    _buttonTween = null;
+                    _downSequence = null;
+                    _buttonPressed = true;
+                    
                 }));
-            _buttonTween.AppendInterval(.18f)
+            _downSequence.AppendInterval(.18f)
                 .OnComplete(() => buttonLogic?.Invoke());
 
         }
@@ -64,23 +75,25 @@ namespace Views
         public void EndButtonEvent()
         {
             ClearOldTween();
+            if(_buttonPressed)
+                return;
             
-            _buttonTween = DOTween.Sequence();
-            _buttonTween.Insert(0f, _buttonRect.DOAnchorPos(new Vector2(0f, IdlePositionY), _buttonPressDuration)
+            _upSequence = DOTween.Sequence();
+            _upSequence.Insert(0f, _buttonRect.DOAnchorPos(new Vector2(0f, IdlePositionY), _buttonPressDuration)
                 .SetEase(Ease.OutCubic)
                 .OnComplete(() =>
                 {
-                    _buttonTween = null;
+                    _upSequence = null;
                 }));
         }
 
         private void ClearOldTween()
         {
-            if (_buttonTween != null)
-            {
-                _buttonTween.Kill();
-                _buttonTween = null;
-            }
+            _downSequence?.Kill();
+            _upSequence?.Kill();
+
+            _downSequence = null;
+            _upSequence = null;
         }
     }
 }

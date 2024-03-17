@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,8 @@ namespace Views
         {
             if(!canClose)
                 closeButton.enabled = false;
+
+            GameStateContainer.Player.IsDead.Subscribe(_ => DestroyModal()).AddTo(this);
             
             
             for (int i = 0; i < choiceRenderer.Length; i++)

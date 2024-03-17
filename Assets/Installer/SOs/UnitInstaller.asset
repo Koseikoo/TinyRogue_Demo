@@ -35,7 +35,7 @@ MonoBehaviour:
   _aimAtTargetSprite: {fileID: 21300000, guid: 10585b6dc7d4543d792e3dddc36bf352, type: 3}
   Enemies:
   - name: Spider
-    Type: 0
+    Type: 2
     Prefab: {fileID: 7390938553989648233, guid: 6c1736239fbb54fad8d1466b87082c21,
       type: 3}
     MaxHealth: 1
@@ -126,7 +126,7 @@ MonoBehaviour:
     MaxHealth: 3
     Invincible: 1
     DropXp: 6
-    AttackRange: 2
+    AttackRange: 1
     ScanRange: 3
     TurnDelay: 1
     Mods:

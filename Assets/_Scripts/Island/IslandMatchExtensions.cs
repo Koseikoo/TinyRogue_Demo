@@ -71,7 +71,7 @@ public static class IslandMatchExtensions
                 tilesToAttack.Add(tile);
         }
 
-        tilesToAttack = tilesToAttack.OrderByDistanceToPosition(startTile.WorldPosition + swipeVector);
+        tilesToAttack = tilesToAttack.OrderByDistanceToPosition(startTile.WorldPosition);
         return tilesToAttack;
     }
     

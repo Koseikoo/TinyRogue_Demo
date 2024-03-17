@@ -27,6 +27,16 @@ public static class UIHelper
 
     }
 
+    public static Vector3 ScreenToWorldPoint(this RectTransform rect)
+    {
+        Vector3[] corners = new Vector3[4];
+        rect.GetWorldCorners(corners);
+
+        Vector2 screenPosition = rect.position;
+        Vector3 worldPoint = Camera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, Camera.nearClipPlane));
+        return worldPoint;
+    }
+
     public static void MoveIntoScreen(this RectTransform image, Vector3 referencePosition)
     {
         Vector2 center = new(Screen.width * .5f, Screen.height * .5f);

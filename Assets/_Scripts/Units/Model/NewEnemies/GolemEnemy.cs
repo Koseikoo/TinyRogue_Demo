@@ -28,10 +28,11 @@ namespace Models
 
         protected override bool IsAttackPathTile(Tile tile)
         {
+            bool isAttackPathTile = base.IsAttackPathTile(tile);
             var tileUnit = tile.CurrentUnit.Value;
-            if (tile.HasUnit && (tileUnit.IsInvincible.Value || tileUnit is Enemy || tileUnit.Type == UnitType.Pillar))
-                return false;
-            return true;
+            if (isAttackPathTile && tileUnit?.Type != UnitType.Pillar)
+                return true;
+            return false;
         }
 
         protected override void RenderAttackPath()

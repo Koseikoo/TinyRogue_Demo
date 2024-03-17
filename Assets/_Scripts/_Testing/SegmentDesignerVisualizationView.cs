@@ -1,26 +1,30 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Installer;
 using UnityEditor;
 using UnityEngine;
 using Views;
 
 namespace _Testing
 {
-    [System.Serializable]
-    public class SegmentDesignerVisualLink
-    {
-        public GameObject Prefab;
-        public UnitType Type;
-    }
-    
-    [ExecuteInEditMode]
+#if UNITY_EDITOR
     public class SegmentDesignerVisualizationView : MonoBehaviour
     {
-        [SerializeField] private SegmentDesignerVisualLink[] Destructibles;
-        [SerializeField] private SegmentDesignerVisualLink[] Enemies;
+        private const string AssetContainerPath = "Assets/Installer/SOs/UnitInstaller.asset";
 
-        private List<GameObject> _currentPrefabs;
+        private UnitInstaller _assets;
+        UnitInstaller Assets
+        {
+            get
+            {
+                if (_assets == null)
+                    _assets = GetAssets();
+                return _assets;
+            }
+        }
+
+        private List<UnitView> _currentPrefabs = new();
 
         public void UpdateVisualization(SegmentView view)
         {
@@ -33,11 +37,18 @@ namespace _Testing
             DestroyPrevious();
         }
 
+        private UnitInstaller GetAssets()
+        {
+            UnitInstaller scriptableObject = AssetDatabase.LoadAssetAtPath<UnitInstaller>(AssetContainerPath);
+            return scriptableObject;
+        }
+
         private void DestroyPrevious()
         {
             for (int i = 0; i < _currentPrefabs.Count; i++)
             {
-                DestroyImmediate(_currentPrefabs[i]);
+                if(_currentPrefabs[i] != null)
+                    DestroyImmediate(_currentPrefabs[i].gameObject);
             }
             
             _currentPrefabs.Clear();
@@ -48,27 +59,31 @@ namespace _Testing
             for (int i = 0; i < definitions.Length; i++)
             {
                 int index = i;
-                var link = GetLink(definitions[index].Type);
+                var prefab = GetPrefab(definitions[index].Type);
 
-                if (link == null)
+                if (prefab == null)
                     throw new Exception($"No Prefab Link for Type {definitions[i].Type.ToString()}");
 
-                GameObject instance = PrefabUtility.InstantiatePrefab(link.Prefab, transform) as GameObject;
+                var instance = PrefabUtility.InstantiatePrefab(prefab, transform) as UnitView;
                 instance.transform.position = definitions[i].Point.position;
                 _currentPrefabs.Add(instance);
             }
         }
 
-        private SegmentDesignerVisualLink GetLink(UnitType type)
+        private UnitView GetPrefab(UnitType type)
         {
-            var link = Destructibles.FirstOrDefault(v => v.Type == type);
+            var definition = Assets.Units.FirstOrDefault(v => v.Type == type);
             
-            if(link == null)
-                link = Enemies.FirstOrDefault(v => v.Type == type);
+            if(definition == null)
+                definition = Assets.Enemies.FirstOrDefault(v => v.Type == type);
 
-            if (link != null)
-                return link;
+            if (definition != null)
+            {
+                
+                return definition.Prefab;
+            }
             throw new Exception($"No Prefab Link for Type {type.ToString()}");
         }
     }
+    #endif
 }

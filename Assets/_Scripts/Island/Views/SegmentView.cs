@@ -1,10 +1,13 @@
 using System;
+using System.Linq;
 using DG.Tweening;
 using Factories;
 using Models;
 using UniRx;
 using UnityEngine;
 using Zenject;
+
+using Unit = Models.Unit;
 
 namespace Views
 {
@@ -14,16 +17,14 @@ namespace Views
         public int Size;
         public Transform PointParent;
         
+        [Inject] private CameraModel _cameraModel;
+        
         public float Radius => Size * Island.TileDistance;
         
         public SegmentUnitDefinition[] SegmentUnitDefinitions;
         
-        [SerializeField] private bool DestroySegmentOnCompletion;
-        [SerializeField] private Transform segmentParent;
         [SerializeField] private Transform segmentCompletedParent;
-
-        [SerializeField] private float segmentScaleDuration;
-        [SerializeField] private AnimationCurve segmentScaleCurve;
+        [SerializeField] private float destroyDelay;
 
         [Inject] private TextFactory _textFactory;
 
@@ -57,28 +58,28 @@ namespace Views
 
         private void CompleteSegmentAnimation()
         {
-            _segment.SegmentCompleteAction(segmentCompletedParent);
-            return;
-            
-            segmentParent.localScale = Vector3.one;
-            segmentCompletedParent.localScale = Vector3.zero;
-
-            foreach (var tile in _segment.Tiles)
-            {
-                tile.Selections.Clear();
-            }
-            
             Sequence sequence = DOTween.Sequence();
+            float delay = 0;
 
-            sequence.Append(segmentParent.DOScale(Vector3.zero, segmentScaleDuration)
-                .SetEase(segmentScaleCurve)
-                .OnComplete(() =>
+            sequence.AppendInterval(.2f);
+
+            foreach (Unit unit in _segment.Units.Where(unit => unit.Health.Value > 0))
+            {
+                sequence.InsertCallback(delay, () =>
                 {
-                    _segment.SegmentCompleteAction(segmentCompletedParent);
-                    //_textFactory.Create(transform.position + (Vector3.up * 2), "Complete!");
-                }));
-            sequence.Append(segmentCompletedParent.DOScale(Vector3.one, segmentScaleDuration))
-                .SetEase(segmentScaleCurve);
+                    unit.IncreaseComboWithDeath = false;
+                    unit.Damage(unit.Health.Value, GameStateContainer.Player);
+            
+                    _cameraModel.UnitDeathShakeCommand.Execute();
+                });
+
+                delay += destroyDelay;
+            }
+
+            sequence.OnComplete(() =>
+            {
+                _segment.SegmentCompleteAction(transform);
+            });
         }
     }
 }

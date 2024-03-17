@@ -65,15 +65,15 @@ namespace Views
             Sequence sequence = DOTween.Sequence();
             Vector3 randomOffset = Random.value * Vector3.right * dropSpray;
             Vector3 heightOffset = Vector3.up * dropIntensity;
+            
             Transform imageTransform = image.transform;
+            if(imageTransform == null || image == null)
+                return;
             
             Vector3 startLocalPosition = imageTransform.localPosition;
             
             sequence.Insert(0f, DOTween.To(() => 0f, t =>
             {
-                if(imageTransform == null )
-                    return;
-                
                 imageTransform.localPosition =
                     Vector3.Lerp(startLocalPosition, startLocalPosition + heightOffset, dropCurve.Evaluate(t)) +
                     Vector3.Lerp(startLocalPosition, startLocalPosition + randomOffset, t);
@@ -82,9 +82,6 @@ namespace Views
             }, 1f, dropDuration)
                 .OnComplete(() =>
                 {
-                    if(image == null || imageTransform == null)
-                        return;
-                    
                     image.gameObject.SetActive(false);
                     imageTransform.localPosition = startLocalPosition;
                     imageTransform.localScale = Vector3.one;

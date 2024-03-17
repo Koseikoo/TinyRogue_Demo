@@ -13,7 +13,6 @@ namespace Models
         public List<Resource> Resources;
         public Vector3 DropPosition;
         public Unit RewardedTo;
-        public bool DelayDrop;
 
         public Loot(int gold, List<Mod> mods = null, List<Item> items = null, List<Resource> resources = null, List<Equipment> equipments = null)
         {
@@ -24,23 +23,11 @@ namespace Models
             Equipment = equipments ?? new();
         }
 
-        public void RewardTo(Unit rewardTo, Vector3 dropPosition, bool delayDrop)
+        public void RewardTo(Unit rewardTo, Vector3 dropPosition)
         {
-            DelayDrop = delayDrop;
             DropPosition = dropPosition;
             RewardedTo = rewardTo;
-            if(DelayDrop)
-                IncreaseLootBasedOnCombo(rewardTo);
             IslandLootContainer.AddToLootDrops(this);
-        }
-
-        private void IncreaseLootBasedOnCombo(Unit unit)
-        {
-            if (unit is Player player)
-            {
-                int combo = player.Weapon.ActiveCombo.Count;
-                Gold += combo;
-            }
         }
     }
 }

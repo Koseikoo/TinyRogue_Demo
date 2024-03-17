@@ -59,11 +59,6 @@ namespace Game
                 _playerManager.Player.SkippedTurns.Value++;
                 _playerManager.Player.Weapon.RecoverAttackCharge();
             }
-
-            bool returnWeapon = InWeaponMode && !_playerManager.Weapon.HasAttackCharge;
-            //if (GameStateContainer.TurnState.Value == TurnState.IslandTurn && returnWeapon) // Move to Actual End
-            //    InWeaponMode = false;
-            
         }
 
         private void HandleInput(Vector3 swipeVector)
@@ -100,6 +95,9 @@ namespace Game
                 }
                 else
                 {
+                    if(swipeVector.magnitude > Island.TileDistance)
+                        MovePlayer(swipeVector);
+                    
                     Debug.Log("Nothing");
                 }
             }
@@ -165,7 +163,6 @@ namespace Game
             if (endTile.HasUnit)
             {
                 Debug.Log("End Tile Occupied Feedback");
-                InWeaponMode = false;
                 return;
             }
 
@@ -227,7 +224,7 @@ namespace Game
                 return;
 
             bool canUpdateMoveMode = InputHelper.IsSwipeStationary() && !worldTile.HasUnit &&
-                                     _playerManager.Player.Tile.Value.Neighbours.Contains(worldTile);
+                                     _playerManager.Player.SwipedTiles.Count == 1;
             if (canUpdateMoveMode)
             {
                 if (_playerManager.Player.SelectedTiles.Count == 0 && InputHelper.IsSwipe)

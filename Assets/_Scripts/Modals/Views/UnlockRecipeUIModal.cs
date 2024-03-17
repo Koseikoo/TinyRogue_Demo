@@ -32,6 +32,8 @@ namespace Views
 
         public void Initialize(ItemType unlockedItem)
         {
+            GameStateContainer.Player.IsDead.Subscribe(_ => DestroyModal()).AddTo(this);
+            
             unlockText.text = $"Unlocked {unlockedItem.ToString()}!";
             unlockedRecipeImage.sprite = _itemIconContainer.GetItemIcon(unlockedItem);
             TriggerAnimation();

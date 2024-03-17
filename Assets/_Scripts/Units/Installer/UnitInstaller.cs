@@ -30,9 +30,9 @@ namespace Installer
         [SerializeField] private Sprite _aimAtTargetSprite;
         
         [Header("Unit (NEW)")]
-        [SerializeField] private EnemyDefinition[] Enemies;
-        [SerializeField] private InteractableDefinition[] Interactables;
-        [SerializeField] private UnitDefinition[] Units;
+        public EnemyDefinition[] Enemies;
+        public InteractableDefinition[] Interactables;
+        public UnitDefinition[] Units;
 
         public override void InstallBindings()
         {

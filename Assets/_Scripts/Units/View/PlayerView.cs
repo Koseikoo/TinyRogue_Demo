@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Models;
 using UniRx;
 using DG.Tweening;
 using Factory;
-using Game;
 using Zenject;
 using AnimationState = Models.AnimationState;
 
@@ -95,9 +93,10 @@ namespace Views
 
         private void ShowAimPath()
         {
+            
             if (InputHelper.IsSwiping() && !InputHelper.StartedOverUI)
             {
-                var playerPosition = transform.position;
+                var playerPosition = _player.Tile.Value.WorldPosition;
                 var weaponPosition = _player.Weapon.Tile.Value.WorldPosition;
 
                 Vector3 startPosition = playerPosition;
@@ -109,19 +108,15 @@ namespace Views
                     UIHelper.Camera
                         .GetWorldSwipeVector(InputHelper.StartPosition, InputHelper.GetTouchPosition())
                         .ShortenToTileRange(_player.Weapon.Range);
-            
-                Tile tile = _player.Tile.Value.TileCollection.GetClosestTileFromPosition(startPosition + swipeVector);
                 
-                ClearSelection();
-                if (_player.SelectedTiles.Count > 0 && !tile.HasUnit)
-                {
-                    tile.AddSelector(new TileSelection(_player, TileSelectionType.Aim));
-                    _lastSelectedTile = tile;
-                }
+                float maxLength = _player.SwipedTiles.Count == 0 ? 0 : Vector3.Distance(startPosition, _player.SwipedTiles[^1].WorldPosition);
+
+                var visualizedSwipeVector =
+                    swipeVector.normalized * Mathf.Min(maxLength, swipeVector.magnitude);
 
                 lineRenderer.enabled = true;
                 lineRenderer.positionCount = LinePoints;
-                lineRenderer.SetPositions(GetLinePoints(startPosition, startPosition + swipeVector));
+                lineRenderer.SetPositions(GetLinePoints(startPosition, startPosition + visualizedSwipeVector));
                 float maxRangeProgress = swipeVector.magnitude / (_player.Weapon.Range * Island.TileDistance);
                 lineRenderer.widthCurve = GetLerpedCurve(maxRangeProgress);
                 lineRenderer.widthMultiplier = lineWidth;
@@ -129,7 +124,6 @@ namespace Views
             else
             {
                 lineRenderer.enabled = false;
-                ClearSelection();
             }
         }
 

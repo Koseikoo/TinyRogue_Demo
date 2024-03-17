@@ -4,6 +4,7 @@ using Factories;
 using UniRx;
 using UnityEngine;
 using Views;
+using Zenject;
 
 namespace Models
 {
@@ -29,7 +30,6 @@ namespace Models
 
         public List<Tile> Tiles;
         public List<Unit> Units = new();
-
         private IDisposable _GameStateSubscription;
 
         public Segment(SegmentView definition, Tile tile)

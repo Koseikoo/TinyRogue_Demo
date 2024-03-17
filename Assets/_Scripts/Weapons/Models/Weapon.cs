@@ -5,7 +5,11 @@ using UniRx;
 using Zenject;
 using DG.Tweening;
 using Factory;
+using Installer;
+using Unity.VisualScripting;
 using Views;
+using Random = UnityEngine.Random;
+using Sequence = DG.Tweening.Sequence;
 
 public enum WeaponType
 {
@@ -26,6 +30,8 @@ namespace Models
         [Inject] private CameraModel _cameraModel;
         [Inject] private ChoiceContainer _choiceContainer;
         [Inject] private ModalFactory _modalFactory;
+
+        [Inject] private ItemContainer _itemContainer;
         
         public Player Owner;
         public int Range;
@@ -38,7 +44,9 @@ namespace Models
         public ReactiveProperty<Vector3> AttackDirection = new();
         public ReactiveProperty<Vector3> AimedPoint = new();
         public BoolReactiveProperty IsDestroyed = new();
-        
+
+        public ReactiveCommand DropComboLootCommand = new();
+
         public bool FixToHolster = new();
         public bool BounceBack;
 
@@ -84,6 +92,8 @@ namespace Models
                 .Subscribe(_ => UpdateAttackState());
 
             _levelUpSubscription = Level.SkipLatestValueOnSubscribe().Subscribe(_ => OpenLevelUpModal());
+            
+            AddXp(21);
         }
 
         private void OpenLevelUpModal()
@@ -154,6 +164,7 @@ namespace Models
 
         public void ReturnToHolster()
         {
+            DropComboLootCommand.Execute();
             Vector3 worldSwipeVector = Owner.Tile.Value.WorldPosition - Tile.Value.WorldPosition;
 
             List<Tile> allTiles = Tile.Value.TileCollection;
@@ -171,6 +182,17 @@ namespace Models
             Tile.Value = Owner.Tile.Value;
         }
 
+        public void DropComboLoot(Vector3 position)
+        {
+            if(ActiveCombo.Count == 0)
+                return;
+            
+            var randomResource = (ItemType)Random.Range(2, 6);
+            Loot loot = new(0, null, null, new List<Resource> { _itemContainer.GetResource(randomResource) });
+            loot.RewardTo(Owner, position);
+            IslandLootContainer.DropLoot.Execute();
+            ActiveCombo.Remove(ActiveCombo[^1]);
+        }
 
         public void RecoverAttackCharge()
         {

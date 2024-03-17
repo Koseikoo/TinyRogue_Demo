@@ -39,6 +39,25 @@ namespace Installer
                 HealthBonus = match.HealthBonus
             };
         }
+
+        public Item GetItem(ItemType type, int amount = 1)
+        {
+            ItemDefinition match = _itemDefinitions.FirstOrDefault(item => item.Type == type);
+            if (match == null)
+                throw new Exception($"{type} definition is Missing in ItemContainer");
+            Item item = type.GetItemInstance(amount);
+            return item;
+        }
+        
+        public Resource GetResource(ItemType type, int amount = 1)
+        {
+            ItemDefinition match = _itemDefinitions.FirstOrDefault(item => item.Type == type);
+            if (match == null)
+                throw new Exception($"{type} definition is Missing in ItemContainer");
+            Resource resource = type.GetResourceInstance(amount);
+            return resource;
+        }
+        
         public Loot GetRandomUnitLoot(Unit unit, int amount)
         {
             List<Mod> mods = new();

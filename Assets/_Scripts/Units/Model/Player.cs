@@ -24,6 +24,8 @@ namespace Models
         public Bag Bag { get; private set; }
         
         public ReactiveCollection<Tile> SelectedTiles = new();
+        public ReactiveCollection<Tile> SwipedTiles = new();
+        
         public IntReactiveProperty SkippedTurns = new();
         public FloatReactiveProperty AnchorYRotation = new();
         public BoolReactiveProperty InAttackMode = new();
@@ -48,12 +50,9 @@ namespace Models
             if(swipedTile == null || swipedTile.HasUnit)
                 return false;
 
-            Debug.Log((swipedTile.WorldPosition - Tile.Value.WorldPosition).magnitude);
             FacingDirection = (swipedTile.WorldPosition - Tile.Value.WorldPosition).normalized;
             swipedTile.MoveUnit(this);
             Weapon.RecoverAttackCharge();
-            Weapon.ActiveCombo.Clear();
-            
             return true;
         }
 

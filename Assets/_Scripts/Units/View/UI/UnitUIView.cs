@@ -13,7 +13,15 @@ namespace Views
         public void Initialize(Unit unit, Transform unitVisual)
         {
             _followTarget = unitVisual;
-            unit.IsDead.Where(b => b).Subscribe(_ => Destroy(gameObject)).AddTo(this);
+            unit.IsDead.Where(b => b && unit is not Player).Subscribe(_ => Destroy(gameObject)).AddTo(this);
+            
+            unit.IsDestroyed
+                .Where(d => d)
+                .Subscribe(_ =>
+                {
+                    Destroy(gameObject);
+                })
+                .AddTo(this);
         }
 
         private void LateUpdate()

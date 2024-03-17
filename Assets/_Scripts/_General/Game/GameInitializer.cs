@@ -60,7 +60,6 @@ public class GameInitializer : MonoBehaviour
             .Subscribe(_ =>
             {
                 _playerManager.SpawnPlayerWithWeapon(_weaponDefinition, _playerDefinition);
-                _playerManager.Weapon.AddXp(20);
                 _gameAreaManager.SpawnNewShip();
                 
             }).AddTo(this);
