@@ -15,7 +15,7 @@ namespace Views
             if(!canClose)
                 closeButton.enabled = false;
 
-            GameStateContainer.Player.IsDead.Subscribe(_ => DestroyModal()).AddTo(this);
+            GameStateContainer.Player.IsDead.Where(b => b).Subscribe(_ => DestroyModal()).AddTo(this);
             
             
             for (int i = 0; i < choiceRenderer.Length; i++)

@@ -88,7 +88,6 @@ namespace Factories
             
             _unitDeathActionContainer.SetDeathActionFor(unit);
             unit.Loot = _itemContainer.GetRandomUnitLoot(unit, unit.Level + 1);
-            return;
             
             unit.DeathActions.Add(tile =>
             {

@@ -35,7 +35,7 @@ namespace Factories
         
         public Island CreateIsland(int level)
         {
-            bool isBossLevel = level % 2 == 0 && level > 0;
+            bool isBossLevel = level % 5 == 0 && level > 0;
             Island island = isBossLevel ?
                 CreateBossIslandModel(level) :
                 CreateIslandModel(level);

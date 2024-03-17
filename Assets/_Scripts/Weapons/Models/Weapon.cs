@@ -92,8 +92,6 @@ namespace Models
                 .Subscribe(_ => UpdateAttackState());
 
             _levelUpSubscription = Level.SkipLatestValueOnSubscribe().Subscribe(_ => OpenLevelUpModal());
-            
-            AddXp(21);
         }
 
         private void OpenLevelUpModal()
