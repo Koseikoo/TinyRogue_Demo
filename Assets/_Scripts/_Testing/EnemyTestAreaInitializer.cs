@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Factories;
 using Game;
+using Installer;
 using Models;
 using UniRx;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace _Testing
         [Inject] private PlayerFeedbackManager _playerFeedbackManager;
         [Inject] private TurnManager _turnManager;
         [Inject] private IntuitiveInputManager _inputManager;
+        [Inject] private SegmentContainer _segmentContainer;
 
         [Inject] private DiContainer _container;
         
@@ -36,7 +38,7 @@ namespace _Testing
         
         [Header("Segment Spawning")]
         
-        [SerializeField] private SegmentView segmentToSpawn;
+        [SerializeField] private SegmentType segmentToSpawn;
         [SerializeField] private bool spawnSegment;
         [SerializeField] private bool destroySegment;
         private Tile _segmentSpawnTile;
@@ -109,7 +111,8 @@ namespace _Testing
                     return;
                 }
                 
-                _currentSegment = CreateSegment(_segmentSpawnTile, segmentToSpawn);
+                _currentSegment = CreateSegment(_segmentSpawnTile, _segmentContainer.GetPrefab(segmentToSpawn));
+                _gameAreaManager.Island.Segments.Add(_currentSegment);
                 
             }
         }
@@ -130,11 +133,11 @@ namespace _Testing
         private Segment CreateSegment(Tile centerTile, SegmentView prefab)
         {
             Segment segment = _segmentFactory.CreateSegment(prefab, centerTile);
-            segment.Position = centerTile.WorldPosition;
+            segment.Tile = centerTile;
             
             var tiles = _gameAreaManager.Island.GetSegmentTiles(segment);
             segment.SetTiles(tiles);
-            //_segmentFactory.CreateSegment(segment);
+            _segmentFactory.CreateSegmentView(segment);
             return segment;
         }
     }

@@ -22,7 +22,7 @@ namespace Models
         public BoolReactiveProperty IsDestroyed = new();
         public BoolReactiveProperty IsCompleted = new();
         public SegmentType Type;
-        public Vector3 Position;
+        public Tile Tile;
         public int Size;
 
         public float Radius => Size * Island.TileDistance;
@@ -32,11 +32,11 @@ namespace Models
 
         private IDisposable _GameStateSubscription;
 
-        public Segment(SegmentView definition, Vector3 position = default)
+        public Segment(SegmentView definition, Tile tile)
         {
             Type = definition.Type;
             Size = definition.Size;
-            Position = position;
+            Tile = tile;
         }
 
         protected virtual void CheckSegmentCompleteCondition()
@@ -94,7 +94,7 @@ namespace Models
         {
             for (int i = 0; i < segments.Count; i++)
             {
-                if (Vector3.Distance(segments[i].Position, Position) < segments[i].Radius.GetSegmentDistance(Radius))
+                if (Vector3.Distance(segments[i].Tile.WorldPosition, Tile.WorldPosition) < segments[i].Radius.GetSegmentDistance(Radius))
                     return true;
             }
             return false;

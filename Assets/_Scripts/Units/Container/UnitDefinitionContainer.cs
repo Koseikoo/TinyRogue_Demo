@@ -6,6 +6,9 @@ public enum UnitType
     
     //Enemies
     TestEnemy = 1,
+    MushroomEnemy = 3,
+    RatEnemy = 4,
+    OrcEnemy = 9,
     SpiderEnemy = 2,
     WolfEnemy = 14,
     GolemEnemy = 15,
@@ -15,14 +18,13 @@ public enum UnitType
     FishermanMiniBoss = 17,
     WerewolfBoss = 18,
     
-    Mushroom = 3,
-    Rat = 4,
-    Orc = 9,
-    
     Obstacle = 5,
-    TreeDestructible = 6,
-    GraveDestructible = 19,
-    WheatDestructible = 20,
+    Tree = 6,
+    Grave = 19,
+    Pillar = 21,
+    Wheat = 20,
+    CampWall = 22,
+    CampFire = 23,
     
     //Interactables
     HelmInteractable = 7,
@@ -33,6 +35,7 @@ public enum UnitType
     OrcTentVisual = 11,
     CampFireVisual = 12,
     TreeStumpVisual = 13,
+    
 }
 
 namespace Container
@@ -40,12 +43,24 @@ namespace Container
     public class UnitDefinitionContainer
     {
         private UnitDefinition _obstacleDefinition;
-        private UnitDefinition _destructibleDefinition;
+        private UnitDefinition _treeDefinition;
+        private UnitDefinition _pillarDefinition;
+        private UnitDefinition _campWallDefinition;
+        private UnitDefinition _campFireDefinition;
 
-        public UnitDefinitionContainer(UnitDefinition obstacleDefinition, UnitDefinition destructibleDefinition)
+        public UnitDefinitionContainer(
+            UnitDefinition obstacleDefinition, 
+            UnitDefinition treeDefinition, 
+            UnitDefinition pillarDefinition,
+            UnitDefinition campWallDefinition,
+            UnitDefinition campFireDefinition
+            )
         {
             _obstacleDefinition = new(obstacleDefinition);
-            _destructibleDefinition = new(destructibleDefinition);
+            _treeDefinition = new(treeDefinition);
+            _pillarDefinition = new(pillarDefinition);
+            _campWallDefinition = new(campWallDefinition);
+            _campFireDefinition = new(campFireDefinition);
         }
 
         public UnitDefinition GetUnitDefinition(UnitType type)
@@ -53,7 +68,10 @@ namespace Container
             return type switch
             {
                 UnitType.Obstacle => _obstacleDefinition,
-                UnitType.TreeDestructible => _destructibleDefinition,
+                UnitType.Tree => _treeDefinition,
+                UnitType.Pillar => _pillarDefinition,
+                UnitType.CampWall => _campWallDefinition,
+                UnitType.CampFire => _campFireDefinition,
                 _ => throw new ArgumentOutOfRangeException(nameof(type), type, $"No unit definition for type {type}")
             };
         }

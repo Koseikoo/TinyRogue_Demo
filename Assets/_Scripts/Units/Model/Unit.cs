@@ -52,15 +52,21 @@ namespace Models
             AttackDirection.Value = attackVector;
             
             if(IsDead.Value && this is Enemy)
-                PersistentPlayerState.IncreaseHeritage(Type, Level);
+                PersistentPlayerState.IncreaseHeritage(DropXp);
         }
 
-        public virtual void Damage(int damage, Unit attacker = null)
+        public virtual void Damage(int damage, Unit attacker = null, bool pierceInvincibility = false)
         {
+            if(IsInvincible.Value && !pierceInvincibility)
+                return;
+            
             _lastAttacker = attacker;
             Health.Value -= damage;
             IsDead.Value = Health.Value <= 0;
             IsDamaged.Value = Health.Value < MaxHealth;
+            
+            if(IsDead.Value && this is Enemy)
+                PersistentPlayerState.IncreaseHeritage(DropXp);
         }
 
         public virtual void Death()

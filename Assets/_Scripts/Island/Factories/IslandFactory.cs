@@ -39,6 +39,11 @@ namespace Factories
             Island island = isBossLevel ?
                 CreateBossIslandModel(level) :
                 CreateIslandModel(level);
+
+            for (int i = 0; i < island.Segments.Count; i++)
+            {
+                _segmentFactory.CreateSegmentView(island.Segments[i]);
+            }
             
             _islandViewFactory.CreateIslandView(island);
             return island;
@@ -76,11 +81,13 @@ namespace Factories
             _islandInitializer.Initialize(island);
             for (int i = 0; i < 10; i++)
             {
-                CreateIslandSegment(island, polygon);
-                if(island.Segments.Count > 2)
+                List<Segment> segments = GetIslandSegments(island, polygon);
+                if (segments.Count > 2)
+                {
+                    island.AddSegments(segments);
                     break;
+                }
             }
-            
             
             foreach (Tile tile in island.Tiles)
             {
@@ -195,7 +202,7 @@ namespace Factories
                 return Random.value > .6f || tile.PathTile.Value ? BoardType.Stone : BoardType.None;
             }
         }
-        private void CreateIslandSegment(Island island, Vector3[] polygon)
+        private List<Segment> GetIslandSegments(Island island, Vector3[] polygon)
         {
             List<Tile> islandTiles = new(island.Tiles);
             Vector3[] checkDirections = GetCheckDirections();
@@ -225,12 +232,9 @@ namespace Factories
                         SegmentView prefab = _segmentContainer.SegmentPool.PickRandom();
                         
                         float distance = currentSegments[i].Radius.GetSegmentDistance(prefab.Radius);
-                        Vector3 checkPosition = currentSegments[i].Position + (checkDirections[j] * distance);
+                        Vector3 checkPosition = currentSegments[i].Tile.WorldPosition + (checkDirections[j] * distance);
                         Tile centerTile = islandTiles.GetTileClosestToPosition(checkPosition);
 
-                        var sphere = _container.InstantiatePrefab(_debugSphere);
-                        sphere.transform.position = checkPosition;
-                        
                         if(centerTile == null)
                             continue;
                         
@@ -247,8 +251,8 @@ namespace Factories
                             spacedSegments.Add(segment);
 
                             Tile previousCenterTile = island.Tiles
-                                .GetTileClosestToPosition(currentSegments[i].Position);
-                            Tile newCenterTile = island.Tiles.GetTileClosestToPosition(segment.Position);
+                                .GetTileClosestToPosition(currentSegments[i].Tile.WorldPosition);
+                            Tile newCenterTile = island.Tiles.GetTileClosestToPosition(segment.Tile.WorldPosition);
                             
                             var path = AStar.FindPath(previousCenterTile, newCenterTile, unit => true);
                             path = path.GetRange(1, path.Count - 2);
@@ -282,7 +286,7 @@ namespace Factories
                 newSegments.Clear();
             }
 
-            island.AddSegments(spacedSegments);
+            return spacedSegments;
         }
 
         private void CreateBossIslandSegments(Island island)
@@ -296,12 +300,6 @@ namespace Factories
             Tile tile = islandTiles.GetTileClosestToPosition(default);
             SegmentView definition = _segmentContainer.BossSegments.PickRandom();
             Segment segment = _segmentFactory.CreateSegment(definition, tile);
-            
-            island.AddSegments(new List<Segment>()
-            {
-                startSegment,
-                segment
-            });
         }
 
         private GrassType GetPathType(List<Tile> path, int index)

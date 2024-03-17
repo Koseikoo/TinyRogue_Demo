@@ -9,8 +9,6 @@ namespace Factories
     public class UnitViewFactory
     {
         [Inject] private PlayerView _playerPrefab;
-        [Inject] private WeaponBoundFeedbackView _weaponBoundFeedbackPrefab;
-        [Inject] private UnitViewContainer _unitViewContainer;
         [Inject] private DiContainer _container;
 
         public PlayerView CreatePlayerView(Player player)
@@ -20,33 +18,23 @@ namespace Factories
             return view;
         }
 
-        public WeaponBoundFeedbackView CreateWeaponBoundFeedbackView(Transform weaponView, Transform playerView)
+        public EnemyView CreateEnemyView(Enemy enemy, UnitDefinition definition)
         {
-            WeaponBoundFeedbackView view = _container.InstantiatePrefab(_playerPrefab).GetComponent<WeaponBoundFeedbackView>();
-            view.Initialize(weaponView, playerView);
-            return view;
-        }
-        
-        public EnemyView CreateEnemyView(Enemy enemy)
-        {
-            var prefab = _unitViewContainer.GetEnemyPrefab(enemy.Type);
-            EnemyView view = _container.InstantiatePrefab(prefab).GetComponent<EnemyView>();
+            EnemyView view = _container.InstantiatePrefab(definition.Prefab).GetComponent<EnemyView>();
             view.Initialize(enemy);
             return view;
         }
 
-        public UnitView CreateUnitView(Unit unit)
+        public UnitView CreateUnitView(Unit unit, UnitDefinition definition)
         {
-            var prefab = _unitViewContainer.GetUnitPrefab(unit.Type);
-            var view = _container.InstantiatePrefab(prefab).GetComponent<UnitView>();
+            var view = _container.InstantiatePrefab(definition.Prefab).GetComponent<UnitView>();
             view.Initialize(unit);
             return view;
         }
 
-        public InteractableView CreateInteractableView(Interactable interactable)
+        public InteractableView CreateInteractableView(Interactable interactable, UnitDefinition definition)
         {
-            var prefab = _unitViewContainer.GetInteractablePrefab(interactable.Type);
-            var view = _container.InstantiatePrefab(prefab).GetComponent<InteractableView>();
+            var view = _container.InstantiatePrefab(definition.Prefab).GetComponent<InteractableView>();
             view.Initialize(interactable);
             return view;
         }

@@ -14,37 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerPrefab: {fileID: 798789943918534757, guid: 5cae77b53cae246dabc65f9e3d60468d,
     type: 3}
-  _obstaclePrefab: {fileID: 6051671917287591104, guid: 3f62e551ef0384378937746ac3ab54ea,
-    type: 3}
-  _destructiblePrefabs:
-  - {fileID: 3743214925162097025, guid: b9aa6cc14cce8458999494c5b4c5c361, type: 3}
-  - {fileID: 838090306596223311, guid: 4e1234921cd05488f97125102a1f5f30, type: 3}
-  - {fileID: 1651488878535765702, guid: c64ff8ea8c61c470494a211d3d37ab16, type: 3}
-  - {fileID: 5721883194595358124, guid: 66c772c486d314a7999f37f846b643ca, type: 3}
-  - {fileID: 6606058479457096494, guid: b61b99316964d42e0833e6799abdfdd0, type: 3}
-  - {fileID: 2708618914665542998, guid: eb8feff9af35348a4b11290fd7fbd127, type: 3}
-  _helmPrefab: {fileID: 7296463533887481696, guid: c531f0c8356164ad4a53664f68fc41fd,
-    type: 3}
-  _chestPrefab: {fileID: 8481061648413099346, guid: b978ba0947215489a943de42a85b59ea,
-    type: 3}
-  _spiderPrefab: {fileID: 1761697935048354840, guid: 6c1736239fbb54fad8d1466b87082c21,
-    type: 3}
-  _mushroomPrefab: {fileID: 4288259664413643435, guid: c389f7ac3336941be97e9894d1ff72f0,
-    type: 3}
-  _ratPrefab: {fileID: 7881910688332835323, guid: fd623d2d6383a48369b6a627eb252122,
-    type: 3}
-  _orcPrefab: {fileID: 7217388085724856396, guid: 7e0b2c655ee9b4ccebcb2fbe48caae63,
-    type: 3}
-  _wolfPrefab: {fileID: 17080348046386130, guid: 75ca713e16f214495934f24f7f437c07,
-    type: 3}
-  _golemPrefab: {fileID: 273459720342862461, guid: 6583be1217b48465f8df96f0739eefbd,
-    type: 3}
-  _specterPrefab: {fileID: 3238677329275740137, guid: 1ad8e9b09cacf45d9820679a8713eace,
-    type: 3}
-  _fishermanPrefab: {fileID: 2391974155817857777, guid: 78a9813ddf282459380c32969061c97a,
-    type: 3}
-  _werewolfPrefab: {fileID: 1591330497665675633, guid: 05f5f746ba62940a086589eb4a5d2294,
-    type: 3}
   _unitUIPrefab: {fileID: 1777521787662592727, guid: f5acba62b065045539add983bb79a5ec,
     type: 3}
   _unitHealthUIPrefab: {fileID: 1537314856726751626, guid: 37b784effef504f71aed6570734795eb,
@@ -64,28 +33,14 @@ MonoBehaviour:
   _idleSprite: {fileID: 21300000, guid: 5a454ac5ca5c9bf489205b48584dd9b9, type: 3}
   _targetFoundSprite: {fileID: 21300000, guid: 8522d4fa7a3bcce4594c53a5e4a1bdd2, type: 3}
   _aimAtTargetSprite: {fileID: 21300000, guid: 10585b6dc7d4543d792e3dddc36bf352, type: 3}
-  _testEnemyDefinition:
-    Unit:
-      Type: 1
-      MaxHealth: 1
-      Invincible: 0
-      DropXp: 0
-    AttackRange: 1
-    ScanRange: 5
-    TurnDelay: 1
-    Mods:
-    - ItemDefinition:
-        Type: 0
-        Stack: 1
-        DroppedFrom: 
-        DropChance: 0
-      Power: 1
-  _spiderDefinition_1:
-    Unit:
-      Type: 2
-      MaxHealth: 1
-      Invincible: 0
-      DropXp: 2
+  Enemies:
+  - name: Spider
+    Type: 0
+    Prefab: {fileID: 7390938553989648233, guid: 6c1736239fbb54fad8d1466b87082c21,
+      type: 3}
+    MaxHealth: 1
+    Invincible: 0
+    DropXp: 2
     AttackRange: 1
     ScanRange: 3
     TurnDelay: 0
@@ -96,12 +51,13 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
-  _mushroomDefinition_1:
-    Unit:
-      Type: 3
-      MaxHealth: 2
-      Invincible: 0
-      DropXp: 2
+  - name: Mushroom
+    Type: 3
+    Prefab: {fileID: 4999515609433682394, guid: c389f7ac3336941be97e9894d1ff72f0,
+      type: 3}
+    MaxHealth: 2
+    Invincible: 0
+    DropXp: 2
     AttackRange: 1
     ScanRange: 5
     TurnDelay: 1
@@ -112,12 +68,13 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
-  _ratDefinition_1:
-    Unit:
-      Type: 4
-      MaxHealth: 3
-      Invincible: 0
-      DropXp: 4
+  - name: Rat
+    Type: 4
+    Prefab: {fileID: 1405406235200359050, guid: fd623d2d6383a48369b6a627eb252122,
+      type: 3}
+    MaxHealth: 3
+    Invincible: 0
+    DropXp: 4
     AttackRange: 1
     ScanRange: 3
     TurnDelay: 1
@@ -128,14 +85,15 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
-  _orcDefinition_1:
-    Unit:
-      Type: 9
-      MaxHealth: 3
-      Invincible: 0
-      DropXp: 4
+  - name: Orc
+    Type: 9
+    Prefab: {fileID: 1930493644751905597, guid: 7e0b2c655ee9b4ccebcb2fbe48caae63,
+      type: 3}
+    MaxHealth: 3
+    Invincible: 0
+    DropXp: 4
     AttackRange: 1
-    ScanRange: 5
+    ScanRange: 3
     TurnDelay: 1
     Mods:
     - ItemDefinition:
@@ -144,14 +102,15 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
-  _wolfDefinition_1:
-    Unit:
-      Type: 14
-      MaxHealth: 2
-      Invincible: 0
-      DropXp: 2
+  - name: Wolf
+    Type: 14
+    Prefab: {fileID: 5127624128120117122, guid: 75ca713e16f214495934f24f7f437c07,
+      type: 3}
+    MaxHealth: 2
+    Invincible: 0
+    DropXp: 2
     AttackRange: 3
-    ScanRange: 4
+    ScanRange: 5
     TurnDelay: 0
     Mods:
     - ItemDefinition:
@@ -160,14 +119,15 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
-  _golemDefinition_1:
-    Unit:
-      Type: 15
-      MaxHealth: 5
-      Invincible: 0
-      DropXp: 6
+  - name: Golem
+    Type: 15
+    Prefab: {fileID: 9018647018364180748, guid: 6583be1217b48465f8df96f0739eefbd,
+      type: 3}
+    MaxHealth: 3
+    Invincible: 1
+    DropXp: 6
     AttackRange: 2
-    ScanRange: 5
+    ScanRange: 3
     TurnDelay: 1
     Mods:
     - ItemDefinition:
@@ -176,12 +136,13 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
-  _specterDefinition:
-    Unit:
-      Type: 16
-      MaxHealth: 1
-      Invincible: 0
-      DropXp: 1
+  - name: Specter
+    Type: 16
+    Prefab: {fileID: 5913571951296986264, guid: 1ad8e9b09cacf45d9820679a8713eace,
+      type: 3}
+    MaxHealth: 1
+    Invincible: 0
+    DropXp: 2
     AttackRange: 1
     ScanRange: 8
     TurnDelay: 0
@@ -192,12 +153,13 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
-  _fishermanDefinition:
-    Unit:
-      Type: 17
-      MaxHealth: 4
-      Invincible: 0
-      DropXp: 6
+  - name: Fisherman MiniBoss
+    Type: 17
+    Prefab: {fileID: 6904812449046876544, guid: 78a9813ddf282459380c32969061c97a,
+      type: 3}
+    MaxHealth: 4
+    Invincible: 0
+    DropXp: 10
     AttackRange: 2
     ScanRange: 8
     TurnDelay: 0
@@ -208,12 +170,13 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
-  _werewolfDefinition:
-    Unit:
-      Type: 18
-      MaxHealth: 6
-      Invincible: 0
-      DropXp: 12
+  - name: Werewolf Boss
+    Type: 18
+    Prefab: {fileID: 7563416434165535232, guid: 05f5f746ba62940a086589eb4a5d2294,
+      type: 3}
+    MaxHealth: 5
+    Invincible: 0
+    DropXp: 16
     AttackRange: 2
     ScanRange: 10
     TurnDelay: 0
@@ -224,27 +187,47 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
-  _obstacleDefinition:
-    Type: 5
+  Interactables:
+  - name: Ship Helm
+    Type: 7
+    Prefab: {fileID: 4256770204145791418, guid: c531f0c8356164ad4a53664f68fc41fd,
+      type: 3}
     MaxHealth: 1
     Invincible: 1
     DropXp: 0
-  _destructibleDefinition:
-    Type: 6
+    InteractButtonText: Set Sail
+  - name: Chest
+    Type: 8
+    Prefab: {fileID: 5271802532941629442, guid: b978ba0947215489a943de42a85b59ea,
+      type: 3}
     MaxHealth: 1
     Invincible: 0
     DropXp: 0
-  _helmDefinition:
-    Unit:
-      Type: 7
-      MaxHealth: 1
-      Invincible: 1
-      DropXp: 0
-    InteractButtonText: Set Sail
-  _chestDefinition:
-    Unit:
-      Type: 8
-      MaxHealth: 1
-      Invincible: 0
-      DropXp: 0
     InteractButtonText: Open
+  Units:
+  - name: Tree
+    Type: 6
+    Prefab: {fileID: 6606058479457096494, guid: b61b99316964d42e0833e6799abdfdd0,
+      type: 3}
+    MaxHealth: 1
+    Invincible: 0
+    DropXp: 0
+  - name: Pillar
+    Type: 21
+    Prefab: {fileID: 945623378594413564, guid: e87fcb60dd62342c99e7b6ab31559c5b, type: 3}
+    MaxHealth: 1
+    Invincible: 0
+    DropXp: 0
+  - name: Camp Wall
+    Type: 22
+    Prefab: {fileID: 6407425324155075007, guid: ad240e9a84f4248619e995ac3dd76b77,
+      type: 3}
+    MaxHealth: 2
+    Invincible: 0
+    DropXp: 0
+  - name: Camp Fire
+    Type: 23
+    Prefab: {fileID: 234729541041868673, guid: a7b9ba8dc34d9460ca74718770e4b5a8, type: 3}
+    MaxHealth: 1
+    Invincible: 0
+    DropXp: 0

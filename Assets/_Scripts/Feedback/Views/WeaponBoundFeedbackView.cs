@@ -111,11 +111,9 @@ public class WeaponBoundFeedbackView : MonoBehaviour
 
         for (int i = 0; i < keyCount; i++)
         {
-            // Get the key from each curve
             Keyframe keyA = baseCurve[i];
             Keyframe keyB = Snapped() ? snapCurve[i] : maxCurve[i];
 
-            // Lerp between the values of the keys
             float inTangent = Mathf.Lerp(keyA.inTangent, keyB.inTangent, curveLerp);
             float outTangent = Mathf.Lerp(keyA.outTangent, keyB.outTangent, curveLerp);
             float inWeight = Mathf.Lerp(keyA.inWeight, keyB.inWeight, curveLerp);
@@ -123,7 +121,6 @@ public class WeaponBoundFeedbackView : MonoBehaviour
             float time = Mathf.Lerp(keyA.time, keyB.time, curveLerp);
             float value = Mathf.Lerp(keyA.value, keyB.value, curveLerp);
 
-            // Add the lerped key to the new curve
             Keyframe lerpedKey = new Keyframe(time, value);
             lerpedKey.inTangent = inTangent;
             lerpedKey.outTangent = outTangent;

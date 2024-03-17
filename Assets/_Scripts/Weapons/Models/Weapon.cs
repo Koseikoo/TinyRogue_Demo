@@ -146,6 +146,8 @@ namespace Models
                     ReturnToHolster();
 
             });
+
+            sequence.SetEase(Ease.Linear);
             
             sequence.Play();
         }

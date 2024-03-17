@@ -14,10 +14,9 @@ namespace Models
         private IDisposable _turnSubscription;
         private Player _player;
 
-        public Interactable(InteractableDefinition definition, Tile tile, Player player)
+        private Interactable(Tile tile)
         {
-            Type = definition.Unit.Type;
-            _player = player;
+            _player = GameStateContainer.Player;
             Tile.Value = tile;
             
             _turnSubscription = GameStateContainer.TurnState

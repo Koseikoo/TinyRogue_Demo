@@ -22,7 +22,9 @@ MonoBehaviour:
     Distortion: 5
     LastPointWeight: 0.8
   Segments:
-  - {fileID: 4895337504762156119, guid: 01d66fdeb03a843e7b3a0fea4c596c58, type: 3}
+  - {fileID: 6090336429288069753, guid: 4c1a6e5806a3149cfa895f9e2038d149, type: 3}
+  - {fileID: 7648519013306157072, guid: 56284974e6ae54ef8af38af4d847be78, type: 3}
+  - {fileID: 3743123127350617931, guid: 3222aa5208a534a2c919b15803a32d4f, type: 3}
   StartSegment: {fileID: 4046348125292851383, guid: 0c4fb6282885049dc907b3e9abaa5c1a,
     type: 3}
   EndSegment: {fileID: 1183987975935004050, guid: 215dc811633484464ac5ff014ce74677,

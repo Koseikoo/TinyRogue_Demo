@@ -31,6 +31,7 @@ namespace Models
         public IntReactiveProperty CurrentTurnDelay = new();
         public BoolReactiveProperty AimAtTarget = new();
         public ReactiveCommand<AnimationState> AnimationCommand = new();
+        public BoolReactiveProperty IsEnraged = new();
         public Tile NextMoveTile;
         public Unit AttackTarget;
 
@@ -106,13 +107,6 @@ namespace Models
             if (tile.HasUnit && (tileUnit.IsInvincible.Value || tileUnit is Enemy))
                 return false;
             return true;
-            
-            if (tile.CurrentUnit.Value == null)
-                return true;
-
-            if (!tileUnit.IsInvincible.Value || tileUnit == AttackTarget || tileUnit.Type == UnitType.TreeDestructible)
-                return true;
-            return false;
         }
         
         protected EnemyState ScanSurroundingTiles()

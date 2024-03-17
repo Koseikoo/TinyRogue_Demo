@@ -146,16 +146,12 @@ namespace Views
 
             Sequence sequence = DOTween.Sequence();
 
-            sequence.Insert(0f, swordAnchor.DOMove(position + Vector3.up, moveDuration));
+            sequence.Insert(0f, swordAnchor.DOMove(position + Vector3.up, moveDuration)
+                .SetEase(Ease.Linear));
             sequence.Insert(0f, DOTween.To(() => 0f, t =>
             {
                 swordGrip.up = Vector3.Lerp(start, end, t).normalized;
             }, 1f, attackRotateDuration));
-            sequence.Insert(moveDuration + .2f, DOTween.To(() => 0f, t =>
-            {
-                Vector3 localUp = swordGrip.up;
-                swordGrip.up = Vector3.Lerp(localUp, Vector3.up, t).normalized;
-            }, 1f, toIdleDuration));
 
         }
 

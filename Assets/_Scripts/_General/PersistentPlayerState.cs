@@ -16,9 +16,9 @@ public static class PersistentPlayerState
 
     public static int WeaponSlots;
 
-    public static void IncreaseHeritage(UnitType type, int level)
+    public static void IncreaseHeritage(int dropXp)
     {
-        CurrentRunHeritage.Value += level + 1;
+        CurrentRunHeritage.Value += dropXp;
     }
 
     public static void ApplyHeritage()

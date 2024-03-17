@@ -11,8 +11,6 @@ namespace Models
         public const float ZDistance = HexagonSize * 1.5f;
         public const float XDistance = .7f * 2;
         
-        // PolygonConfig's Hexagon Size * 1.5
-        //public const float TileDistance = 1.212f;
         public const float TileDistance = 1.4f;
         public const float HalfTileDistance = TileDistance * .5f;
         public const float TileBuffer = HalfTileDistance / 3;
@@ -43,20 +41,20 @@ namespace Models
                 tile.SetIsland(this);
         }
 
+        public void AddSegments(List<Segment> segments)
+        {
+            foreach (Segment segment in segments)
+            {
+                var tiles = segment.Tile.Island.GetSegmentTiles(segment);                       
+                segment.SetTiles(tiles);                                                  
+                Segments.Add(segment);  
+            }
+            
+        }
+
         public void AddUnit(Unit unit)
         {
             Units.Add(unit);
-        }
-
-        public void AddSegments(List<Segment> segments)
-        {
-            for (int i = 0; i < segments.Count; i++)
-            {
-                var tiles = this.GetSegmentTiles(segments[i]);
-                segments[i].SetTiles(tiles);
-            }
-            
-            Segments = segments;
         }
 
         public void RemoveUnit(Unit unit)

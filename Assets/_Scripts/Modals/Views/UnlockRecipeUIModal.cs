@@ -24,6 +24,12 @@ namespace Views
 
         [Inject] private ItemIconContainer _itemIconContainer;
 
+        private Tween outerRotation;
+        private Tween innerRotation;
+        private Tween outerScale;
+        private Tween innerScale;
+        private Tween unlockSlot;
+
         public void Initialize(ItemType unlockedItem)
         {
             unlockText.text = $"Unlocked {unlockedItem.ToString()}!";
@@ -34,16 +40,22 @@ namespace Views
         public void DestroyModal()
         {
             Destroy(gameObject);
+            
+            outerRotation?.Kill();
+            innerRotation?.Kill();
+            outerScale?.Kill();
+            innerScale?.Kill();
+            unlockSlot?.Kill();
         }
 
         private void TriggerAnimation()
         {
-            outerHighlight.transform.DORotate(Vector3.forward * 180, outerRotationSpeed).SetEase(Ease.Linear).SetLoops(-1);
-            innerHighlight.transform.DORotate(Vector3.forward * 180, innerRotationSpeed).SetEase(Ease.Linear).SetLoops(-1);
+            outerRotation = outerHighlight.transform.DORotate(Vector3.forward * 180, outerRotationSpeed).SetEase(Ease.Linear).SetLoops(-1);
+            innerRotation = innerHighlight.transform.DORotate(Vector3.forward * 180, innerRotationSpeed).SetEase(Ease.Linear).SetLoops(-1);
             
-            outerHighlight.transform.DOScale(Vector3.one * scaleValues.y, scaleDuration).From(Vector3.one * scaleValues.x).SetEase(SlotScaleCurve).SetLoops(-1);
-            innerHighlight.transform.DOScale(Vector3.one * scaleValues.y, scaleDuration).From(Vector3.one * scaleValues.x).SetEase(SlotScaleCurve).SetLoops(-1);
-            UnlockSlot.DOScale(Vector3.one * scaleValues.y, scaleDuration).From(Vector3.one * scaleValues.x).SetEase(SlotScaleCurve).SetLoops(-1);
+            outerScale = outerHighlight.transform.DOScale(Vector3.one * scaleValues.y, scaleDuration).From(Vector3.one * scaleValues.x).SetEase(SlotScaleCurve).SetLoops(-1);
+            innerScale = innerHighlight.transform.DOScale(Vector3.one * scaleValues.y, scaleDuration).From(Vector3.one * scaleValues.x).SetEase(SlotScaleCurve).SetLoops(-1);
+            unlockSlot = UnlockSlot.DOScale(Vector3.one * scaleValues.y, scaleDuration).From(Vector3.one * scaleValues.x).SetEase(SlotScaleCurve).SetLoops(-1);
         }
     }
 }

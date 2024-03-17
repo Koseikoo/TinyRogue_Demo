@@ -1,16 +1,14 @@
 using System.Collections.Generic;
 
 [System.Serializable]
-public class EnemyDefinition
+public class EnemyDefinition : UnitDefinition
 {
-    public UnitDefinition Unit;
     public int AttackRange;
     public int ScanRange;
     public int TurnDelay;
     public List<ModDefinition> Mods;
-    public EnemyDefinition(EnemyDefinition definition)
+    public EnemyDefinition(EnemyDefinition definition) : base(definition)
     {
-        Unit = new(definition.Unit);
         AttackRange = definition.AttackRange;
         ScanRange = definition.ScanRange;
         TurnDelay = definition.TurnDelay;

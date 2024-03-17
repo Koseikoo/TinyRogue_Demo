@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Factories;
 using Models;
 using Zenject;
@@ -9,8 +10,7 @@ namespace Container
     public class UnitDeathActionContainer
     {
         [Inject] private UnitFactory _unitFactory;
-        [Inject] private EnemyDefinitionContainer _enemyDefinitionContainer;
-        [Inject] private UnitRecipeDropContainer _unitRecipeDropContainer;
+        [Inject] private UnitContainer _unitContainer;
         
         public Action<Tile> UnlockEndTileAction;
 
@@ -23,9 +23,18 @@ namespace Container
                 tile.Island.EndTileUnlocked.Value = true;
             };
             
-            _unitDeathActions[UnitType.GraveDestructible] = tile =>
+            _unitDeathActions[UnitType.Grave] = tile =>
             {
-                var enemy = _unitFactory.CreateEnemy(_enemyDefinitionContainer.GetEnemyDefinition(UnitType.SpecterEnemy), tile);
+                var enemy = _unitFactory.CreateEnemy(_unitContainer.GetEnemyDefinition(UnitType.SpecterEnemy), tile);
+            };
+
+            _unitDeathActions[UnitType.Pillar] = tile =>
+            {
+                Island island = tile.Island;
+                Segment segment = island.Segments.FirstOrDefault(segment => segment.Tiles.Contains(tile));
+
+                Unit golem = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.GolemEnemy);
+                golem.Damage(1, GameStateContainer.Player, true);
             };
         }
 

@@ -16,19 +16,16 @@ namespace Views
     {
         [SerializeField] private float deathDuration = .3f;
         [SerializeField] private Transform visual;
-        [SerializeField] private Renderer meshRenderer;
         [SerializeField] private Animator animator;
         [SerializeField] private float selectedPulseSpeed;
         [SerializeField] private float selectedPulseIntensity;
-        [SerializeField] private AnimationCurve deathScaleCurve;
         [SerializeField] private ParticleSystem deathFX;
+        
         private Unit _unit;
         private bool _pulseActive;
-        private Color _deathColor;
         
         public void Initialize(Unit unit)
         {
-            _deathColor = new Color(.43f, .43f, .43f, 1f);
             _unit = unit;
 
             Vector3 offset = Vector3.zero;
@@ -78,24 +75,15 @@ namespace Views
 
         private void DeathEvent()
         {
-            SetAnimationTrigger(AnimationState.GetDamaged);
-            
             Sequence sequence = DOTween.Sequence();
-            if (meshRenderer != null)
-                sequence.Insert(0f, meshRenderer.material.DOColor(_deathColor, deathDuration));
-                
-            sequence.Insert(0f, visual.DOScale(Vector3.zero, deathDuration)
-                .SetEase(deathScaleCurve)
-                .OnComplete(() =>
-                {
-                    _unit.Death();
-                    if (meshRenderer != null)
-                        deathFX.transform.position = meshRenderer.transform.position;
-                    deathFX.Play();
-                }));
+            _unit.Death();
+            deathFX.Play();
             
-            sequence.AppendInterval(.5f)
-                .OnComplete(() => Destroy(gameObject));
+            Destroy(visual.gameObject);
+            sequence.AppendInterval(1f);
+
+            sequence.OnComplete(() => Destroy(gameObject));
+
         }
 
         private void SetAnimationTrigger(AnimationState state)

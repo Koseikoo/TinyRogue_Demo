@@ -25,7 +25,15 @@ namespace Models
                 this.FollowTarget(path[0]);
             }
         }
-        
+
+        protected override bool IsAttackPathTile(Tile tile)
+        {
+            var tileUnit = tile.CurrentUnit.Value;
+            if (tile.HasUnit && (tileUnit.IsInvincible.Value || tileUnit is Enemy || tileUnit.Type == UnitType.Pillar))
+                return false;
+            return true;
+        }
+
         protected override void RenderAttackPath()
         {
             if(!AimAtTarget.Value)

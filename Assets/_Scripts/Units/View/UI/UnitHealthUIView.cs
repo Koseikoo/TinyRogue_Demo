@@ -34,7 +34,7 @@ namespace Views
 
         private void UpdateHealthBar(int newHealth)
         {
-            renderer.RenderNew(_unit);
+            renderer.Render(_unit);
         }
 
         private void ShowHealthBar(bool isDamaged)

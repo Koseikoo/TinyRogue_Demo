@@ -12,7 +12,7 @@ public static class UnitHelper
     {
         EnemyDefinition scaledDefinition = new(definition);
 
-        scaledDefinition.Unit = definition.Unit.ScaledWithLevel(level);
+        scaledDefinition = definition.ScaledWithLevel(level);
         for (int i = 0; i < scaledDefinition.Mods.Count; i++)
         {
             scaledDefinition.Mods[i].Power = definition.Mods[i].Power + level;

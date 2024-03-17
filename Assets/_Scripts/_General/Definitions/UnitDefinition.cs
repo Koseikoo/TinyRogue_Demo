@@ -1,10 +1,14 @@
 using Models;
 using UnityEngine.Serialization;
+using Views;
 
 [System.Serializable]
 public class UnitDefinition
 {
+    public string name;
+    
     public UnitType Type;
+    public UnitView Prefab;
     public int MaxHealth;
     public bool Invincible;
     public int DropXp;
@@ -15,16 +19,6 @@ public class UnitDefinition
         MaxHealth = definition.MaxHealth;
         Invincible = definition.Invincible;
         DropXp = definition.DropXp;
-    }
-
-    public Unit GetInstance()
-    {
-        Unit unit = new();
-        unit.Type = Type;
-        unit.MaxHealth = MaxHealth;
-        unit.Health.Value = MaxHealth;
-        unit.IsInvincible.Value = Invincible;
-        unit.DropXp = DropXp;
-        return unit;
+        Prefab = definition.Prefab;
     }
 }

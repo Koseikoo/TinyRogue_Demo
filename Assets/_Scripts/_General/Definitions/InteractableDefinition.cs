@@ -1,12 +1,10 @@
 [System.Serializable]
-public class InteractableDefinition
+public class InteractableDefinition : UnitDefinition
 {
-    public UnitDefinition Unit;
     public string InteractButtonText;
     
-    public InteractableDefinition(InteractableDefinition definition)
+    public InteractableDefinition(InteractableDefinition definition) : base(definition)
     {
-        Unit = new(definition.Unit);
         InteractButtonText = definition.InteractButtonText;
     }
 }

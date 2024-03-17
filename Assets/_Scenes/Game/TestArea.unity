@@ -294,7 +294,7 @@ MonoBehaviour:
       DropXp: 0
   _weaponDefinition:
     Type: 1
-    Range: 3
+    Range: 6
     MaxAttackCharges: 1
     MaxMoveCharges: 1
     Mods:

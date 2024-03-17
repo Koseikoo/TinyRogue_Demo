@@ -18,7 +18,7 @@ namespace Models
         private readonly int _defaultTurnDelay = 1;
 
         [Inject] private UnitFactory _unitFactory;
-        [Inject] private EnemyDefinitionContainer _enemyDefinitionContainer;
+        [Inject] private UnitContainer _unitContainer;
 
         private List<Tile> _leapPath = new();
         private bool _enraged;
@@ -175,7 +175,7 @@ namespace Models
                 .WithoutUnitOnTile()
                 .PickRandom();
 
-            var wolfDefinition = _enemyDefinitionContainer.GetEnemyDefinition(UnitType.WolfEnemy);
+            var wolfDefinition = _unitContainer.GetEnemyDefinition(UnitType.WolfEnemy);
             var wolf = _unitFactory.CreateEnemy(wolfDefinition, wolfSpawnTile);
             wolf.State.Value = EnemyState.TargetFound;
         }

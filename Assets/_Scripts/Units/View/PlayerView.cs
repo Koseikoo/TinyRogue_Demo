@@ -18,7 +18,13 @@ namespace Views
         
         [SerializeField] private Animator animator;
         [SerializeField] private Transform holsterTransform;
+        
+        [Header("Aim Feedback")]
+        [SerializeField] private AnimationCurve minCurve;
+        [SerializeField] private AnimationCurve maxCurve;
         [SerializeField] private LineRenderer lineRenderer;
+        [SerializeField] private float lineHeight;
+        [SerializeField] private float lineWidth;
         
         [Inject] private ModalFactory _modalFactory;
         
@@ -115,7 +121,10 @@ namespace Views
 
                 lineRenderer.enabled = true;
                 lineRenderer.positionCount = LinePoints;
-                lineRenderer.SetPositions(GetLinePoints(startPosition + Vector3.up, startPosition + swipeVector + Vector3.up));
+                lineRenderer.SetPositions(GetLinePoints(startPosition, startPosition + swipeVector));
+                float maxRangeProgress = swipeVector.magnitude / (_player.Weapon.Range * Island.TileDistance);
+                lineRenderer.widthCurve = GetLerpedCurve(maxRangeProgress);
+                lineRenderer.widthMultiplier = lineWidth;
             }
             else
             {
@@ -129,7 +138,9 @@ namespace Views
             Vector3[] points = new Vector3[LinePoints];
             for (int i = 0; i < LinePoints; i++)
             {
-                points[i] = Vector3.Lerp(startPosition, endPosition, (float)i / (LinePoints - 1));
+                Vector3 position = Vector3.Lerp(startPosition, endPosition, (float)i / (LinePoints - 1));
+                position.y = lineHeight;
+                points[i] = position;
             }
 
             return points;
@@ -156,6 +167,35 @@ namespace Views
         private void TriggerPlayerAnimation(AnimationState animationState)
         {
             animator.SetTrigger(animationState.ToString());
+        }
+        
+        private AnimationCurve GetLerpedCurve(float curveLerp)
+        {
+            int keyCount = Mathf.Min(minCurve.length, maxCurve.length);
+            AnimationCurve lerpedCurve = new AnimationCurve();
+
+            for (int i = 0; i < keyCount; i++)
+            {
+                Keyframe keyA = minCurve[i];
+                Keyframe keyB = maxCurve[i];
+
+                float inTangent = Mathf.Lerp(keyA.inTangent, keyB.inTangent, curveLerp);
+                float outTangent = Mathf.Lerp(keyA.outTangent, keyB.outTangent, curveLerp);
+                float inWeight = Mathf.Lerp(keyA.inWeight, keyB.inWeight, curveLerp);
+                float outWeight = Mathf.Lerp(keyA.outWeight, keyB.outWeight, curveLerp);
+                float time = Mathf.Lerp(keyA.time, keyB.time, curveLerp);
+                float value = Mathf.Lerp(keyA.value, keyB.value, curveLerp);
+
+                Keyframe lerpedKey = new Keyframe(time, value);
+                lerpedKey.inTangent = inTangent;
+                lerpedKey.outTangent = outTangent;
+                lerpedKey.inWeight = inWeight;
+                lerpedKey.outWeight = outWeight;
+            
+                lerpedCurve.AddKey(lerpedKey);
+            }
+
+            return lerpedCurve;
         }
         
         

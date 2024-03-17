@@ -35,10 +35,13 @@ namespace Factories
         
         public Enemy CreateEnemy(EnemyDefinition definition, Tile spawnTile)
         {
-            int islandLevel = spawnTile.Island.Level;
-            Enemy enemy = CreateEnemyModel(definition, spawnTile, islandLevel);
-            enemy.Loot = _itemContainer.GetRandomUnitLoot(enemy, enemy.Level+1);
-            EnemyView view = _unitViewFactory.CreateEnemyView(enemy);
+            Enemy enemy = GetEnemyInstance(definition.Type);
+            
+            AssignUnitData(enemy, definition);
+            AssignEnemyData(enemy, definition);
+            BindUnitToIsland(enemy, spawnTile);
+            
+            EnemyView view = _unitViewFactory.CreateEnemyView(enemy, definition);
             view.GetComponent<UnitView>().Initialize(enemy);
             _unitUIFactory.CreateUI(enemy, view.transform)
                 .AddStateUI(enemy)
@@ -47,49 +50,72 @@ namespace Factories
             return enemy;
         }
 
-        public Unit CreateUnit(UnitDefinition definition, Tile spawnTile)
+        public Interactable CreateInteractable(InteractableDefinition definition, Tile spawnTile)
         {
-            Unit unit = CreateUnitModel(definition, spawnTile);
-            unit.Loot = _itemContainer.GetRandomUnitLoot(unit, unit.Level + 1);
-            UnitView view = _unitViewFactory.CreateUnitView(unit);
-            _unitDeathActionContainer.SetDeathActionFor(unit);
-            _unitUIFactory.CreateUI(unit, view.transform)
-                .AddHealth(unit);
-            return unit;
-        }
-
-        public Interactable CreateInteractable(InteractableDefinition definition, Tile spawnTile, Player player)
-        {
-            if (!definition.Unit.Type.ToString().ToLower().Contains("interact"))
-                throw new Exception($"unit {definition.Unit.Type} is not an Interactable");
-
-            Interactable interactable = new Interactable(definition, spawnTile, player);
-            _unitDeathActionContainer.SetDeathActionFor(interactable);
-            interactable.MaxHealth = 1;
-            interactable.Health.Value = 1;
-            interactable.InteractButtonText = definition.InteractButtonText;
-            interactable.Loot = _itemContainer.GetRandomUnitLoot(interactable, 1);
-            interactable.InteractionLogic = _unitActionContainer.GetUnitAction(definition.Unit.Type);
-            spawnTile.MoveUnit(interactable);
-            if(spawnTile.Island != null)
-                spawnTile.Island.AddUnit(interactable);
+            Interactable interactable = _container.Instantiate<Interactable>(new object[] {spawnTile});
             
-            InteractableView view = _unitViewFactory.CreateInteractableView(interactable);
+            AssignUnitData(interactable, definition);
+            AssignInteractableData(interactable, definition);
+            BindUnitToIsland(interactable, spawnTile);
+            
+            InteractableView view = _unitViewFactory.CreateInteractableView(interactable, definition);
             view.GetComponent<UnitView>().Initialize(interactable);
             _unitUIFactory.CreateUI(interactable, view.transform)
                 .AddInteractionButtonUI(interactable);
             return interactable;
         }
-
-        public Unit CreateObstacle(UnitDefinition definition, Tile spawnTile)
+        
+        public Unit CreateUnit(UnitDefinition definition, Tile spawnTile)
         {
-            Unit unit = CreateUnitModel(definition, spawnTile);
-            _unitDeathActionContainer.SetDeathActionFor(unit);
-            UnitView view = _unitViewFactory.CreateUnitView(unit);
-            _unitUIFactory.CreateUI(unit, view.transform);
+            Unit unit = _container.Instantiate<Unit>();
+            AssignUnitData(unit, definition);
+            BindUnitToIsland(unit, spawnTile);
+            
+            UnitView view = _unitViewFactory.CreateUnitView(unit, definition);
+            _unitUIFactory.CreateUI(unit, view.transform)
+                .AddHealth(unit);
             return unit;
         }
 
+        private void AssignUnitData(Unit unit, UnitDefinition definition)
+        {
+            unit.Type = definition.Type;
+            unit.MaxHealth = definition.MaxHealth;
+            unit.Health.Value = definition.MaxHealth;
+            unit.IsInvincible.Value = definition.Invincible;
+            unit.DropXp = definition.DropXp;
+            
+            _unitDeathActionContainer.SetDeathActionFor(unit);
+            unit.Loot = _itemContainer.GetRandomUnitLoot(unit, unit.Level + 1);
+        }
+
+        private void AssignEnemyData(Enemy enemy, EnemyDefinition definition)
+        {
+            enemy.AttackRange = definition.AttackRange;
+            enemy.ScanRange = definition.ScanRange;
+            enemy.TurnDelay = definition.TurnDelay;
+            
+            foreach (var modDefinition in definition.Mods)
+                enemy.AddMod(modDefinition.ItemDefinition.Type.GetModInstance(modDefinition.Power));
+        }
+
+        private void AssignInteractableData(Interactable interactable, InteractableDefinition definition)
+        {
+            interactable.InteractButtonText = definition.InteractButtonText;
+            interactable.InteractionLogic = _unitActionContainer.GetUnitAction(definition.Type);
+        }
+
+        private void BindUnitToIsland(Unit unit, Tile tile)
+        {
+            if (tile.Island != null)
+            {
+                unit.Level = tile.Island.Level;
+                tile.Island.AddUnit(unit);
+            }
+            
+            tile.MoveUnit(unit);
+        }
+        
         private Player CreatePlayerModel(PlayerDefinition definition, Weapon weapon)
         {
             Player player = _container.Instantiate<Player>(
@@ -104,51 +130,7 @@ namespace Factories
             return player;
         }
 
-        private Enemy CreateEnemyModel(EnemyDefinition definition, Tile spawnTile, int islandLevel)
-        {
-            definition = definition.ScaledWithLevel(islandLevel);
-            Enemy enemy = GetEnemyInstance(definition.Unit.Type);
-            enemy.DeathActions.Add(tile =>
-            {
-                var recipe = _unitRecipeDropContainer.TryUnlockRecipe(enemy.Type);
-                if(recipe != null)
-                    _modalFactory.CreateUnlockRecipeModal(recipe.Output);
-            });
-            
-            _unitDeathActionContainer.SetDeathActionFor(enemy);
-            enemy.Type = definition.Unit.Type;
-            enemy.Level = islandLevel;
-            enemy.MaxHealth = definition.Unit.MaxHealth;
-            enemy.Health.Value = definition.Unit.MaxHealth;
-            enemy.AttackRange = definition.AttackRange;
-            enemy.ScanRange = definition.ScanRange;
-            enemy.TurnDelay = definition.TurnDelay;
-            enemy.Tile.Value = spawnTile;
-            enemy.DropXp = definition.Unit.DropXp;
-            spawnTile.MoveUnit(enemy);
-            
-            spawnTile.Island.AddUnit(enemy);
 
-            foreach (var modDefinition in definition.Mods)
-                enemy.AddMod(modDefinition.ItemDefinition.Type.GetModInstance(modDefinition.Power));
-
-            return enemy;
-        }
-
-        private Unit CreateUnitModel(UnitDefinition definition, Tile spawnTile)
-        {
-            Unit unit = definition.GetInstance();
-            
-            _unitDeathActionContainer.SetDeathActionFor(unit);
-            unit.MaxHealth = definition.MaxHealth;
-            unit.Health.Value = definition.MaxHealth;
-            unit.Tile.Value = spawnTile;
-            unit.DropXp = definition.DropXp;
-            spawnTile.MoveUnit(unit);
-            spawnTile.Island.AddUnit(unit);
-            return unit;
-        }
-        
         private Enemy GetEnemyInstance(UnitType type)
         {
             return type switch
@@ -156,9 +138,9 @@ namespace Factories
                 UnitType.TestEnemy => _container.Instantiate<SimpleEnemy>(),
                 UnitType.SpiderEnemy => _container.Instantiate<SimpleEnemy>(),
                 UnitType.WolfEnemy => _container.Instantiate<WolfEnemy>(),
-                UnitType.Mushroom => _container.Instantiate<MushroomEnemy>(),
-                UnitType.Rat => _container.Instantiate<SimpleEnemy>(),
-                UnitType.Orc => _container.Instantiate<SimpleEnemy>(),
+                UnitType.MushroomEnemy => _container.Instantiate<MushroomEnemy>(),
+                UnitType.RatEnemy => _container.Instantiate<SimpleEnemy>(),
+                UnitType.OrcEnemy => _container.Instantiate<OrcEnemy>(),
                 UnitType.GolemEnemy => _container.Instantiate<GolemEnemy>(),
                 UnitType.SpecterEnemy => _container.Instantiate<GhostEnemy>(),
                 UnitType.FishermanMiniBoss => _container.Instantiate<FishermanMiniBoss>(),

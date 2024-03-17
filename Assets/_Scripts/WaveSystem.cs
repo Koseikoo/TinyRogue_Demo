@@ -66,7 +66,7 @@ public class WaveSystem : MonoBehaviour
     private void SpawnEnemy(Tile tileToSpawnOn)
     {
         Enemy enemy = _unitFactory.CreateEnemy(waveEnemy, tileToSpawnOn);
-        EnemyView view = _unitViewFactory.CreateEnemyView(enemy);
+        EnemyView view = _unitViewFactory.CreateEnemyView(enemy, new(waveEnemy));
         _unitUIFactory.CreateUI(enemy, view.transform)
             .AddStateUI(enemy)
             .AddHealth(enemy)

@@ -12,7 +12,8 @@ namespace Views
     {
         public SegmentType Type;
         public int Size;
-
+        public Transform PointParent;
+        
         public float Radius => Size * Island.TileDistance;
         
         public SegmentUnitDefinition[] SegmentUnitDefinitions;
@@ -30,7 +31,7 @@ namespace Views
         public void Initialize(Segment segment)
         {
             _segment = segment;
-            transform.position = _segment.Position;
+            transform.position = _segment.Tile.WorldPosition;
 
             segment.IsDestroyed
                 .Where(b => b)
@@ -42,18 +43,16 @@ namespace Views
                 .Subscribe(_ => Destroy(gameObject))
                 .AddTo(this);
             
-            if (DestroySegmentOnCompletion)
-            {
-                segment.IsCompleted
-                    .Where(b => b)
-                    .Subscribe(_ => CompleteSegmentAnimation())
-                    .AddTo(this);
-            }
+            segment.IsCompleted
+                .Where(b => b)
+                .Subscribe(_ => CompleteSegmentAnimation())
+                .AddTo(this);
         }
 
-        private void OnDrawGizmosSelected()
+        private void OnDrawGizmos()
         {
-            Gizmos.DrawWireSphere(transform.position + (Vector3.up * 2), Size * Island.TileDistance);
+            if(Application.isEditor)
+                Gizmos.DrawWireSphere(transform.position + (Vector3.up * 2), Size * Island.TileDistance);
         }
 
         private void CompleteSegmentAnimation()

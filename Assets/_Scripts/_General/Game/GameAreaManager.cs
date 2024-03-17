@@ -15,7 +15,7 @@ namespace Game
         [Inject] private SegmentFactory _segmentFactory;
         [Inject] private UnitFactory _unitFactory;
         
-        [Inject] private InteractableDefinitionContainer _interactableDefinitionContainer;
+        [Inject] private UnitContainer _unitContainer;
 
         [Inject] private PlayerManager _playerManager;
         [Inject] private PlayerFeedbackManager _playerFeedbackManager;
@@ -28,13 +28,6 @@ namespace Game
 
         public List<Tile> TileCollection => Island == null ? Ship.Tiles : Island.Tiles;
         private int _currentIslandLevel;
-        private void SpawnIslandSections(Island island)
-        {
-            foreach (var segment in island.Segments)
-            {
-                _segmentFactory.CreateSegmentView(segment);
-            }
-        }
 
         public void SpawnTestIsland(float size)
         {
@@ -51,7 +44,6 @@ namespace Game
             
             _island = _islandFactory.CreateIsland(_currentIslandLevel);
             _currentIslandLevel++;
-            SpawnIslandSections(_island);
             _island.StartTile.MoveUnit(_playerManager.Player);
             _playerManager.Player.Weapon.Tile.Value = _island.StartTile;
                 
@@ -101,21 +93,17 @@ namespace Game
             ship.MerchantTile.AddMoveToLogic(unit =>
             {
                 if (unit is Player player)
-                {
                     _ship.Merchant.StartTrade(player);
-                }
             });
             
             ship.ModSmithTile.AddMoveToLogic(unit =>
             {
-                if (unit is Player player)
-                {
+                if (unit is Player)
                     _ship.BlackSmith.StartTrade();
-                }
             });
     
-            var definition = _interactableDefinitionContainer.GetInteractableDefinition(UnitType.HelmInteractable);
-            ship.Units.Add(_unitFactory.CreateInteractable(definition, ship.HelmTile, _playerManager.Player));
+            var definition = _unitContainer.GetInteractableDefinition(UnitType.HelmInteractable);
+            ship.Units.Add(_unitFactory.CreateInteractable(definition, ship.HelmTile));
         }
     
         private void StartGame()

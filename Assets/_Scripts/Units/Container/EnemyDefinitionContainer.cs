@@ -44,9 +44,9 @@ namespace Container
             {
                 UnitType.TestEnemy => _testEnemy,
                 UnitType.SpiderEnemy => _spider,
-                UnitType.Mushroom => _mushroom,
-                UnitType.Rat => _rat,
-                UnitType.Orc => _orc,
+                UnitType.MushroomEnemy => _mushroom,
+                UnitType.RatEnemy => _rat,
+                UnitType.OrcEnemy => _orc,
                 UnitType.WolfEnemy => _wolf,
                 UnitType.GolemEnemy => _golem,
                 UnitType.SpecterEnemy => _specter,

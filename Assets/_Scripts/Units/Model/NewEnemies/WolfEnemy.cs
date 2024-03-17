@@ -31,6 +31,17 @@ namespace Models
                 this.FollowTarget(path[0]);
             }
         }
+        
+        protected override bool IsAttackPathTile(Tile tile)
+        {
+            var tileUnit = tile.CurrentUnit.Value;
+            if (tile.HasUnit && (tileUnit.IsInvincible.Value || 
+                                 tileUnit is Enemy || 
+                                 tileUnit.Type == UnitType.CampWall || 
+                                 tileUnit.Type == UnitType.CampFire))
+                return false;
+            return true;
+        }
 
         protected override void RenderAttackPath()
         {

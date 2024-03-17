@@ -20,12 +20,16 @@ namespace Views
         
         private Enemy _enemy;
         private MovementView _move;
+        private EnragedView _enrage;
 
         public void Initialize(Enemy enemy)
         {
             _enemy = enemy;
             _move = GetComponent<MovementView>();
-
+            if(TryGetComponent(out _enrage))
+                _enrage.Initialize(enemy);
+            
+            
             _enemy.AimAtTarget
                 .SkipLatestValueOnSubscribe()
                 .Subscribe(b =>

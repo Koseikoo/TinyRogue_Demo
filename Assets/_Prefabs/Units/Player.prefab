@@ -509,7 +509,57 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 477502600482979930}
   holsterTransform: {fileID: 2809218053405219999}
+  minCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.5
+      outSlope: -0.5
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0.5
+      inSlope: -0.5
+      outSlope: -0.5
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -2.0170314
+      outSlope: -2.0170314
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.49895614
+    - serializedVersion: 3
+      time: 1
+      value: 0.5
+      inSlope: 3.237995
+      outSlope: 3.237995
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.16075158
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   lineRenderer: {fileID: 208391414016603709}
+  lineHeight: 0.4
+  lineWidth: 0.3
 --- !u!114 &7423524648342550310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1117,12 +1167,12 @@ LineRenderer:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 1
-        value: 0
-        inSlope: -3.085478
-        outSlope: -3.085478
+        value: 1
+        inSlope: -0.027536813
+        outSlope: -0.027536813
         tangentMode: 0
         weightedMode: 0
-        inWeight: 0.13147408
+        inWeight: 0.96198833
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
@@ -1130,7 +1180,7 @@ LineRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 0}
+      key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}

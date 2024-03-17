@@ -217,7 +217,7 @@ namespace Game
 
         private void TryEnableMoveMode(Vector3 swipeVector)
         {
-            if(InMoveMode)
+            if(InMoveMode || InWeaponMode)
                 return;
 
             var worldPosition = _playerManager.Player.Tile.Value.WorldPosition + swipeVector;
