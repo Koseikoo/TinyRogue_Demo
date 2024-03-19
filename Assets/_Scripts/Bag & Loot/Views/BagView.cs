@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Models;
 using UniRx;
@@ -7,6 +8,7 @@ using Factories;
 using Installer;
 using UnityEngine.Serialization;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Views
 {
@@ -25,6 +27,7 @@ namespace Views
         [SerializeField] private float lootAnimationDelay;
         [SerializeField] private float anchorPointDistance;
         [SerializeField] private ParticleSystem lootFX;
+        [SerializeField] private float lootSequenceDuration;
         
         [Inject] private LootFactory _lootFactory;
 
@@ -35,37 +38,98 @@ namespace Views
             _bag = bag;
             _bag.SetBagPoint(lootTransform);
 
-            IslandLootContainer.DropLoot.Subscribe(_ =>
+            WorldLootContainer.DropLoot.Subscribe(_ =>
             {
                 List<Loot> toRemove = new();
                 
-                foreach (Loot loot in IslandLootContainer.DroppedLoot)
+                foreach (Loot loot in WorldLootContainer.DroppedLoot)
                 {
                     if (loot.RewardedTo == _bag.Owner)
                     {
-                        NewVisualLootClaim(loot);
+                        VisualLootClaim(loot);
                         toRemove.Add(loot);
                     }
                 }
-                IslandLootContainer.DroppedLoot.Remove(toRemove);
+                WorldLootContainer.DroppedLoot.Remove(toRemove);
                 
             }).AddTo(this);
+
+            if (_bag.Owner is Player)
+            {
+                WorldLootContainer.ClaimMerchantCoins.Subscribe(_ => MerchantGoldClaim()).AddTo(this);
+            }
+            
+            
         }
 
-        private void NewVisualLootClaim(Loot loot)
+        private void MerchantGoldClaim()
+        {
+            List<GoldCoinView> droppedCoins = _lootFactory.GetDroppedGoldCoin();
+            
+            float delay = 0;
+            float delayAdd = lootSequenceDuration / droppedCoins.Count;
+
+            Tween bagTween = null;
+            
+            Sequence sequence = DOTween.Sequence();
+            for (int i = 0; i < droppedCoins.Count; i++)
+            {
+                droppedCoins[i].MerchantDrop = false;
+                Vector3 coinPosition = droppedCoins[i].transform.position;
+                
+                Vector3 bagPosition = lootTransform.position;
+                Vector3 anchorPointPosition = Vector3.Lerp(coinPosition, bagPosition, anchorPoint);
+                Vector3 baseArcVector = (Vector3.up * arcSize) * anchorPointDistance;
+                float claimDuration = claimMult;
+                
+                Vector3 randomArcVector = baseArcVector.RotateVector((bagPosition - coinPosition).normalized, Random.Range(-60f, 60f));
+                int index = i;
+                sequence.Insert(delay, DOTween.To(() => 0f, t =>
+                    {
+                        var position = MathHelper.BezierLerp(coinPosition,
+                            anchorPointPosition + randomArcVector,
+                            bagPosition, claimCurve.Evaluate(t));
+                        droppedCoins[index].transform.position = position;
+                    }, 1f, claimDuration)
+                    .OnComplete(() =>
+                    {
+                        droppedCoins[index].ResetView();
+                        lootFX.Play();
+                        _bag.AddGold(1);
+                        droppedCoins[index].ResetView();
+
+                        if (bagTween != null)
+                            bagTween.Kill();
+                        
+                        bagTween = bagVisual.DOScale(maxBagScale, claimDuration)
+                            .From(Vector3.one)
+                            .SetEase(bagScaleCurve);
+                        
+                    }));
+                delay += delayAdd;
+            }
+        }
+
+        private void VisualLootClaim(Loot loot)
         {
             List<LootView> lootViews = GetLootViews(loot);
+            
             Vector3 bagPosition = lootTransform.position;
             Vector3 anchorPointPosition = Vector3.Lerp(loot.DropPosition, bagPosition, anchorPoint);
             Vector3 baseArcVector = (Vector3.up * arcSize) * anchorPointDistance;
-            float claimDuration = claimMult * (bagPosition - loot.DropPosition).magnitude;
+            float claimDuration = claimMult;
+            float delay = 0;
+            float delayAdd = lootSequenceDuration / lootViews.Count;
+            
+            Tween bagTween = null;
             
             Sequence sequence = DOTween.Sequence();
             for (int i = 0; i < lootViews.Count; i++)
             {
                 Vector3 randomArcVector = baseArcVector.RotateVector((bagPosition - loot.DropPosition).normalized, Random.Range(-60f, 60f));
                 int index = i;
-                sequence.Insert(0, DOTween.To(() => 0f, t =>
+                Item item = GetLootItemBasedOnIndex(loot, index);
+                sequence.Insert(delay, DOTween.To(() => 0f, t =>
                     {
                         var position = MathHelper.BezierLerp(loot.DropPosition,
                             anchorPointPosition + randomArcVector,
@@ -76,80 +140,63 @@ namespace Views
                     {
                         lootViews[index].ResetView();
                         lootFX.Play();
+                        AddItemToBag(item);
+                        
+                        if (bagTween != null)
+                            bagTween.Kill();
+                        
+                        bagTween = bagVisual.DOScale(maxBagScale, claimDuration)
+                            .From(Vector3.one)
+                            .SetEase(bagScaleCurve);
                     }));
-            }
-            
-            sequence.Insert(claimDuration, DOTween.To(() => 0f, t =>
-            {
-                bagVisual.localScale = Mathf.Lerp(1f, maxBagScale, bagScaleCurve.Evaluate(t)) * Vector3.one;
-            }, 1f, claimDuration));
-            
-            sequence.InsertCallback(claimDuration, () =>
-            {
-                foreach (var view in lootViews)
-                    view.ResetView();
-
-                _bag.AddLoot(loot);
-                
-            });
-        }
-
-        private void VisualizeLootClaim(Loot loot)
-        {
-            List<LootView> lootViews = GetLootViews(loot);
-            List<float> lootAngles = CalculateLootAngles(lootViews);
-
-            var startPosition = loot.DropPosition;
-            var endPosition = lootTransform.position;
-            
-            Sequence sequence = DOTween.Sequence();
-            for (int i = 0; i < lootViews.Count; i++)
-            {
-                int index = i;
-                sequence.Insert(0f, DOTween.To(() => 0f, t =>
-                {
-                    Debug.Break();
-                    var position = MathHelper.BezierLerp(loot.DropPosition, CalculateArcPosition(lootAngles[index]),
-                        lootTransform.position, t);
-                    lootViews[index].transform.position = position;
-                }, 1f, .5f));
-                
-                //sequence.Insert(0f, lootViews[i].transform.DOMove(lootTransform.position, .5f));
-            }
-
-            sequence.OnComplete(() =>
-            {
-                foreach (var view in lootViews)
-                    view.ResetView();
-
-                _bag.AddLoot(loot);
-                lootFX.Play();
-            });
-            
-            Vector3 CalculateArcPosition(float angle)
-            {
-                var arcPivot = Vector3.Lerp(startPosition, endPosition, anchorPoint);
-                var arcPoint = arcPivot + (Vector3.up * arcSize);
-                var arcAxis = (endPosition - startPosition).normalized;
-
-                var rotatedPosition = MathHelper.RotatePointAroundPoint(arcPoint, arcPivot, arcAxis, angle);
-                return rotatedPosition;
+                delay += delayAdd;
             }
         }
 
-        private List<float> CalculateLootAngles(List<LootView> lootViews)
+        private void AddItemToBag(Item item)
         {
-            List<float> angles = new();
-            var anglePerItem = angleRange / lootViews.Count;
-            var currentAngle = (anglePerItem * .5f) * (lootViews.Count - 1) - (angleRange * .5f);
+            if(item == null)
+                _bag.AddGold(1);
+            else if(item is Mod mod)
+                _bag.AddMod(mod);
+            else if(item is Resource resource)
+                _bag.AddResource(resource);
+            else if(item is Equipment equipment)
+                _bag.AddEquipment(equipment);
+            
+            _bag.AddItem(item);
+        }
 
-            for (int i = 0; i < lootViews.Count; i++)
+        private Item GetLootItemBasedOnIndex(Loot loot, int index)
+        {
+            int goldCoins = loot.Gold;
+            int mods = loot.Mods.Count;
+            int items = loot.Items.Count;
+            int resources = loot.Resources.Count;
+
+            if (index < goldCoins)
             {
-                angles.Add(currentAngle);
-                currentAngle += anglePerItem;
+                return null;
             }
 
-            return angles;
+            if (index < goldCoins + mods)
+            {
+                return loot.Mods[index - goldCoins];
+            }
+
+            if (index < goldCoins + mods + items)
+            {
+                return loot.Items[index - (goldCoins + mods)];
+            }
+            
+            if (index < goldCoins + mods + items + resources)
+            {
+                return loot.Resources[index - (goldCoins + mods + items)];
+            }
+
+            throw new Exception("Get Loot based on Index Overflow");
+
+
         }
 
         private List<LootView> GetLootViews(Loot loot)

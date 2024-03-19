@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using Installer;
+using Models;
 using Zenject;
 
 namespace Views
@@ -76,7 +77,6 @@ namespace Views
                 background.enabled = true;
             icon.enabled = true;
             amountParent.SetActive(true);
-            RenderSelection(false);
         }
     }
 }

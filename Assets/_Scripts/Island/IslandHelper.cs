@@ -80,6 +80,19 @@ public static class IslandHelper
         return touchWorldPosition - startWorldPosition;
     }
 
+    public static List<Tile> FilterForBounceBack(this List<Tile> orderedTiles)
+    {
+        List<Tile> filteredForBounceBack = new();
+        for (int i = 0; i < orderedTiles.Count; i++)
+        {
+            filteredForBounceBack.Add(orderedTiles[i]);
+            if (orderedTiles[i].AttackBouncesFromTile)
+                break;
+        }
+
+        return filteredForBounceBack;
+    }
+
     public static Vector3 ShortenToTileRange(this Vector3 swipeVector, int range)
     {
         return Vector3.ClampMagnitude(swipeVector, range * Island.TileDistance);
@@ -140,7 +153,7 @@ public static class IslandHelper
     public static List<Tile> GetOrderedEnemyTiles(this List<Tile> tiles)
     {
         var enemyTiles = tiles
-            .GetMatchingTiles(tile => tile.HasUnit && tile.CurrentUnit.Value is Enemy)
+            .GetMatchingTiles(tile => tile.HasUnit && tile.Unit.Value is Enemy)
             .OrderBy(tile =>
             (tile.WorldPosition - GameStateContainer.Player.Tile.Value.WorldPosition).magnitude);
         return new List<Tile>(enemyTiles);

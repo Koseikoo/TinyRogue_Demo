@@ -58,18 +58,14 @@ namespace Views
                 _playerBag.RemoveItem(cost.Type, cost.Amount);
             }
 
-            Loot loot = new(0);
-            
             if (_recipe.Type == RecipeType.Equipment)
             {
-                loot.Equipment = new() { _itemContainer.GetEquipment(_recipe.Output) };
+                _playerBag.AddEquipment(_itemContainer.GetEquipment(_recipe.Output));
             }
             else if (_recipe.Type == RecipeType.Mod)
             {
-                loot.Mods = new() { _recipe.Output.GetModInstance(1) };
+                _playerBag.AddMod( _recipe.Output.GetModInstance(1));
             }
-
-            _playerBag.AddLoot(loot);
         }
 
         private void Render(Recipe recipe)

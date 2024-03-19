@@ -25,7 +25,7 @@ namespace Models
         protected override bool IsAttackPathTile(Tile tile)
         {
             bool baseConditionMet = base.IsAttackPathTile(tile);
-            var tileUnit = tile.CurrentUnit.Value;
+            var tileUnit = tile.Unit.Value;
             if (baseConditionMet ||
                 tileUnit.Type == UnitType.CampWall || 
                 tileUnit.Type == UnitType.CampFire);

@@ -49,7 +49,7 @@ public static class IslandMatchExtensions
     
     public static List<Tile> WithEnemyOnTile(this List<Tile> tiles)
     {
-        return tiles.GetMatchingTiles(tile => tile.HasUnit && tile.CurrentUnit.Value is Enemy);
+        return tiles.GetMatchingTiles(tile => tile.HasUnit && tile.Unit.Value is Enemy);
     }
 
     public static List<Tile> GetEdgeTiles(this List<Tile> tiles)

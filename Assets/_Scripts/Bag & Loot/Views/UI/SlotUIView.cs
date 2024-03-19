@@ -17,7 +17,6 @@ namespace Views
         
         private Slot _slot;
 
-        private IDisposable _selectionSubscription;
         private IDisposable _stackSubscription;
         private IDisposable _powerSubscription;
 
@@ -26,6 +25,7 @@ namespace Views
             _slot = slot;
             _slot.IsLocked.Subscribe(isLocked => lockedVisual.enabled = isLocked).AddTo(this);
             _slot.Item.Subscribe(_ => UpdateVisuals(_slot)).AddTo(this);
+            _slot.IsSelected.Subscribe(selected => slotRenderer.RenderSelection(selected));
         }
 
         public void TapSlot()
@@ -55,7 +55,6 @@ namespace Views
         
         private void UpdateSubscriptions(Slot slot)
         {
-            _selectionSubscription?.Dispose();
             _stackSubscription?.Dispose();
             _powerSubscription?.Dispose();
 
@@ -63,8 +62,6 @@ namespace Views
             
             if (item != null)
             {
-                _selectionSubscription = slot.IsSelected.Subscribe(slotRenderer.RenderSelection).AddTo(this);
-
                 if (item is Mod mod)
                 {
                     _powerSubscription = mod.Power.Subscribe(_ => Render(mod)).AddTo(this);

@@ -6,6 +6,7 @@ using UniRx;
 using UnityEngine;
 using DG.Tweening;
 using Factories;
+using UnityEngine.UI;
 using Zenject;
 
 namespace Views
@@ -16,6 +17,8 @@ namespace Views
         [SerializeField] private float inTradeFOV;
         [SerializeField] private float fovLerpDuration;
         [SerializeField] private float coinDropInterval;
+        [SerializeField] private float coinLerpDuration;
+        [SerializeField] private float coinArch;
         [Space]
         [SerializeField] private MerchantSlotUIView[] slotViews;
         [SerializeField] private BuyResourceSlotUIView[] sellSlots;
@@ -24,11 +27,12 @@ namespace Views
         [SerializeField] private GameObject moveSelection;
         [SerializeField] private MoveCameraView _moveCameraView;
 
+        [SerializeField] private Button takeMoneyButton;
+        [SerializeField] private GameObject buttonParent;
+
         private Merchant _merchant;
         private LootFactory _lootFactory;
         private List<IDisposable> _buySlotsDisposable = new();
-
-        private List<GoldCoinView> _currentTradeCoins = new();
 
         public void Initialize(Merchant merchant, LootFactory lootFactory)
         {
@@ -54,7 +58,15 @@ namespace Views
                 .Where(pair => pair.Previous < pair.Current)
                 .Subscribe(pair => SellingAnimation(pair.Current - pair.Previous))
                 .AddTo(this);
+
+            takeMoneyButton.onClick.AddListener(() =>
+            {
+                buttonParent.SetActive(false);
+                WorldLootContainer.ClaimMerchantCoins.Execute();
+            });
             
+            
+            buttonParent.SetActive(false);
             HideShop();
             HideMerchantSlots();
         }
@@ -74,11 +86,15 @@ namespace Views
 
         private IEnumerator DropGoldCoins(int coins)
         {
+            buttonParent.SetActive(false);
+            
             for (int i = 0; i < coins; i++)
             {
                 yield return new WaitForSeconds(coinDropInterval);
-                _currentTradeCoins.Add(_lootFactory.CreateGoldCoin(goldCoinDropPoint.position));
+                _lootFactory.CreateGoldCoin(goldCoinDropPoint.position, true);
             }
+            
+            buttonParent.SetActive(true);
         }
 
         private void OnStartTrade()
@@ -96,26 +112,13 @@ namespace Views
             UIHelper.Camera.DOFieldOfView(defaultFOV, fovLerpDuration);
             _moveCameraView.ResetCameraTransform();
             moveSelection.SetActive(true);
-            
-            EndTradeAnimation();
+
+            WorldLootContainer.ClaimMerchantCoins.Execute();
             HideShop();
             HideMerchantSlots();
         }
         
-        private void EndTradeAnimation()
-        {
-            Sequence sequence = DOTween.Sequence();
-            foreach (var coin in _currentTradeCoins)
-            {
-                sequence.Insert(0f, DOTween.To(() => 0f, t =>
-                    {
-                        coin.transform.position = Vector3.Lerp(coin.transform.position, _merchant.Player.Bag.BagPoint.position, t);
-                    }, 1f, .5f)
-                    .OnComplete(() => coin.ResetView()));
-            }
-            
-            _currentTradeCoins.Clear();
-        }
+        
 
         private void ShowMerchantSlots()
         {

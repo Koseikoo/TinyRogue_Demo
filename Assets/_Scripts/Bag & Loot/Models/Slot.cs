@@ -7,7 +7,7 @@ namespace Models
     {
         public ReactiveProperty<Item> Item = new();
 
-        public bool IsOccupied => Item.Value != null;
+        public bool IsOccupied => Item.Value != null && Item.Value.Stack.Value > 0;
         public BoolReactiveProperty IsSelected = new();
         public BoolReactiveProperty IsLocked = new();
 

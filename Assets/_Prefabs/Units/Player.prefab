@@ -726,13 +726,14 @@ MonoBehaviour:
     m_RotationOrder: 4
   maxBagScale: 1.32
   scaleDuration: 0.2
-  claimMult: 0.1
+  claimMult: 0.3
   arcSize: 2
   angleRange: 140
   anchorPoint: 0.8
   lootAnimationDelay: 0.08
   anchorPointDistance: 1.5
   lootFX: {fileID: 4940895058724480983}
+  lootSequenceDuration: 0.2
 --- !u!1 &3596851309602563407
 GameObject:
   m_ObjectHideFlags: 0

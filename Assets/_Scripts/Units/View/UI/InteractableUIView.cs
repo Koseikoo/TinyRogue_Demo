@@ -20,8 +20,6 @@ namespace Views
         public void Initialize(Interactable interactable)
         {
             _interactable = interactable;
-            _buttonUIView.SetText(_interactable.InteractButtonText);
-
             _interactable.InInteractionRange
                 .Subscribe(_buttonUIView.ToggleInteractionUI)
                 .AddTo(this);
@@ -29,15 +27,8 @@ namespace Views
             _interactable.IsDead.Where(b => b).Subscribe(_ => Destroy(gameObject)).AddTo(this);
             _interactable.IsDestroyed.Where(b => b).Subscribe(_ => Destroy(gameObject)).AddTo(this);
             
-            _buttonUIView.InteractionButton.OnPointerDownAsObservable().Subscribe(_ =>
-            {
-                _buttonUIView.TriggerButtonEvent(() => _interactable.InteractionLogic?.Invoke(_interactable));
-            }).AddTo(this);
-            
-            _buttonUIView.InteractionButton.OnPointerUpAsObservable().Subscribe(_ =>
-            {
-                _buttonUIView.EndButtonEvent();
-            }).AddTo(this);
+            _buttonUIView.Initialize(() => _interactable.InteractionLogic?.Invoke(_interactable),
+                _interactable.InteractButtonText);
         }
 
     }

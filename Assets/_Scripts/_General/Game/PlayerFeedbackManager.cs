@@ -100,7 +100,7 @@ namespace Game
     
             for (int i = 0; i < tiles.Count; i++)
             {
-                if (!_playerManager.Player.SwipedTiles.Contains(tiles[i]) && tiles[i].CurrentUnit.Value != _playerManager.Player)
+                if (!_playerManager.Player.SwipedTiles.Contains(tiles[i]) && tiles[i].Unit.Value != _playerManager.Player)
                     _playerManager.Player.SwipedTiles.Add(tiles[i]);
             }
             
@@ -111,9 +111,11 @@ namespace Game
         private void UpdateAimTile()
         {
             List<Tile> tiles = new List<Tile>(_playerManager.Player.SwipedTiles);
+            List<Tile> selectedTiles = new List<Tile>(_playerManager.Player.SelectedTiles);
             bool showAimedTile = _playerManager.Player.SelectedTiles.Count > 0 && !tiles[^1].HasUnit;
+            bool weaponBouncesBack = selectedTiles.Count > 0 && selectedTiles[^1].AttackBouncesFromTile;
             _lastAimTile?.RemoveSelector(_playerManager.Player, TileSelectionType.Aim);
-            if (showAimedTile)
+            if (showAimedTile && !weaponBouncesBack)
             {
                 _lastAimTile = tiles[^1];
                 _lastAimTile.AddSelector(new(_playerManager.Player, TileSelectionType.Aim));
@@ -133,15 +135,17 @@ namespace Game
     
             for (int i = 0; i < tiles.Count; i++)
             {
-                if (!_playerManager.Player.SelectedTiles.Contains(tiles[i]) && tiles[i].CurrentUnit.Value != _playerManager.Player)
+                if (!_playerManager.Player.SelectedTiles.Contains(tiles[i]) && tiles[i].Unit.Value != _playerManager.Player)
                 {
                     tiles[i].AddSelector(new TileSelection(_playerManager.Player, TileSelectionType.Attack));
                     _playerManager.Player.SelectedTiles.Add(tiles[i]);
                 }
             }
 
-            _playerManager.Player.SelectedTiles = new(_playerManager.Player.SelectedTiles.OrderBy(tile =>
+            List<Tile> orderedTiles = new(_playerManager.Player.SelectedTiles.OrderBy(tile =>
                 Vector3.Distance(tile.WorldPosition, _playerManager.Weapon.Tile.Value.WorldPosition)));
+
+            _playerManager.Player.SelectedTiles = new(orderedTiles.FilterForBounceBack());
         }
         
         public void TryDestroyEnemyInfoModal()

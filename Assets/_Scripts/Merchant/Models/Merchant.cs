@@ -47,14 +47,18 @@ namespace Models
             LastTradedItem.Value = GameStateContainer.SelectedSlot.Item.Value;
             
             _player.Bag.RemoveItem(GameStateContainer.SelectedSlot.Item.Value.Type);
-            GameStateContainer.SelectedSlot.IsSelected.Value = false;
-            GameStateContainer.SelectedSlot = null;
+
+            var selectedSlot = GameStateContainer.SelectedSlot;
+
+            if (!selectedSlot.IsOccupied)
+            {
+                GameStateContainer.SelectedSlot.IsSelected.Value = false;
+                GameStateContainer.SelectedSlot = null;
+            }
         }
 
         public void EndTrade()
         {
-            _player.Bag.AddLoot(new(CurrentTradeGold.Value));
-            CurrentTradeGold.Value = 0;
             _player.Bag.ShowUI.Value = false;
             InTrade.Value = false;
         }

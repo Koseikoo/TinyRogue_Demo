@@ -84,16 +84,16 @@ namespace Factories
 
         private void CreateEnemyCampSegment(Segment segment)
         {
-            var orcTiles = segment.Tiles.FindAll(tile => tile.CurrentUnit.Value is OrcEnemy);
+            var orcTiles = segment.Tiles.FindAll(tile => tile.Unit.Value is OrcEnemy);
 
             for (int i = 0; i < orcTiles.Count; i++)
             {
-                OrcEnemy orc = orcTiles[i].CurrentUnit.Value as OrcEnemy;
-                var neighbourWolfTile = orcTiles[i].Neighbours.FirstOrDefault(tile => tile.CurrentUnit.Value is WolfEnemy);
+                OrcEnemy orc = orcTiles[i].Unit.Value as OrcEnemy;
+                var neighbourWolfTile = orcTiles[i].Neighbours.FirstOrDefault(tile => tile.Unit.Value is WolfEnemy);
                 if (neighbourWolfTile == null)
                     throw new Exception("No neighboring Wolf!");
                 
-                neighbourWolfTile.CurrentUnit.Value.DeathActions.Add(tile => orc.IsEnraged.Value = true);
+                neighbourWolfTile.Unit.Value.DeathActions.Add(tile => orc.IsEnraged.Value = true);
             }
         }
         

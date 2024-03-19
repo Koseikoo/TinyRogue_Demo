@@ -34,7 +34,7 @@ namespace Models
         
         public Vector3 WorldPosition;
         public List<Tile> Neighbours = new();
-        public ReactiveProperty<Unit> CurrentUnit = new();
+        public ReactiveProperty<Unit> Unit = new();
 
         public bool IsSegmentTile;
         public BoolReactiveProperty Destroyed = new();
@@ -61,14 +61,16 @@ namespace Models
         public ReactiveProperty<bool> DebugElevate = new();
 
         public bool IsEdgeTile => Neighbours.Count < 6;
-        public bool HasUnit => CurrentUnit.Value != null;
-        public bool HasAliveUnit => CurrentUnit.Value != null && CurrentUnit.Value.Health.Value > 0;
+        public bool HasUnit => Unit.Value != null;
+        public bool HasAliveUnit => Unit.Value != null && Unit.Value.Health.Value > 0;
         public bool IsStartTile => _island.StartTile == this;
         public bool IsEndTile => _island.EndTile == this;
 
         public Island Island => _island;
         public Ship Ship => _ship;
         public List<Tile> TileCollection => _island == null ? _ship.Tiles : _island.Tiles;
+        
+        public bool AttackBouncesFromTile => HasUnit && (Unit.Value.Health.Value > GameStateContainer.Player.Weapon.GetAttackDamage() || Unit.Value.IsInvincible.Value);
 
 
         public Tile(Vector3 worldPosition)
@@ -111,7 +113,7 @@ namespace Models
                 unit.Tile.Value.RemoveUnit();
             
             unit.Tile.Value = this;
-            CurrentUnit.Value = unit;
+            Unit.Value = unit;
             _onMoveTo?.Invoke(unit);
             
             if (unit is Player player)
@@ -120,7 +122,7 @@ namespace Models
 
         public void RemoveUnit()
         {
-            CurrentUnit.Value = null;
+            Unit.Value = null;
         }
 
         public void AddSelector(TileSelection selection)

@@ -10,8 +10,8 @@ namespace Models
         private const int CategorySlots = 20;
         public Unit Owner { get; private set; }
         public IntReactiveProperty Gold = new();
-        public ReactiveCommand<Loot> OnLootAdded = new();
-        
+        public ReactiveCommand OnLootAdded = new();
+
 
         public List<Slot> Mods = new();
         public List<Slot> Items = new();
@@ -49,57 +49,75 @@ namespace Models
             _bagPoint = point;
         }
 
+        public void AddGold(int amount)
+        {
+            Gold.Value += amount;
+        }
+
+        public void AddMod(Mod mod)
+        {
+            var slot = Mods.FirstFreeSlot();
+            if (slot == null)
+                throw new Exception("Mods are Full");
+                
+            slot.SetItem(mod);
+            OnLootAdded.Execute();
+        }
+
+        public void AddItem(Item item)
+        {
+            var slot = Items.FirstWithType(item.Type);
+            if (slot == null)
+                slot = Items.FirstFreeSlot();
+                
+            if(slot == null)
+                throw new Exception("Items are Full");
+                
+            slot.SetItem(item);
+            OnLootAdded.Execute();
+        }
+
+        public void AddResource(Resource resource)
+        {
+            var slot = Resources.FirstWithType(resource.Type);
+            if (slot == null)
+                slot = Resources.FirstFreeSlot();
+                
+            if (slot == null)
+                throw new Exception("Resources are Full");
+                
+            slot.SetItem(resource);
+            OnLootAdded.Execute();
+        }
+
+        public void AddEquipment(Equipment equipment)
+        {
+            var slot = Equipment.FirstWithType(equipment.Type);
+            if (slot == null)
+                slot = Equipment.FirstFreeSlot();
+                
+            if (slot == null)
+                throw new Exception("Equipments are Full");
+                
+            slot.SetItem(equipment);
+            OnLootAdded.Execute();
+        }
+
         public void AddLoot(Loot loot)
         {
-            Gold.Value += loot.Gold;
+            AddGold(loot.Gold);
             
             foreach (Mod mod in loot.Mods)
-            {
-                var slot = Mods.FirstFreeSlot();
-                if (slot == null)
-                    throw new Exception("Mods are Full");
-                
-                slot.SetItem(mod);
-            }
+                AddMod(mod);
             
             foreach (Item item in loot.Items)
-            {
-                var slot = Items.FirstWithType(item.Type);
-                if (slot == null)
-                    slot = Items.FirstFreeSlot();
-                
-                if(slot == null)
-                    throw new Exception("Items are Full");
-                
-                slot.SetItem(item);
-            }
+                AddItem(item);
 
             foreach (Resource resource in loot.Resources)
-            {
-                var slot = Resources.FirstWithType(resource.Type);
-                if (slot == null)
-                    slot = Resources.FirstFreeSlot();
-                
-                if (slot == null)
-                    throw new Exception("Resources are Full");
-                
-                slot.SetItem(resource);
-            }
+                AddResource(resource);
             
             foreach (Equipment equipment in loot.Equipment)
-            {
-                var slot = Equipment.FirstWithType(equipment.Type);
-                if (slot == null)
-                    slot = Equipment.FirstFreeSlot();
-                
-                if (slot == null)
-                    throw new Exception("Equipments are Full");
-                
-                slot.SetItem(equipment);
-            }
-            
-            IslandLootContainer.DroppedLoot.Remove(loot);
-            OnLootAdded.Execute(loot);
+                AddEquipment(equipment);
         }
 
         public void RemoveGold(int gold)

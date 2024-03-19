@@ -188,7 +188,7 @@ namespace Models
             var randomResource = (ItemType)Random.Range(2, 6);
             Loot loot = new(0, null, null, new List<Resource> { _itemContainer.GetResource(randomResource) });
             loot.RewardTo(Owner, position);
-            IslandLootContainer.DropLoot.Execute();
+            WorldLootContainer.DropLoot.Execute();
             ActiveCombo.Remove(ActiveCombo[^1]);
         }
 
@@ -217,7 +217,7 @@ namespace Models
         
         private void AttackTile(Tile tile, Vector3 attackDirection)
         {
-            Unit tileUnit = tile.CurrentUnit.Value;
+            Unit tileUnit = tile.Unit.Value;
             if (tileUnit != null && tileUnit != GameStateContainer.Player) {
                 tileUnit.Attack(ModSlots.GetMods(), attackDirection, Owner);
                 _cameraModel.AttackShakeCommand.Execute();

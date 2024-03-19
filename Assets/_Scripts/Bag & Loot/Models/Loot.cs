@@ -27,7 +27,7 @@ namespace Models
         {
             DropPosition = dropPosition;
             RewardedTo = rewardTo;
-            IslandLootContainer.AddToLootDrops(this);
+            WorldLootContainer.AddToLootDrops(this);
         }
     }
 }

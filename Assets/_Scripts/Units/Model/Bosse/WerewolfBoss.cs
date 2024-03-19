@@ -137,7 +137,7 @@ namespace Models
 
             for (int i = path.Count - 1; i >= 0; i--)
             {
-                if (path[i].CurrentUnit.Value == AttackTarget)
+                if (path[i].Unit.Value == AttackTarget)
                 {
                     jumpIndex = i - 1;
                     attack = true;

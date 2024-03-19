@@ -56,8 +56,13 @@ namespace Game
                 }
                 
                 GameStateContainer.TurnState.Value = TurnState.PlayerTurnEnd;
-                _playerManager.Player.SkippedTurns.Value++;
-                _playerManager.Player.Weapon.RecoverAttackCharge();
+                bool hadOpenElements = CloseOpenUIElements();
+
+                if (!hadOpenElements)
+                {
+                    _playerManager.Player.SkippedTurns.Value++;
+                    _playerManager.Player.Weapon.RecoverAttackCharge();
+                }
             }
         }
 
@@ -86,9 +91,9 @@ namespace Game
                     _gameAreaManager.TileCollection.GetClosestTileFromPosition(_playerManager.Weapon.Tile.Value.WorldPosition + swipeVector));
 
                 var matching =
-                    tilesFromWeapon.GetMatchingTiles(tile => tile.CurrentUnit.Value != GameStateContainer.Player);
+                    tilesFromWeapon.GetMatchingTiles(tile => tile.Unit.Value != GameStateContainer.Player);
 
-                if (matching.HasAnyUnit())
+                if (_playerManager.Player.SelectedTiles.Count > 0)
                 {
                     Debug.Log("Attack");
                     AttackTiles(swipeVector);
@@ -98,7 +103,7 @@ namespace Game
                     if(swipeVector.magnitude > Island.TileDistance)
                         MovePlayer(swipeVector);
                     
-                    Debug.Log("Nothing");
+                    Debug.Log("Move");
                 }
             }
             else
@@ -138,7 +143,7 @@ namespace Game
             var tilesFromPlayer = GetSwipedTiles(_playerManager.Player.Tile.Value,
                 _playerManager.Player.Tile.Value.TileCollection.GetClosestTileFromPosition(_playerManager.Player.Tile.Value.WorldPosition + swipeVector));
 
-            if (tilesFromPlayer.GetMatchingTiles(tile => tile.CurrentUnit.Value != GameStateContainer.Player).HasAnyUnit())
+            if (_playerManager.Player.SelectedTiles.Count > 0)
             {
                 AttackTiles(swipeVector);
             }
@@ -151,8 +156,8 @@ namespace Game
 
         private void AttackTiles(Vector3 swipeVector)
         {
-            CloseOpenUIElements();
-            if (GameStateContainer.GameState.Value == GameState.Ship)
+            bool hadOpenElements = CloseOpenUIElements();
+            if (GameStateContainer.GameState.Value == GameState.Ship || hadOpenElements)
                 return;
             
             Tile startTile = _playerManager.Weapon.Tile.Value;
@@ -172,11 +177,11 @@ namespace Game
 
             for (int i = 0; i < tiles.Count; i++)
             {
-                if (tiles[i].CurrentUnit.Value == _playerManager.Player)
+                if (tiles[i].Unit.Value == _playerManager.Player)
                     continue;
                 
                 attackTiles.Add(tiles[i]);
-                Unit unit = tiles[i].CurrentUnit.Value;
+                Unit unit = tiles[i].Unit.Value;
                 if (unit != null && (unit.Health.Value > attackDamage || unit.IsInvincible.Value))
                 {
                     endTile = tiles[i];
@@ -201,14 +206,18 @@ namespace Game
             if(tile == _playerManager.Player.Tile.Value)
                 return;
             
-            CloseOpenUIElements();
+            bool hadOpenElements = CloseOpenUIElements();
             EndActiveTrade();
+            
+            if(hadOpenElements)
+                return;
+            
             bool movedPlayer = _playerManager.Player.TryMoveInDirection(InputHelper.SwipeVector);
             if (movedPlayer)
             {
                 GameStateContainer.TurnState.Value = TurnState.PlayerTurnEnd;
                 _playerManager.Weapon.ReturnToHolster();
-                    
+                InWeaponMode = false;
             }
         }
 
@@ -266,10 +275,13 @@ namespace Game
 
         }
         
-        private void CloseOpenUIElements()
+        private bool CloseOpenUIElements()
         {
-            if (GameStateContainer.OpenUI && !InputHelper.StartedOverUI)
+            bool hasOpenUI = GameStateContainer.OpenUI;
+            if (hasOpenUI && !InputHelper.StartedOverUI)
                 GameStateContainer.CloseOpenUIElements.Execute();
+
+            return hasOpenUI;
         }
         
         private void EndActiveTrade()

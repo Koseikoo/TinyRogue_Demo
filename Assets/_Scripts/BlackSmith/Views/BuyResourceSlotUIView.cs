@@ -45,18 +45,12 @@ namespace Views
                 if (slot.Item.Value is Resource resource)
                 {
                     playerBag.RemoveGold(itemValue);
-                    _merchant.Player.Bag.AddLoot(new(0, null, null, new()
-                    {
-                        resource
-                    }));
+                    playerBag.AddResource(resource);
                 }
                 else
                 {
                     playerBag.RemoveGold(itemValue);
-                    _merchant.Player.Bag.AddLoot(new(0, null, new()
-                    {
-                        slot.Item.Value
-                    }));
+                    playerBag.AddItem(slot.Item.Value);
                 }
                 
             }

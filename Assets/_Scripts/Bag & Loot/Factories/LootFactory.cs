@@ -25,11 +25,25 @@ namespace Factories
             return view;
         }
 
-        public GoldCoinView CreateGoldCoin(Vector3 spawnPosition)
+        public GoldCoinView CreateGoldCoin(Vector3 spawnPosition, bool merchantDrop)
         {
             GoldCoinView view = GetGoldCoin();
+            view.MerchantDrop = merchantDrop;
             view.Initialize(spawnPosition + (Random.onUnitSphere * GoldCoinSpread));
             return view;
+        }
+        
+        public List<GoldCoinView> GetDroppedGoldCoin()
+        {
+            List<GoldCoinView> droppedCoins = new();
+            foreach (GoldCoinView view in _goldCoinPool)
+            {
+                if(!view.gameObject.activeSelf || !view.MerchantDrop)
+                    continue;
+                droppedCoins.Add(view);
+            }
+
+            return droppedCoins;
         }
 
         private LootView GetLootView()
@@ -45,7 +59,7 @@ namespace Factories
             _lootViewPool.Add(newView);
             return newView;
         }
-        
+
         private GoldCoinView GetGoldCoin()
         {
             foreach (GoldCoinView view in _goldCoinPool)
@@ -56,6 +70,7 @@ namespace Factories
             }
 
             GoldCoinView newView = _container.InstantiatePrefab(_goldCoinPrefab).GetComponent<GoldCoinView>();
+            _goldCoinPool.Add(newView);
             return newView;
         }
     }

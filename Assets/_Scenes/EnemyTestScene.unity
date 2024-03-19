@@ -796,18 +796,12 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
-    - ItemDefinition:
-        Type: 6
-        Stack: 0
-        DroppedFrom: 
-        DropChance: 0
-      Power: 1
   enemyToSpawn:
     name: 
     Type: 2
     Prefab: {fileID: 7390938553989648233, guid: 6c1736239fbb54fad8d1466b87082c21,
       type: 3}
-    MaxHealth: 4
+    MaxHealth: 1
     Invincible: 0
     DropXp: 0
     AttackRange: 1

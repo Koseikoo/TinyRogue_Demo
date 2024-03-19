@@ -2,6 +2,8 @@ using System;
 using DG.Tweening;
 using Models;
 using TMPro;
+using UniRx;
+using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -15,7 +17,7 @@ namespace Views
 
         [Inject] private CameraModel _cameraModel;
         
-        public Button InteractionButton;
+        [SerializeField] private Button _interactionButton;
         
         [SerializeField] private GameObject _visual;
         [SerializeField] private TextMeshProUGUI _interactionText;
@@ -27,6 +29,29 @@ namespace Views
         private Sequence _downSequence;
         private Sequence _upSequence;
         private bool _buttonPressed;
+
+        private Action _buttonLogic;
+
+        public void Initialize(Action buttonLogic, string text)
+        {
+            _interactionButton.OnPointerDownAsObservable().Subscribe(_ =>
+            {
+                TriggerButtonEvent(buttonLogic);
+            }).AddTo(this);
+            
+            _interactionButton.OnPointerUpAsObservable().Subscribe(_ =>
+            {
+                EndButtonEvent();
+            }).AddTo(this);
+
+            _interactionText.text = text;
+        }
+        
+        public void ToggleInteractionUI(bool show)
+        {
+            _interactionButton.interactable = show;
+            _visual.gameObject.SetActive(show);
+        }
         
         private void Update()
         {
@@ -37,25 +62,14 @@ namespace Views
                 ClearOldTween();
         }
 
-        public void SetText(string text)
-        {
-            _interactionText.text = text;
-        }
         
-        public void ToggleInteractionUI(bool show)
-        {
-            InteractionButton.interactable = show;
-            _visual.gameObject.SetActive(show);
-        }
 
-        public void TriggerButtonEvent(Action buttonLogic)
+        private void TriggerButtonEvent(Action buttonLogic)
         {
             ClearOldTween();
             if(_buttonPressed)
                 return;
             _downSequence = DOTween.Sequence();
-            
-            
             
             _downSequence.Insert(0f, _buttonRect.DOAnchorPos(new Vector2(0f, PressedPositionY), _buttonPressDuration)
                 .SetEase(Ease.InCubic)
@@ -63,6 +77,7 @@ namespace Views
                 {
                     _cameraModel.UnitDeathShakeCommand.Execute();
                     _animator.SetTrigger("Shrink");
+                    
                     _downSequence = null;
                     _buttonPressed = true;
                     
@@ -72,7 +87,7 @@ namespace Views
 
         }
 
-        public void EndButtonEvent()
+        private void EndButtonEvent()
         {
             ClearOldTween();
             if(_buttonPressed)

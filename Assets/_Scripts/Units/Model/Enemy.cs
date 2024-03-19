@@ -104,7 +104,7 @@ namespace Models
 
         protected virtual bool IsAttackPathTile(Tile tile)
         {
-            var tileUnit = tile.CurrentUnit.Value;
+            var tileUnit = tile.Unit.Value;
             bool ignoreTile = tile.HasUnit && (tileUnit.IsInvincible.Value || tileUnit is Enemy);
             return !ignoreTile && !tile.WeaponOnTile.Value;
         }
@@ -115,7 +115,7 @@ namespace Models
                 return EnemyState.Idle;
             var tiles = Island.Tiles.GetTilesWithinDistance(Tile.Value, ScanRange);
 
-            Tile tileWithAttackTarget = tiles.FirstOrDefault(tile => tile.CurrentUnit.Value == AttackTarget);
+            Tile tileWithAttackTarget = tiles.FirstOrDefault(tile => tile.Unit.Value == AttackTarget);
             return tileWithAttackTarget == null ? EnemyState.Idle : EnemyState.TargetFound;
         }
 

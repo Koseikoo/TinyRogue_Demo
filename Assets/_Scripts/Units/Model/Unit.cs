@@ -79,7 +79,7 @@ namespace Models
             {
                 Loot?.RewardTo(_lastAttacker, Tile.Value.WorldPosition);
             }
-            IslandLootContainer.DropLoot.Execute();
+            WorldLootContainer.DropLoot.Execute();
 
             if (_lastAttacker == GameStateContainer.Player)
             {

@@ -142,13 +142,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5974abbfe054c3790a2723fb50f4813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InteractionButton: {fileID: 845288874052072575}
+  _interactionButton: {fileID: 845288874052072575}
   _visual: {fileID: 626878466727316100}
   _interactionText: {fileID: 65785658487402748}
   _animator: {fileID: 4729451565430038482}
   _buttonRect: {fileID: 5671141678305457457}
   _innerBorder: {fileID: 1281646244728115170}
-  _buttonPressDuration: 0.5
+  _buttonPressDuration: 0.2
 --- !u!95 &4729451565430038482
 Animator:
   serializedVersion: 5

@@ -30,7 +30,7 @@ namespace Models
             var neighbourTiles = Tile.Value.Neighbours;
             foreach (var neigbour in neighbourTiles)
             {
-                if (neigbour.CurrentUnit.Value == _player)
+                if (neigbour.Unit.Value == _player)
                 {
                     InInteractionRange.Value = true;
                     return;

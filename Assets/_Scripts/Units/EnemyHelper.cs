@@ -18,7 +18,7 @@ public static class EnemyHelper
         {
             if (attackPath[i].HasUnit)
             {
-                enemy.AttackUnit(attackPath[i].CurrentUnit.Value);
+                enemy.AttackUnit(attackPath[i].Unit.Value);
                 if(!damageAllTiles)
                     break;
             }
@@ -42,7 +42,7 @@ public static class EnemyHelper
     {
         for (int i = 0; i < path.Count; i++)
         {
-            if (path[i].CurrentUnit.Value == unit)
+            if (path[i].Unit.Value == unit)
                 return true;
         }
 
@@ -53,7 +53,7 @@ public static class EnemyHelper
     {
         if (nextTile.HasUnit)
         {
-            enemy.AttackUnit(nextTile.CurrentUnit.Value);
+            enemy.AttackUnit(nextTile.Unit.Value);
             enemy.AnimationCommand.Execute(AnimationState.Attack1);
         }
         else

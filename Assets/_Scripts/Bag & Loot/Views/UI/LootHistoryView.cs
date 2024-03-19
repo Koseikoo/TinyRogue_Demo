@@ -17,7 +17,7 @@ namespace Views
         public void Initialize(Player player)
         {
             _playerBag = player.Bag;
-            _playerBag.OnLootAdded.Subscribe(AddToLootQueue).AddTo(this);
+            //_playerBag.OnLootAdded.Subscribe(_ => AddToLootQueue).AddTo(this);
             StartCoroutine(QueueVisualization());
         }
 

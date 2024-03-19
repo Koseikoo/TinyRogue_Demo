@@ -70,6 +70,7 @@ public static class ItemHelper
         {
             ItemType.HealthPotion => () => GameStateContainer.Player.Health.Value =
                 Mathf.Min(GameStateContainer.Player.Health.Value + 3, GameStateContainer.Player.MaxHealth),
+            _ => null
         };
     }
     

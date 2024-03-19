@@ -20,10 +20,22 @@ namespace Views
             _cameraAnchor = cameraAnchor;
             _startRotation = cameraAnchor.rotation;
             _player = player;
-
+            
+            GameStateContainer.GameState
+                .Where(state => state == GameState.Island && _cameraAnchor != null)
+                .Subscribe(_ =>
+                {
+                    gameObject.SetActive(true);
+                })
+                .AddTo(this);
+            
             GameStateContainer.GameState
                 .Where(state => state == GameState.Ship && _cameraAnchor != null)
-                .Subscribe(_ => ResetRotation())
+                .Subscribe(_ =>
+                {
+                    ResetRotation();
+                    gameObject.SetActive(false);
+                })
                 .AddTo(this);
         }
 
