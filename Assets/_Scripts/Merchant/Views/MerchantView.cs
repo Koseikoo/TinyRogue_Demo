@@ -86,7 +86,7 @@ namespace Views
 
         private IEnumerator DropGoldCoins(int coins)
         {
-            buttonParent.SetActive(false);
+            takeMoneyButton.enabled = false;
             
             for (int i = 0; i < coins; i++)
             {
@@ -94,6 +94,7 @@ namespace Views
                 _lootFactory.CreateGoldCoin(goldCoinDropPoint.position, true);
             }
             
+            takeMoneyButton.enabled = true;
             buttonParent.SetActive(true);
         }
 

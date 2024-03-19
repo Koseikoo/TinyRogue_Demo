@@ -47,7 +47,6 @@ namespace Views
             _preview.SetActive(true);
             _recipeIcon.gameObject.SetActive(false);
             _costParent.SetActive(false);
-            Debug.Log("RenderPreview Here");
         }
 
         private void CraftItem()
