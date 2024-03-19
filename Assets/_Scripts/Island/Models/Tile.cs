@@ -38,7 +38,7 @@ namespace Models
 
         public bool IsSegmentTile;
         public BoolReactiveProperty Destroyed = new();
-        public BoolReactiveProperty PathTile = new();
+        public BoolReactiveProperty IsPathTile = new();
         public BoolReactiveProperty WeaponOnTile = new();
         public ReactiveCollection<TileSelection> Selections = new();
         public Node Node { get; private set; }

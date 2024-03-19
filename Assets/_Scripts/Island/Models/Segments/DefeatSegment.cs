@@ -12,7 +12,7 @@ namespace Models
     {
         [Inject] private UnitFactory _unitFactory;
         [Inject] private UnitContainer _unitContainer;
-        public DefeatSegment(SegmentView definition, Tile tile) : base(definition, tile)
+        public DefeatSegment(SegmentView definition, Tile centerTile) : base(definition, centerTile)
         {
             
         }

@@ -73,7 +73,7 @@ namespace Models
             base.Death();
             RemoveLastSelection();
             Dispose();
-            _cameraModel.UnitDeathShakeCommand.Execute();
+            _cameraModel.RotationShakeCommand.Execute();
         }
 
         private void OnEnemyTurn()

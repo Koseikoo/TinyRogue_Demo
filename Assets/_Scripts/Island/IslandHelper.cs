@@ -107,7 +107,7 @@ public static class IslandHelper
     public static List<Tile> GetSegmentTiles(this Island island, Segment segment)
     {
         return island.Tiles.GetMatchingTiles(tile =>
-            Vector3.Distance(tile.WorldPosition, segment.Tile.WorldPosition) < segment.Radius + Island.TileBuffer);
+            Vector3.Distance(tile.WorldPosition, segment.CenterTile.WorldPosition) < segment.Radius + Island.TileBuffer);
     }
     
     public static Tile GetTileClosestToPosition(this List<Tile> tiles, Vector3 position)

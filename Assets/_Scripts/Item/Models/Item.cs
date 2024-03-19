@@ -37,5 +37,11 @@ namespace Models
             Type = type;
             Stack.Value = stack;
         }
+
+        public Item(Item item)
+        {
+            Type = item.Type;
+            Stack.Value = item.Stack.Value;
+        }
     }
 }

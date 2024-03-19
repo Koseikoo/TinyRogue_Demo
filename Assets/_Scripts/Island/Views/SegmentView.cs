@@ -32,7 +32,7 @@ namespace Views
         public void Initialize(Segment segment)
         {
             _segment = segment;
-            transform.position = _segment.Tile.WorldPosition;
+            transform.position = _segment.CenterTile.WorldPosition;
 
             segment.IsDestroyed
                 .Where(b => b)
@@ -70,7 +70,7 @@ namespace Views
                     unit.IncreaseComboWithDeath = false;
                     unit.Damage(unit.Health.Value, GameStateContainer.Player);
             
-                    _cameraModel.UnitDeathShakeCommand.Execute();
+                    _cameraModel.RotationShakeCommand.Execute();
                 });
 
                 delay += destroyDelay;

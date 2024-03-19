@@ -45,7 +45,7 @@ namespace Models
         {
             foreach (Segment segment in segments)
             {
-                var tiles = segment.Tile.Island.GetSegmentTiles(segment);                       
+                var tiles = segment.CenterTile.Island.GetSegmentTiles(segment);                       
                 segment.SetTiles(tiles);                                                  
                 Segments.Add(segment);  
             }

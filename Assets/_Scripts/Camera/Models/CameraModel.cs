@@ -5,9 +5,11 @@ namespace Models
 {
     public class CameraModel
     {
-        public ReactiveCommand AttackShakeCommand = new();
-        public ReactiveCommand UnitDeathShakeCommand = new();
         public ReactiveCommand DestroyCommand = new();
+        
+        public ReactiveCommand ForwardShakeCommand = new();
+        public ReactiveCommand RotationShakeCommand = new();
+        public ReactiveCommand SideShakeCommand = new();
         public ReactiveProperty<Vector3> WorldPosition = new();
     }
 }

@@ -75,7 +75,7 @@ namespace Views
                 .SetEase(Ease.InCubic)
                 .OnComplete(() =>
                 {
-                    _cameraModel.UnitDeathShakeCommand.Execute();
+                    _cameraModel.RotationShakeCommand.Execute();
                     _animator.SetTrigger("Shrink");
                     
                     _downSequence = null;

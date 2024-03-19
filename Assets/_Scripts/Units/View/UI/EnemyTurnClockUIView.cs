@@ -26,7 +26,11 @@ namespace Views
 
         private float _radius;
         private bool _isActive;
-        
+
+        private Tween _clockProgressTween;
+        private Tween _clockFadeInTween;
+        private Tween _clockFadeOutTween;
+
         public void Initialize(Enemy enemy)
         {
             _enemy = enemy;
@@ -34,11 +38,25 @@ namespace Views
             
             AssignClockPoints();
 
+            _enemy.IsDead.Where(b => b).Subscribe(_ =>
+            {
+                _clockProgressTween?.Kill();
+                _clockFadeInTween?.Kill();
+                _clockFadeOutTween?.Kill();
+            }).AddTo(this);
+
             _enemy.CurrentTurnDelay
-                .Where(_ => _enemy.TurnDelay > 0)
+                .Where(_ => _enemy.TurnDelay > 0 && !_enemy.IsDead.Value)
                 .Pairwise()
                 .Subscribe(pair => UpdateTurnClock(pair.Previous, pair.Current))
                 .AddTo(this);
+        }
+        
+        private void UpdateTurnClock(int lastDelay, int currentDelay)
+        {
+            HandleClockFade();
+            AssignClockPoints();
+            RenderClockState(lastDelay, currentDelay);
         }
 
         private void AssignClockPoints()
@@ -55,25 +73,18 @@ namespace Views
             }
         }
 
-        private void UpdateTurnClock(int lastDelay, int currentDelay)
-        {
-            HandleClockFade();
-            AssignClockPoints();
-            RenderClockState(lastDelay, currentDelay);
-        }
-
         private void HandleClockFade()
         {
             if (_enemy.SkipTurn && !_isActive)
             {
                 // Fade In
-                turnClock.transform.DOScale(Vector3.one, clockFadeDuration).SetEase(clockFadeInCurve);
+                _clockFadeInTween = turnClock.transform.DOScale(Vector3.one, clockFadeDuration).SetEase(clockFadeInCurve);
                 _isActive = true;
             }
             else if(!_enemy.SkipTurn && _isActive)
             {
                 // FadeOut
-                turnClock.transform.DOScale(Vector3.zero, clockFadeDuration).SetEase(clockFadeOutCurve);
+                _clockFadeOutTween = turnClock.transform.DOScale(Vector3.zero, clockFadeDuration).SetEase(clockFadeOutCurve);
                 _isActive = false;
             }
         }
@@ -94,7 +105,7 @@ namespace Views
 
             AnimationCurve curve = currentDelay == 0 ? clockProgressEndCurve : clockProgressCurve;
 
-            DOTween.To(() => 0f, t =>
+            _clockProgressTween = DOTween.To(() => 0f, t =>
             {
                 var progress = Mathf.LerpUnclamped(lastState, state, curve.Evaluate(t));
                 

@@ -34,25 +34,16 @@ namespace Views
 
         public void BuyResource()
         {
-            Slot slot = _merchant.SellSlots[_slotIndex];
+            Item item = new(_merchant.SellSlots[_slotIndex].Item.Value);
 
             Bag playerBag = _merchant.Player.Bag;
-            int itemValue = slot.Item.Value.Type.GetValue();
+            int itemValue = item.Type.GetValue();
             
             if (playerBag.HasGold(itemValue))
             {
-
-                if (slot.Item.Value is Resource resource)
-                {
-                    playerBag.RemoveGold(itemValue);
-                    playerBag.AddResource(resource);
-                }
-                else
-                {
-                    playerBag.RemoveGold(itemValue);
-                    playerBag.AddItem(slot.Item.Value);
-                }
-                
+                playerBag.RemoveGold(itemValue);
+                item.AddToDroppedLoot(_transformPositioner.WorldPosition);
+                WorldLootContainer.DropLoot.Execute();
             }
             else
             {

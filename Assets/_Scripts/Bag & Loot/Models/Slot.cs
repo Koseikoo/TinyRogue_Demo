@@ -32,9 +32,17 @@ namespace Models
 
             if (Item.Value.Stack.Value < 0)
                 throw new Exception("Slot Item Amount is Negative!");
-            
+
             if (Item.Value.Stack.Value == 0)
+            {
                 Item.Value = null;
+
+                if (GameStateContainer.SelectedSlot == this)
+                {
+                    GameStateContainer.SelectedSlot.IsSelected.Value = false;
+                    GameStateContainer.SelectedSlot = null;
+                }
+            }
         }
 
         public void TapSlot()
@@ -85,7 +93,7 @@ namespace Models
             if (Item.Value.Stack.Value > 0 && useAction != null)
             {
                 useAction.Invoke();
-                Item.Value.Stack.Value--;
+                RemoveAmount(1);
             }
         }
     }

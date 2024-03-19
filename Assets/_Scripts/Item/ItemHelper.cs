@@ -50,6 +50,7 @@ public static class ItemHelper
     
     public static Equipment GetEquipmentInstance(this ItemType type)
     {
+        Debug.LogError("Equipment Stats need to be picked from EquipmentDefinition! Currently its just 'new Equipment(type)' ");
         return type switch
         {
             ItemType.StartArmorEquipment => new Equipment(type),

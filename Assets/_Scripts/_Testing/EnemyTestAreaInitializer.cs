@@ -131,7 +131,7 @@ namespace _Testing
         private Segment CreateSegment(Tile centerTile, SegmentView prefab)
         {
             Segment segment = _segmentFactory.CreateSegment(prefab, centerTile);
-            segment.Tile = centerTile;
+            segment.CenterTile = centerTile;
             
             var tiles = _gameAreaManager.Island.GetSegmentTiles(segment);
             segment.SetTiles(tiles);

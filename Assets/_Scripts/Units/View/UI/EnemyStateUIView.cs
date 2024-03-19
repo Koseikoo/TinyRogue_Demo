@@ -23,6 +23,8 @@ namespace Views
         private bool _visible;
         private Enemy _enemy;
 
+        private Sequence _sequence;
+
         public void Initialize(Enemy enemy)
         {
             _enemy = enemy;
@@ -34,6 +36,9 @@ namespace Views
 
         private void Update()
         {
+            if(stateImage == null && _sequence != null)
+                _sequence.Kill();
+            
             if(!_visible)
                 return;
             
@@ -61,12 +66,12 @@ namespace Views
 
         private void FadeOutSprite(float delay)
         {
-            Sequence sequence = DOTween.Sequence();
-            sequence
+            _sequence = DOTween.Sequence();
+            _sequence
                 .AppendInterval(delay)
                 .Insert(delay, stateImage.DOFade(0, fadeDuration))
                 .Insert(delay, stateImage.transform.DOScale(Vector3.zero, fadeDuration));
-            sequence.OnComplete(() => _visible = false);
+            _sequence.OnComplete(() => _visible = false);
         }
     }
 }

@@ -220,7 +220,7 @@ namespace Models
             Unit tileUnit = tile.Unit.Value;
             if (tileUnit != null && tileUnit != GameStateContainer.Player) {
                 tileUnit.Attack(ModSlots.GetMods(), attackDirection, Owner);
-                _cameraModel.AttackShakeCommand.Execute();
+                _cameraModel.ForwardShakeCommand.Execute();
                 if (tileUnit.IsDead.Value)
                 {
                     RecoverAttackCharge();

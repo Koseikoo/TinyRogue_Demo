@@ -16,8 +16,9 @@ namespace Game
         public bool InMoveMode { get; private set; }
         
         [Inject] private PlayerManager _playerManager;
-        [Inject] private PlayerFeedbackManager _playerFeedbackManager;
         [Inject] private GameAreaManager _gameAreaManager;
+        
+        [Inject] private CameraModel _cameraModel;
 
         public float MoveModeTracker { get; private set; }
         private float _moveModeDelay;
@@ -168,6 +169,7 @@ namespace Game
             if (endTile.HasUnit)
             {
                 Debug.Log("End Tile Occupied Feedback");
+                _cameraModel.SideShakeCommand.Execute();
                 return;
             }
 

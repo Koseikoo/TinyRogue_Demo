@@ -58,8 +58,6 @@ namespace Views
             {
                 WorldLootContainer.ClaimMerchantCoins.Subscribe(_ => MerchantGoldClaim()).AddTo(this);
             }
-            
-            
         }
 
         private void MerchantGoldClaim()
@@ -122,7 +120,6 @@ namespace Views
             float delayAdd = lootSequenceDuration / lootViews.Count;
             
             Tween bagTween = null;
-            
             Sequence sequence = DOTween.Sequence();
             for (int i = 0; i < lootViews.Count; i++)
             {
@@ -163,8 +160,8 @@ namespace Views
                 _bag.AddResource(resource);
             else if(item is Equipment equipment)
                 _bag.AddEquipment(equipment);
-            
-            _bag.AddItem(item);
+            else
+                _bag.AddItem(item);
         }
 
         private Item GetLootItemBasedOnIndex(Loot loot, int index)
@@ -195,8 +192,6 @@ namespace Views
             }
 
             throw new Exception("Get Loot based on Index Overflow");
-
-
         }
 
         private List<LootView> GetLootViews(Loot loot)

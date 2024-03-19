@@ -46,15 +46,7 @@ namespace Models
             LastTradedIndex = index;
             LastTradedItem.Value = GameStateContainer.SelectedSlot.Item.Value;
             
-            _player.Bag.RemoveItem(GameStateContainer.SelectedSlot.Item.Value.Type);
-
-            var selectedSlot = GameStateContainer.SelectedSlot;
-
-            if (!selectedSlot.IsOccupied)
-            {
-                GameStateContainer.SelectedSlot.IsSelected.Value = false;
-                GameStateContainer.SelectedSlot = null;
-            }
+            GameStateContainer.SelectedSlot.RemoveAmount(1);
         }
 
         public void EndTrade()
