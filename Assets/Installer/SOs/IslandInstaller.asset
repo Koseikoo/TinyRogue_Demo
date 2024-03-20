@@ -18,7 +18,7 @@ MonoBehaviour:
     type: 3}
   _polygonConfig:
     Points: 20
-    Size: 4
+    Size: 6
     Distortion: 5
     LastPointWeight: 0.8
   Segments:

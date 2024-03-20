@@ -104,9 +104,9 @@ public static class IslandHelper
         return orderedTiles;
     }
 
-    public static List<Tile> GetSegmentTiles(this Island island, Segment segment)
+    public static List<Tile> GetSegmentTiles(this List<Tile> tiles, Segment segment)
     {
-        return island.Tiles.GetMatchingTiles(tile =>
+        return tiles.GetMatchingTiles(tile =>
             Vector3.Distance(tile.WorldPosition, segment.CenterTile.WorldPosition) < segment.Radius + Island.TileBuffer);
     }
     
@@ -159,9 +159,9 @@ public static class IslandHelper
         return new List<Tile>(enemyTiles);
     }
     
-    public static Tile GetTileFurthestAway(this Tile referenceTile)
+    public static Tile GetTileFurthestAway(this List<Tile> tiles, Tile referenceTile)
     {
-        var orderedTiles = referenceTile.Island.Tiles.OrderByDistanceToPosition(referenceTile.WorldPosition);
+        var orderedTiles = tiles.OrderByDistanceToPosition(referenceTile.WorldPosition);
         return orderedTiles[^1];
     }
 }

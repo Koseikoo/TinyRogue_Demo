@@ -19,7 +19,9 @@ namespace Factories
                     if (y % 2 == 0)
                         xOffset = Vector3.right * (Island.XDistance * .5f);
 
-                    gridPositions[x, y] = position + xOffset;
+                    position += xOffset;
+
+                    gridPositions[x, y] = position;
                 }
             }
         

@@ -29,6 +29,8 @@ namespace _Testing
         [Space]
         [SerializeField] private PlayerDefinition _playerDefinition;
         [SerializeField] private WeaponDefinition _weaponDefinition;
+
+        public bool SpawnNewIsland;
         
         [Header("Enemy Spawning")]
         
@@ -59,6 +61,11 @@ namespace _Testing
         
         private void Update()
         {
+            if (SpawnNewIsland)
+            {
+                SpawnNewIsland = false;
+                _gameAreaManager.SpawnNewIsland();
+            }
             SpawnUnit();
             SpawnSegment();
 
@@ -133,7 +140,7 @@ namespace _Testing
             Segment segment = _segmentFactory.CreateSegment(prefab, centerTile);
             segment.CenterTile = centerTile;
             
-            var tiles = _gameAreaManager.Island.GetSegmentTiles(segment);
+            var tiles = _gameAreaManager.Island.Tiles.GetSegmentTiles(segment);
             segment.SetTiles(tiles);
             _segmentFactory.CreateSegmentView(segment);
             return segment;

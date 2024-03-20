@@ -4,6 +4,7 @@ using UnityEngine;
 using Models;
 using UniRx;
 using Factories;
+using TMPro;
 using Zenject;
 
 namespace Views
@@ -38,7 +39,8 @@ namespace Views
                 .Where(destroyed => destroyed)
                 .Subscribe(_ => Destroy(gameObject))
                 .AddTo(this);
-
+            
+            _actionLocked.SetActive(false);
             if (tile.Island != null && tile.IsEndTile)
                 tile.Island.EndTileUnlocked.Subscribe(b => _actionLocked.SetActive(!b)).AddTo(this);
 

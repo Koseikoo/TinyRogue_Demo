@@ -31,7 +31,7 @@ namespace Models
     {
         public const float BoardOffset = .15f;
         public const float GrassOffset = .1f;
-        
+
         public Vector3 WorldPosition;
         public List<Tile> Neighbours = new();
         public ReactiveProperty<Unit> Unit = new();
@@ -76,7 +76,6 @@ namespace Models
         public Tile(Vector3 worldPosition)
         {
             WorldPosition = worldPosition;
-            Neighbours = new();
             Node = new Node(this);
 
             _turnSubscription = GameStateContainer.TurnState
@@ -92,14 +91,6 @@ namespace Models
         public void SetShip(Ship ship)
         {
             _ship = ship;
-        }
-
-        public void AddNeighbour(Tile tile)
-        {
-            if(tile == this)
-                return;
-            
-            Neighbours.Add(tile);
         }
 
         public void AddMoveToLogic(Action<Unit> moveToAction)

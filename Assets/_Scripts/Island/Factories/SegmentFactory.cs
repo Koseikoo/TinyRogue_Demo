@@ -78,7 +78,7 @@ namespace Factories
                 SegmentType.Boss => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
                 _ => throw new ArgumentOutOfRangeException()
             };
-            
+
             return segment;
         }
 
@@ -96,16 +96,6 @@ namespace Factories
                 neighbourWolfTile.Unit.Value.DeathActions.Add(tile => orc.IsEnraged.Value = true);
             }
         }
-        
-        
-        
-        
-        
-
-        private void CreateStartSegment(Segment segment)
-        {
-            
-        }
 
         private void CreateEndSegment(Segment segment)
         {
@@ -122,82 +112,6 @@ namespace Factories
             
         }
         
-        private void CreateBossSegment(Segment segment)
-        {
-            var tile = segment.Tiles.PickRandom();
-            var definition = _unitContainer.GetEnemyDefinition(UnitType.WerewolfBoss);
-            Unit boss = _unitFactory.CreateEnemy(definition, tile);
-            segment.AddUnit(boss);
-            boss.DeathActions.Add(_unitDeathActionContainer.UnlockEndTileAction);
-        }
         
-        private void CreateRuinSegment(Segment segment)
-        {
-            var tiles = segment.Tiles.GetMatchingTiles(tile => !tile.HasUnit);
-            
-            var definition = _unitContainer.GetEnemyDefinition(UnitType.GolemEnemy);
-            Enemy enemy = _unitFactory.CreateEnemy(definition, tiles.PickRandom());
-            segment.AddUnit(enemy);
-        }
-        
-        private void CreateEnemySegment(Segment segment)
-        {
-            var tiles = segment.Tiles.GetMatchingTiles(tile => !tile.HasUnit);
-
-            for (int i = 0; i < 2; i++)
-            {
-                var tile = tiles.PickRandom();
-                tiles.Remove(tile);
-                var definition = _unitContainer.GetEnemyDefinition(i % 2 == 0 ? UnitType.OrcEnemy : UnitType.WolfEnemy);
-                Enemy enemy = _unitFactory.CreateEnemy(definition, tile);
-                segment.AddUnit(enemy);
-            }
-        }
-
-        private void CreateForrestSegment(Segment segment)
-        {
-            var tiles = segment.Tiles.GetMatchingTiles(tile => !tile.HasUnit);
-
-            UnitType[] enemyPool =
-            {
-                UnitType.MushroomEnemy,
-                UnitType.SpiderEnemy,
-            };
-
-            for (int i = 0; i < 2; i++)
-            {
-                var tile = tiles.PickRandom();
-                tiles.Remove(tile);
-                
-                var definition = _unitContainer.GetEnemyDefinition(enemyPool.PickRandom());
-                Unit spider = _unitFactory.CreateEnemy(definition, tile);
-                segment.AddUnit(spider);
-            }
-            
-            for (int i = 0; i < tiles.Count; i++)
-            {
-                if (Random.value < DestructibleSpawnChance)
-                {
-                    var definition = _unitContainer.GetUnitDefinition(UnitType.Tree);
-                    Unit destructible = _unitFactory.CreateUnit(definition, tiles[i]);
-                    segment.AddUnit(destructible);
-                }
-            }
-        }
-
-        private void CreateVillageSegment(Segment segment)
-        {
-            var tiles = segment.Tiles.GetMatchingTiles(tile => !tile.HasUnit);
-
-            for (int i = 0; i < 2; i++)
-            {
-                var tile = tiles.PickRandom();
-                tiles.Remove(tile);
-                
-                var definition = _unitContainer.GetEnemyDefinition(UnitType.RatEnemy);
-                Unit rat = _unitFactory.CreateEnemy(definition, tile);
-                segment.AddUnit(rat);
-            }
-        }
     }
 }

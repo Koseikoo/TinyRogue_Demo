@@ -56,8 +56,6 @@ namespace Installer
             BindPrefabs();
             BindContainer();
             BindFactories();
-
-            Container.Bind<IslandInitializer>().AsSingle();
         }
 
         private void BindPrefabs()

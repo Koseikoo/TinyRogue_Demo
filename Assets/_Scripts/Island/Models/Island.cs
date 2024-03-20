@@ -28,10 +28,14 @@ namespace Models
         public BoolReactiveProperty IsDestroyed = new();
         public BoolReactiveProperty EndTileUnlocked = new();
 
-        public Island(List<Tile> islandTiles, int level)
+        public Island(List<Tile> islandTiles, Tile startTile, Tile endTile, List<Segment> segments, int level)
         {
             Tiles = islandTiles;
+            StartTile = startTile;
+            EndTile = endTile;
+            Segments = segments ?? new();
             Level = level;
+            
             LinkTiles();
         }
         
@@ -39,17 +43,6 @@ namespace Models
         {
             foreach (var tile in Tiles)
                 tile.SetIsland(this);
-        }
-
-        public void AddSegments(List<Segment> segments)
-        {
-            foreach (Segment segment in segments)
-            {
-                var tiles = segment.CenterTile.Island.GetSegmentTiles(segment);                       
-                segment.SetTiles(tiles);                                                  
-                Segments.Add(segment);  
-            }
-            
         }
 
         public void AddUnit(Unit unit)
@@ -73,12 +66,6 @@ namespace Models
             {
                 Segments[i].IsDestroyed.Value = true;
             }
-        }
-
-        public Tile GetTappedTile(Camera camera, Vector2 screenPosition)
-        {
-            Vector3 intersectionPoint = camera.GetExtendedPositionFromCamera(screenPosition);
-            return Tiles.GetClosestTileFromPosition(intersectionPoint);
         }
     }
 }
