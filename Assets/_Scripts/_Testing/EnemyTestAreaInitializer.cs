@@ -55,8 +55,9 @@ namespace _Testing
             GameStateContainer.GameState.Value = GameState.Island;
             _turnManager.StartTurn(this);
 
-            _enemySpawnTile = _gameAreaManager.Island.Tiles.GetTileClosestToPosition(default);
-            _segmentSpawnTile = _gameAreaManager.Island.Tiles.GetTileClosestToPosition(default);
+
+            _enemySpawnTile = _gameAreaManager.Island.Segments[2].CenterTile;
+            _segmentSpawnTile = _gameAreaManager.Island.Segments[2].CenterTile;
         }
         
         private void Update()

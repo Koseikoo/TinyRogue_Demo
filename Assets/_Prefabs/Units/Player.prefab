@@ -726,7 +726,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   maxBagScale: 1.32
   scaleDuration: 0.2
-  claimMult: 0.3
+  claimMult: 0.07
   arcSize: 2
   angleRange: 140
   anchorPoint: 0.8

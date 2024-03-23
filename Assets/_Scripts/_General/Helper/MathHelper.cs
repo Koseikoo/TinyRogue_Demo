@@ -2,6 +2,7 @@ using UnityEngine;
 
 public static class MathHelper
 {
+    private const int CurveLengthSegments = 20;
     public static Vector3 GetClosestPointOnLine(Vector3 linePoint1, Vector3 linePoint2, Vector3 pointA)
     {
         Vector3 lineDirection = linePoint2 - linePoint1;
@@ -18,6 +19,23 @@ public static class MathHelper
         Vector3 p0b = Vector3.Lerp(p0, b, t);
         Vector3 ab = Vector3.Lerp(ap0, p0b, t);
         return ab;
+    }
+    
+    public static float BezierCurveLength(Vector3 a, Vector3 p0, Vector3 b)
+    {
+        float length = 0;
+        float lastT = 0;
+
+        for (int i = 0; i < CurveLengthSegments; i++)
+        {
+            float t = (float)i / (CurveLengthSegments - 1);
+            Vector3 startPoint = BezierLerp(a, p0, b, lastT);
+            Vector3 endPoint = BezierLerp(a, p0, b, t);
+            length += Vector3.Distance(startPoint, endPoint);
+            lastT = t;
+        }
+
+        return length;
     }
 
     public static Vector3 CubicBezierLerp(Vector3 a, Vector3 p0, Vector3 p1, Vector3 b, float t)

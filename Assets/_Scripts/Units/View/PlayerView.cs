@@ -108,15 +108,17 @@ namespace Views
                     UIHelper.Camera
                         .GetWorldSwipeVector(InputHelper.StartPosition, InputHelper.GetTouchPosition())
                         .ShortenToTileRange(_player.Weapon.Range);
-                
-                float maxLength = _player.SwipedTiles.Count == 0 ? 0 : Vector3.Distance(startPosition, _player.SwipedTiles[^1].WorldPosition);
 
-                var visualizedSwipeVector =
-                    swipeVector.normalized * Mathf.Min(maxLength, swipeVector.magnitude);
+
+                if (_player.SwipedTiles.Count >= _player.Weapon.Range)
+                {
+                    float maxLength = Vector3.Distance(startPosition, _player.SwipedTiles[^1].WorldPosition);
+                    swipeVector = Vector3.ClampMagnitude(swipeVector, maxLength);
+                }
 
                 lineRenderer.enabled = true;
                 lineRenderer.positionCount = LinePoints;
-                lineRenderer.SetPositions(GetLinePoints(startPosition, startPosition + visualizedSwipeVector));
+                lineRenderer.SetPositions(GetLinePoints(startPosition, startPosition + swipeVector));
                 float maxRangeProgress = swipeVector.magnitude / (_player.Weapon.Range * Island.TileDistance);
                 lineRenderer.widthCurve = GetLerpedCurve(maxRangeProgress);
                 lineRenderer.widthMultiplier = lineWidth;

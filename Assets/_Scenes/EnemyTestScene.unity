@@ -796,6 +796,7 @@ MonoBehaviour:
         DroppedFrom: 
         DropChance: 0
       Power: 1
+  SpawnNewIsland: 0
   enemyToSpawn:
     name: 
     Type: 2

@@ -83,7 +83,7 @@ MonoBehaviour:
   PointParent: {fileID: 1535746284512030615}
   SegmentUnitDefinitions: []
   segmentCompletedParent: {fileID: 1337407087544074339}
-  destroyDelay: 0.06
+  destroyDelay: 0.1
 --- !u!1 &2509600023163571090
 GameObject:
   m_ObjectHideFlags: 0

@@ -78,9 +78,12 @@ namespace Views
                 Vector3 bagPosition = lootTransform.position;
                 Vector3 anchorPointPosition = Vector3.Lerp(coinPosition, bagPosition, anchorPoint);
                 Vector3 baseArcVector = (Vector3.up * arcSize) * anchorPointDistance;
-                float claimDuration = claimMult;
-                
                 Vector3 randomArcVector = baseArcVector.RotateVector((bagPosition - coinPosition).normalized, Random.Range(-60f, 60f));
+                
+                float claimDuration = MathHelper.BezierCurveLength(coinPosition,
+                    anchorPointPosition + baseArcVector,
+                    bagPosition) * claimMult;
+                
                 int index = i;
                 sequence.Insert(delay, DOTween.To(() => 0f, t =>
                     {
@@ -115,7 +118,9 @@ namespace Views
             Vector3 bagPosition = lootTransform.position;
             Vector3 anchorPointPosition = Vector3.Lerp(loot.DropPosition, bagPosition, anchorPoint);
             Vector3 baseArcVector = (Vector3.up * arcSize) * anchorPointDistance;
-            float claimDuration = claimMult;
+            float claimDuration = MathHelper.BezierCurveLength(loot.DropPosition,
+                anchorPointPosition + baseArcVector,
+                bagPosition) * claimMult;
             float delay = 0;
             float delayAdd = lootSequenceDuration / lootViews.Count;
             
@@ -130,7 +135,7 @@ namespace Views
                     {
                         var position = MathHelper.BezierLerp(loot.DropPosition,
                             anchorPointPosition + randomArcVector,
-                            bagPosition, claimCurve.Evaluate(t));
+                            lootTransform.position, claimCurve.Evaluate(t));
                         lootViews[index].transform.position = position;
                     }, 1f, claimDuration)
                     .OnComplete(() =>
