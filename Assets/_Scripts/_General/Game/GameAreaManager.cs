@@ -4,6 +4,7 @@ using Factories;
 using Factory;
 using Models;
 using UniRx;
+using Views;
 using Zenject;
 
 namespace Game
@@ -29,10 +30,23 @@ namespace Game
         public List<Tile> TileCollection => Island == null ? Ship.Tiles : Island.Tiles;
         private int _currentIslandLevel;
 
-        public void SpawnTestIsland(float size)
+        public void SpawnSegmentTestIsland(SegmentView segmentToTest)
         {
-            _island = _islandFactory.CreateTestIsland(size);
+            _island = _islandFactory.CreateSegmentTestIsland(segmentToTest);
             _island.StartTile.MoveUnit(_playerManager.Player);
+            StartGame();
+        }
+
+        public void SpawnNewSegmentTestIsland(SegmentView segmentToTest)
+        {
+            GameStateContainer.LockCameraRotation = false;
+            DestroyIsland();
+            DestroyShip();
+            
+            _island = _islandFactory.CreateSegmentTestIsland(segmentToTest);
+            _island.StartTile.MoveUnit(_playerManager.Player);
+            _playerManager.Player.Weapon.Tile.Value = _island.StartTile;
+                
             StartGame();
         }
         

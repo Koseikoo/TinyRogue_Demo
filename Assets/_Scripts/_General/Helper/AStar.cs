@@ -64,7 +64,7 @@ public static class AStar
                 }
             }
         }
-        return null;
+        return new();
 
         List<Tile> AssignPath()
         {

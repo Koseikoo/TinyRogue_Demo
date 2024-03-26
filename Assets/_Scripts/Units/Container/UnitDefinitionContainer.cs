@@ -11,6 +11,7 @@ public enum UnitType
     OrcEnemy = 9,
     SpiderEnemy = 2,
     WolfEnemy = 14,
+    BigWolfEnemy = 25,
     GolemEnemy = 15,
     SpecterEnemy = 16,
     
@@ -18,13 +19,14 @@ public enum UnitType
     FishermanMiniBoss = 17,
     WerewolfBoss = 18,
     
-    Obstacle = 5,
+    PathBlocker = 5,
     Tree = 6,
     Grave = 19,
     Pillar = 21,
     Wheat = 20,
     CampWall = 22,
     CampFire = 23,
+    WolfCave = 24,
     
     //Interactables
     HelmInteractable = 7,
@@ -67,7 +69,7 @@ namespace Container
         {
             return type switch
             {
-                UnitType.Obstacle => _obstacleDefinition,
+                UnitType.PathBlocker => _obstacleDefinition,
                 UnitType.Tree => _treeDefinition,
                 UnitType.Pillar => _pillarDefinition,
                 UnitType.CampWall => _campWallDefinition,

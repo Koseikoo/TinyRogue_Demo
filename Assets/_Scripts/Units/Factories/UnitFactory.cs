@@ -146,6 +146,7 @@ namespace Factories
                 UnitType.TestEnemy => _container.Instantiate<SimpleEnemy>(),
                 UnitType.SpiderEnemy => _container.Instantiate<SimpleEnemy>(),
                 UnitType.WolfEnemy => _container.Instantiate<WolfEnemy>(),
+                UnitType.BigWolfEnemy => _container.Instantiate<WolfEnemy>(),
                 UnitType.MushroomEnemy => _container.Instantiate<MushroomEnemy>(),
                 UnitType.RatEnemy => _container.Instantiate<SimpleEnemy>(),
                 UnitType.OrcEnemy => _container.Instantiate<OrcEnemy>(),

@@ -17,7 +17,7 @@ public enum EnemyState
 
 namespace Models
 {
-    public class Enemy : Unit, IAttacker, IDisposable
+    public class Enemy : Unit, IAttacker
     {
         private const int EnemyMods = 3;
 
@@ -52,27 +52,29 @@ namespace Models
             }
             
             AttackTarget = GameStateContainer.Player;
-            _turnSubscription = GameStateContainer.TurnState
+            var turnSubscription = GameStateContainer.TurnState
                 .Where(state => state == TurnState.EnemyTurn)
                 .Subscribe(_ => OnEnemyTurn());
 
-            _stateSubscription = State
+            var stateSubscription = State
                 .Pairwise()
                 .Where(pair => pair.Previous == EnemyState.Idle)
                 .Subscribe(_ => CurrentTurnDelay.Value = TurnDelay);
 
-            _destroySubscription = IsDestroyed.Where(b => b).Subscribe(_ =>
+            var destroySubscription = IsDestroyed.Where(b => b).Subscribe(_ =>
             {
-                Dispose();
                 RemoveLastSelection();
             });
+            
+            UnitSubscriptions.Add(turnSubscription);
+            UnitSubscriptions.Add(stateSubscription);
+            UnitSubscriptions.Add(destroySubscription);
         }
 
         public override void Death()
         {
             base.Death();
             RemoveLastSelection();
-            Dispose();
             _cameraModel.RotationShakeCommand.Execute();
         }
 
@@ -105,8 +107,8 @@ namespace Models
         protected virtual bool IsAttackPathTile(Tile tile)
         {
             var tileUnit = tile.Unit.Value;
-            bool ignoreTile = tile.HasUnit && (tileUnit.IsInvincible.Value || tileUnit is Enemy);
-            return !ignoreTile && !tile.WeaponOnTile.Value;
+            bool isPathTile = !tile.HasUnit || tile.Unit.Value is Player;
+            return isPathTile && !tile.WeaponOnTile.Value;
         }
         
         protected EnemyState ScanSurroundingTiles()
@@ -168,13 +170,5 @@ namespace Models
             }
             _lastSelectedTiles.Clear();
         }
-
-        public void Dispose()
-        {
-            _turnSubscription?.Dispose();
-            _stateSubscription?.Dispose();
-            _destroySubscription?.Dispose();
-        }
-
     }
 }

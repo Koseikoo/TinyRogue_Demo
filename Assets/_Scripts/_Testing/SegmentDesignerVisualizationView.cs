@@ -28,13 +28,16 @@ namespace _Testing
 
         public void UpdateVisualization(SegmentView view)
         {
-            DestroyPrevious();
+            ClearVisualization();
             SpawnVisuals(view.SegmentUnitDefinitions);
         }
 
         public void ClearVisualization()
         {
-            DestroyPrevious();
+            _currentPrefabs.Clear();
+
+            for (int i = transform.childCount - 1; i >= 0; i--)
+                DestroyImmediate(transform.GetChild(i).gameObject);
         }
 
         private UnitInstaller GetAssets()

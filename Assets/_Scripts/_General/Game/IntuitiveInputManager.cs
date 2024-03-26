@@ -166,13 +166,6 @@ namespace Game
             List<Tile> tiles = GetSwipedTiles(startTile, endTile);
             List<Tile> attackTiles = new();
             
-            if (endTile.HasUnit)
-            {
-                Debug.Log("End Tile Occupied Feedback");
-                _cameraModel.SideShakeCommand.Execute();
-                return;
-            }
-
             int attackDamage = _playerManager.Weapon.GetAttackDamage();
 
             bool bounceBack = false;
@@ -190,6 +183,13 @@ namespace Game
                     bounceBack = true;
                     break;
                 }
+            }
+            
+            if (endTile.HasUnit && !bounceBack)
+            {
+                Debug.Log("End Tile Occupied Feedback");
+                _cameraModel.SideShakeCommand.Execute();
+                return;
             }
 
             InWeaponMode = !bounceBack;
@@ -235,7 +235,7 @@ namespace Game
                 return;
 
             bool canUpdateMoveMode = InputHelper.IsSwipeStationary() && !worldTile.HasUnit &&
-                                     _playerManager.Player.SwipedTiles.Count == 1;
+                                     swipeVector.magnitude <= Island.TileDistance;
             if (canUpdateMoveMode)
             {
                 if (_playerManager.Player.SelectedTiles.Count == 0 && InputHelper.IsSwipe)

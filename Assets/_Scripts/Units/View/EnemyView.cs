@@ -77,9 +77,6 @@ namespace Views
                 })
                 .AddTo(this);
             
-            _enemy.IsDead.Where(b => b).Subscribe(_ => _enemy.Dispose()).AddTo(this);
-            _enemy.IsDestroyed.Where(b => b).Subscribe(_ => _enemy.Dispose()).AddTo(this);
-
             transform.position = _enemy.Tile.Value.WorldPosition;
         }
 

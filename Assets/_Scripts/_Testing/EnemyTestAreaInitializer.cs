@@ -50,7 +50,7 @@ namespace _Testing
         private void PostInject()
         {
             CreatePlayer();
-            _gameAreaManager.SpawnTestIsland(8);
+            _gameAreaManager.SpawnNewIsland();
         
             GameStateContainer.GameState.Value = GameState.Island;
             _turnManager.StartTurn(this);

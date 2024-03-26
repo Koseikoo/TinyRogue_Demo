@@ -96,7 +96,8 @@ namespace Views
             
             if (InputHelper.IsSwiping() && !InputHelper.StartedOverUI)
             {
-                var playerPosition = _player.Tile.Value.WorldPosition;
+                var playerPosition = transform.position;
+                playerPosition.y = 0;
                 var weaponPosition = _player.Weapon.Tile.Value.WorldPosition;
 
                 Vector3 startPosition = playerPosition;

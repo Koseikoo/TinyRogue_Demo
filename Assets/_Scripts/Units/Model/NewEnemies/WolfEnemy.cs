@@ -19,6 +19,8 @@ namespace Models
             var path = AStar.FindPath(Tile.Value,
                 AttackTarget.Tile.Value, 
                 IsAttackPathTile);
+            if(path == null)
+                return;
 
             if (_leapPath.Count > 0)
             {
@@ -30,17 +32,6 @@ namespace Models
             {
                 this.FollowTarget(path[0]);
             }
-        }
-        
-        protected override bool IsAttackPathTile(Tile tile)
-        {
-            bool baseConditionMet = base.IsAttackPathTile(tile);
-            var tileUnit = tile.Unit.Value;
-            if (baseConditionMet || 
-                tileUnit.Type == UnitType.CampWall || 
-                tileUnit.Type == UnitType.CampFire)
-                return false;
-            return true;
         }
 
         protected override void RenderAttackPath()

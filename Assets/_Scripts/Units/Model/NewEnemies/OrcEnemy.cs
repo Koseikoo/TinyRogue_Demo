@@ -21,16 +21,5 @@ namespace Models
                 this.FollowTarget(path[0]);
             }
         }
-
-        protected override bool IsAttackPathTile(Tile tile)
-        {
-            bool baseConditionMet = base.IsAttackPathTile(tile);
-            var tileUnit = tile.Unit.Value;
-            if (baseConditionMet ||
-                tileUnit.Type == UnitType.CampWall || 
-                tileUnit.Type == UnitType.CampFire);
-                return false;
-            return true;
-        }
     }
 }

@@ -104,9 +104,9 @@ MonoBehaviour:
       Power: 1
   - name: Wolf
     Type: 14
-    Prefab: {fileID: 5127624128120117122, guid: 75ca713e16f214495934f24f7f437c07,
+    Prefab: {fileID: 4321313423860467816, guid: 5f79f4eaaebff4a41a8c6bfb217d62e8,
       type: 3}
-    MaxHealth: 2
+    MaxHealth: 1
     Invincible: 0
     DropXp: 2
     AttackRange: 3
@@ -116,6 +116,22 @@ MonoBehaviour:
     - ItemDefinition:
         Type: 0
         Stack: 1
+        DroppedFrom: 
+        DropChance: 0
+      Power: 1
+  - name: BigWolf
+    Type: 25
+    Prefab: {fileID: 327620077985183488, guid: b1c142c5efa04420bb3a0a81edb4da03, type: 3}
+    MaxHealth: 3
+    Invincible: 0
+    DropXp: 8
+    AttackRange: 3
+    ScanRange: 10
+    TurnDelay: 0
+    Mods:
+    - ItemDefinition:
+        Type: 0
+        Stack: 0
         DroppedFrom: 
         DropChance: 0
       Power: 1
@@ -161,7 +177,7 @@ MonoBehaviour:
     Invincible: 0
     DropXp: 10
     AttackRange: 2
-    ScanRange: 8
+    ScanRange: 4
     TurnDelay: 0
     Mods:
     - ItemDefinition:
@@ -230,4 +246,18 @@ MonoBehaviour:
     Prefab: {fileID: 234729541041868673, guid: a7b9ba8dc34d9460ca74718770e4b5a8, type: 3}
     MaxHealth: 1
     Invincible: 0
+    DropXp: 0
+  - name: WolfCave
+    Type: 24
+    Prefab: {fileID: 6169580348439121258, guid: 3b925cc1c13d748f6978befa66cf59df,
+      type: 3}
+    MaxHealth: 1
+    Invincible: 1
+    DropXp: 0
+  - name: PathObstacle
+    Type: 5
+    Prefab: {fileID: 1861494755789565353, guid: bbf06e6d3231c4c3c8b8e34eb42cc094,
+      type: 3}
+    MaxHealth: 1
+    Invincible: 1
     DropXp: 0

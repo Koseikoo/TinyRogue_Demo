@@ -37,7 +37,7 @@ public static class IslandHelper
 
     public static float GetSegmentDistance(this float baseSegmentRadius, float segmentRadius)
     {
-        return baseSegmentRadius + segmentRadius + Island.TileDistance;
+        return baseSegmentRadius + segmentRadius + (Island.TileDistance * 2);
     }
 
     public static Tile GetClosestTileFromPosition(this List<Tile> tiles, Vector3 worldPosition)
@@ -59,6 +59,12 @@ public static class IslandHelper
             throw new Exception("No Closest Tile Found");
 
         return closest;
+    }
+
+    public static Segment GetClosestSegment(this List<Segment> segments, Segment segment)
+    {
+        var orderedSegments = segments.OrderBy(s => Vector3.Distance(s.CenterTile.WorldPosition, segment.CenterTile.WorldPosition));
+        return orderedSegments.First(s => s != segment);
     }
 
     public static Vector3 GetExtendedPositionFromCamera(this Camera camera, Vector2 screenPosition)

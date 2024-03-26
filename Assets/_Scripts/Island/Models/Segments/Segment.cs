@@ -11,11 +11,12 @@ namespace Models
     public enum SegmentType
     {
         Forrest,
-        EnemyCamp,
+        WolfCamp,
         Village,
         Ruin,
         Start,
         End,
+        MiniBoss,
         Boss
     }
     public class Segment
@@ -29,24 +30,16 @@ namespace Models
         public float Radius => Size * Island.TileDistance;
 
         public List<Tile> Tiles;
+        public List<Tile> EntryTiles = new();
+        public List<Tile> ExitTiles = new();
         public List<Unit> Units = new();
-        private IDisposable _GameStateSubscription;
+
 
         public Segment(SegmentView definition, Tile centerTile)
         {
             Type = definition.Type;
             Size = definition.Size;
             CenterTile = centerTile;
-        }
-
-        protected virtual void CheckSegmentCompleteCondition()
-        {
-            var units = Units.FindAll(u => u is Enemy && !u.IsDead.Value);
-            if (units.Count == 0)
-            {
-                IsCompleted.Value = true;
-                _GameStateSubscription?.Dispose();
-            }
         }
 
         public virtual void SegmentCompleteAction(Transform parent)
@@ -57,10 +50,6 @@ namespace Models
         public void AddUnit(Unit unit)
         {
             Units.Add(unit);
-            
-            _GameStateSubscription = unit.IsDead
-                .Where(b => b)
-                .Subscribe(_ => CheckSegmentCompleteCondition());
         }
 
         public void SetTiles(List<Tile> tiles)

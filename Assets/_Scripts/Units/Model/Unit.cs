@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Models
 {
-    public class Unit
+    public class Unit : IDisposable
     {
         public int Level;
         public int MaxHealth;
@@ -21,12 +21,13 @@ namespace Models
         public ReactiveProperty<Tile> Tile = new();
         public List<Tile> AdditionalTiles = new();
         public IntReactiveProperty AttackCounter = new();
-        public BoolReactiveProperty IsDefeated = new();
         public BoolReactiveProperty IsDead = new();
         public BoolReactiveProperty IsDestroyed = new();
         public BoolReactiveProperty IsDamaged = new();
         public ReactiveCollection<StatusEffect> ActiveStatusEffects = new();
         public BoolReactiveProperty IsInvincible = new();
+
+        public List<IDisposable> UnitSubscriptions = new();
 
         
         public ReactiveProperty<Vector3> AttackDirection = new();
@@ -35,6 +36,12 @@ namespace Models
 
         [Inject] private UnitRecipeDropContainer _unitRecipeDropContainer;
         [Inject] private ModalFactory _modalFactory;
+
+        protected Unit()
+        {
+            var destroySubscription = IsDestroyed.Where(b => b).Subscribe(_ => Dispose());
+            UnitSubscriptions.Add(destroySubscription);
+        }
 
         public virtual void Attack(IEnumerable<Mod> mods, Vector3 attackVector, Unit attacker = null)
         {
@@ -54,9 +61,13 @@ namespace Models
             IsDamaged.Value = Health.Value < MaxHealth || ActiveStatusEffects.Count > 0;
             attackVector.Normalize();
             AttackDirection.Value = attackVector;
-            
-            if(IsDead.Value && this is Enemy)
-                PersistentPlayerState.IncreaseHeritage(DropXp);
+
+            if (IsDead.Value)
+            {
+                Dispose();
+                if(this is Enemy)
+                    PersistentPlayerState.IncreaseHeritage(DropXp);
+            }
         }
 
         public virtual void Damage(int damage, Unit attacker = null, bool pierceInvincibility = false)
@@ -69,8 +80,12 @@ namespace Models
             IsDead.Value = Health.Value <= 0;
             IsDamaged.Value = Health.Value < MaxHealth;
             
-            if(IsDead.Value && this is Enemy)
-                PersistentPlayerState.IncreaseHeritage(DropXp);
+            if (IsDead.Value)
+            {
+                Dispose();
+                if(this is Enemy)
+                    PersistentPlayerState.IncreaseHeritage(DropXp);
+            }
         }
 
         public virtual void Death()
@@ -97,6 +112,14 @@ namespace Models
 
             for (int i = 0; i < DeathActions.Count; i++)
                 DeathActions[i]?.Invoke(Tile.Value);
+        }
+
+        public void Dispose()
+        {
+            foreach (IDisposable subscription in UnitSubscriptions)
+                subscription?.Dispose();
+            
+            UnitSubscriptions.Clear();
         }
     }
 }

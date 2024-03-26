@@ -4,10 +4,10 @@ using System.Linq;
 using Container;
 using Installer;
 using Models;
-using UnityEngine;
 using Views;
 using Zenject;
-using Random = UnityEngine.Random;
+using UniRx;
+using Unit = Models.Unit;
 
 namespace Factories
 {
@@ -27,13 +27,17 @@ namespace Factories
 
         public SegmentFactory()
         {
-            _segmentSpawnActions[SegmentType.EnemyCamp] = CreateEnemyCampSegment;
+            _segmentSpawnActions[SegmentType.Ruin] = CreateSimpleEnemySegment;
+            _segmentSpawnActions[SegmentType.Forrest] = CreateSimpleEnemySegment;
+            _segmentSpawnActions[SegmentType.WolfCamp] = CreateWolfCamp;
+            _segmentSpawnActions[SegmentType.MiniBoss] = CreateMiniBossSegment;
             _segmentSpawnActions[SegmentType.End] = CreateEndSegment;
         }
 
-        public SegmentView CreateSegmentView(Segment segment)
+        public SegmentView CreateSegmentView(Segment segment, SegmentView prefab = null)
         {
-            SegmentView prefab = _segmentContainer.GetPrefab(segment.Type);
+            if(prefab == null)
+                prefab = _segmentContainer.GetPrefab(segment.Type);
             SegmentView view = _container.InstantiatePrefab(prefab).GetComponent<SegmentView>();
             view.Initialize(segment);
             
@@ -70,11 +74,12 @@ namespace Factories
             Segment segment = prefab.Type switch
             {
                 SegmentType.Forrest => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
-                SegmentType.EnemyCamp => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
+                SegmentType.WolfCamp => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
                 SegmentType.Village => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
                 SegmentType.Start => _container.Instantiate<Segment>(new object[]{prefab, center}),
                 SegmentType.End => _container.Instantiate<Segment>(new object[]{prefab, center}),
                 SegmentType.Ruin => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
+                SegmentType.MiniBoss => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
                 SegmentType.Boss => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
                 _ => throw new ArgumentOutOfRangeException()
             };
@@ -82,34 +87,84 @@ namespace Factories
             return segment;
         }
 
-        private void CreateEnemyCampSegment(Segment segment)
+        private void CreateWolfCamp(Segment segment)
         {
-            var orcTiles = segment.Tiles.FindAll(tile => tile.Unit.Value is OrcEnemy);
-
-            for (int i = 0; i < orcTiles.Count; i++)
+            var cave = segment.Units.First(unit => unit.Type == UnitType.WolfCave);
+            
+            Action<Tile> caveDestroyAction = tile =>
             {
-                OrcEnemy orc = orcTiles[i].Unit.Value as OrcEnemy;
-                var neighbourWolfTile = orcTiles[i].Neighbours.FirstOrDefault(tile => tile.Unit.Value is WolfEnemy);
-                if (neighbourWolfTile == null)
-                    throw new Exception("No neighboring Wolf!");
-                
-                neighbourWolfTile.Unit.Value.DeathActions.Add(tile => orc.IsEnraged.Value = true);
+                var wolfDefinition = _unitContainer.GetEnemyDefinition(UnitType.BigWolfEnemy);
+                var wolf = _unitFactory.CreateEnemy(wolfDefinition, tile);
+
+                var deathSub = wolf.IsDead.Where(b => b).Subscribe(_ =>
+                {
+                    segment.IsCompleted.Value = true;
+                });
+                wolf.UnitSubscriptions.Insert(0, deathSub);
+            };
+
+            Action<Segment> allWolfsDefeatedCheck = s =>
+            {
+                var aliveWolfs = s.Units.Where(unit => unit.Type == UnitType.WolfEnemy && !unit.IsDead.Value);
+                if (!aliveWolfs.Any())
+                {
+                    var caveTile = cave.Tile.Value;
+                    cave.Damage(cave.Health.Value, null, true);
+                    caveDestroyAction(caveTile);
+                }
+            };
+            
+            foreach (Unit wolf in segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy))
+            {
+                IDisposable wolfSub = wolf.IsDead.Where(b => b).Subscribe(_ => allWolfsDefeatedCheck(segment));
+                wolf.UnitSubscriptions.Insert(0, wolfSub);
+            }
+        }
+
+        private void CreateMiniBossSegment(Segment segment)
+        {
+            Unit miniBoss = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.FishermanMiniBoss);
+            if(miniBoss == null)
+                throw new Exception("No Mini Boss in End Segment");
+            miniBoss.DeathActions.Add(_unitDeathActionContainer.UnlockEndTileAction);
+
+            foreach (Tile tile in segment.ExitTiles)
+            {
+                var definition = _unitContainer.GetUnitDefinition(UnitType.PathBlocker);
+                var obstacle = _unitFactory.CreateUnit(definition, tile);
+
+                var sub = miniBoss.IsDead.Where(b => b).Subscribe(_ =>
+                {
+                    obstacle.Damage(obstacle.Health.Value, null, true);
+                });
+                obstacle.UnitSubscriptions.Insert(0, sub);
             }
         }
 
         private void CreateEndSegment(Segment segment)
         {
-            try
+            for (int i = 0; i < 2; i++)
             {
-                Unit unit = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.FishermanMiniBoss);
-                unit.DeathActions.Add(_unitDeathActionContainer.UnlockEndTileAction);
+                var rand = segment.Tiles.PickRandom();
+                var definition = _unitContainer.GetInteractableDefinition(UnitType.ChestInteractable);
+                var chest = _unitFactory.CreateUnit(definition, rand);
             }
-            catch (Exception e)
+        }
+
+        private void CreateSimpleEnemySegment(Segment segment)
+        {
+            foreach (Unit enemy in segment.Units.Where(unit => unit is Enemy))
             {
-                throw new Exception("No Mini Boss in End Segment");
+                var sub = enemy.IsDead
+                    .Where(b => b)
+                    .Subscribe(_ =>
+                    {
+                        var livingEnemies = segment.Units.Where(unit => unit is Enemy && !unit.IsDead.Value);
+                        if (!livingEnemies.Any())
+                            segment.IsCompleted.Value = true;
+
+                    });
             }
-            
-            
         }
         
         

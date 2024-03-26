@@ -82,7 +82,10 @@ namespace Views
             Destroy(visual.gameObject);
             sequence.AppendInterval(1f);
 
-            sequence.OnComplete(() => Destroy(gameObject));
+            sequence.OnComplete(() =>
+            {
+                Destroy(gameObject);
+            });
 
         }
 

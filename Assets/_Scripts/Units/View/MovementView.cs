@@ -1,3 +1,4 @@
+using System;
 using Models;
 using UnityEngine;
 using DG.Tweening;
@@ -19,7 +20,13 @@ namespace Views
 
         private bool skippedLeft;
         private Sequence _sequence;
-        
+
+        private void Update()
+        {
+            if (visual == null)
+                _sequence?.Kill();
+        }
+
         public void ToTile(Tile tile)
         {
             Vector3 startPosition = transform.position;

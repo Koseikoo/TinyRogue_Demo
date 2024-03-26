@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Installer;
 using Models;
 using UnityEngine;
@@ -42,12 +43,74 @@ namespace Factories
             return island;
         }
 
-        public Island CreateTestIsland(float size)
+        public Island CreateSegmentTestIsland(SegmentView segmentToTest)
         {
 
-            Island i = CreateIslandModel(0);
+            Island i = CreateTestIslandModel(segmentToTest);
+            _segmentFactory.CreateSegmentView(i.Segments[2], segmentToTest);
             _islandViewFactory.CreateIslandView(i);
             return i;
+        }
+
+        private Island CreateTestIslandModel(SegmentView segmentToTestPrefab)
+        {
+            Vector3[] polygon = _polygonFactory.Create(_islandPolygonConfig);
+            Bounds bounds = polygon.GetBounds();
+            Vector3[,] baseGrid = _hexGridFactory.Create(bounds, Island.HexagonSize);
+            
+            (Dictionary<Vector2Int, Tile> tileDict, List<Tile> tiles, Vector2Int maxValue) = GetIslandTiles(baseGrid, polygon);
+            
+            List<Tile> islandTiles = LinkTiles(tileDict, maxValue);
+            
+            var edgeTiles = SetEdgeTiles(tiles);
+            var startTile = edgeTiles.PickRandom();
+            var endTile = tiles.GetTileFurthestAway(startTile);
+
+            var segments = CreateTestSegments(islandTiles);
+            foreach (var segment in segments)
+            {
+                var segmentTiles = islandTiles.GetSegmentTiles(segment);                       
+                segment.SetTiles(segmentTiles);
+            }
+
+            tileDict = RemoveUnusedTiles(tileDict);
+            islandTiles = LinkTiles(tileDict, maxValue);
+            
+            Island island = _container.Instantiate<Island>(
+                new object[] {islandTiles, startTile, endTile, segments, 0});
+            
+            foreach (Tile tile in island.Tiles)
+            {
+                SetVisualAttributes(tile);
+            }
+
+            return island;
+
+            List<Segment> CreateTestSegments(List<Tile> tiles)
+            {
+                List<Segment> testSegments = new();
+                
+                Segment startSegment = _segmentFactory.CreateSegment(_segmentContainer.StartSegment, startTile);
+                testSegments.Add(startSegment);
+
+                Segment endSegment = _segmentFactory.CreateSegment(_segmentContainer.EndSegment, endTile);
+                testSegments.Add(endSegment);
+                
+                
+                
+                float distance = startSegment.Radius.GetSegmentDistance(segmentToTestPrefab.Radius);
+                var checkDirection = endSegment.CenterTile.WorldPosition - startSegment.CenterTile.WorldPosition;
+                checkDirection.Normalize();
+
+                var centerTile = tiles.GetTileClosestToPosition(startSegment.CenterTile.WorldPosition + (checkDirection * distance));
+                Segment segment = _segmentFactory.CreateSegment(segmentToTestPrefab, centerTile);
+                testSegments.Add(segment);
+                
+                AssignPath(startSegment, segment);
+                AssignPath(segment, endSegment);
+                return testSegments;
+
+            }
         }
 
         private Island CreateIslandModel(int level)
@@ -188,19 +251,29 @@ namespace Factories
                             newSegments.Add(segment);
                             spacedSegments.Add(segment);
 
-                            Tile newCenterTile = segment.CenterTile;
-
-                            AssignPath(previousSegment.CenterTile, newCenterTile);
+                            AssignPath(previousSegment, segment);
                         }
                     }
                 }
+                
+                
                 
                 currentSegments.Clear();
                 currentSegments.AddRange(new List<Segment>(newSegments));
                 newSegments.Clear();
             }
+
+            var lastSegment = spacedSegments.GetClosestSegment(endSegment);
+            var index = spacedSegments.IndexOf(lastSegment);
+
+            var miniBossPrefab = _segmentContainer.BossSegments.PickRandom();
+            var miniBossSegment = _segmentFactory.CreateSegment(miniBossPrefab, lastSegment.CenterTile);
             
-            AssignPath(spacedSegments[^1].CenterTile, endTile);
+            spacedSegments.RemoveAt(index);
+            spacedSegments.Insert(index, miniBossSegment);
+            
+            
+            AssignPath(miniBossSegment, endSegment);
             return spacedSegments;
 
             Vector3[] GetCheckDirections()
@@ -217,130 +290,133 @@ namespace Factories
 
                 return directions;
             }
+        }
+        
+        void AssignPath(Segment startSegment, Segment endSegment)
+        {
+            var path = AStar.FindPath(startSegment.CenterTile, endSegment.CenterTile, unit => true);
+            path = path.Where(tile => Vector3.Distance(startSegment.CenterTile.WorldPosition, tile.WorldPosition) >= startSegment.Radius &&
+                                      Vector3.Distance(endSegment.CenterTile.WorldPosition, tile.WorldPosition) >= endSegment.Radius).ToList();
 
-            void AssignPath(Tile start, Tile end)
+            startSegment.ExitTiles.Add(path[0]);
+            endSegment.EntryTiles.Add(path[^1]);
+
+            if (path.Count == 1)
             {
-                var path = AStar.FindPath(start, end, unit => true);
-                
-                
-                if (path == null || path.Count == 0)
-                {
-                    Debug.Log($"Null Error in Assign path will be triggered {start.WorldPosition} | {end.WorldPosition}");
-                    return;
-                }
-                
-                path = path.GetRange(1, path.Count - 2);
-
-                for (int k = 0; k < path.Count; k++)
-                {
-                    path[k].GrassType = GetPathType(path, k);
-
-                    switch (path[k].GrassType)
-                    {
-                        case GrassType.Bend60:
-                            path[k].GrassRotation = GetPathBendRotation(path, k);
-                            break;
-                        case GrassType.Straight:
-                            path[k].GrassRotation = GetPathStraightRotation(path, k);
-                            break;
-                        case GrassType.End:
-                            path[k].GrassRotation = GetPathEndRotation(path, k);
-                            break;
-                        default:
-                            throw new Exception($"path tile has wrong type ({path[k].GrassType})");
-                    }
-
-                    path[k].IsPathTile.Value = true;
-                }
+                path[0].GrassType = GrassType.Board;
+                path[0].IsPathTile.Value = true;
+                return;
             }
 
+            for (int k = 0; k < path.Count; k++)
+            {
+                path[k].GrassType = GetPathType(path, k);
+
+                switch (path[k].GrassType)
+                {
+                    case GrassType.Bend60:
+                        path[k].GrassRotation = GetPathBendRotation(path, k);
+                        break;
+                    case GrassType.Straight:
+                        path[k].GrassRotation = GetPathStraightRotation(path, k);
+                        break;
+                    case GrassType.End:
+                        path[k].GrassRotation = GetPathEndRotation(path, k);
+                        break;
+                    default:
+                        throw new Exception($"path tile has wrong type ({path[k].GrassType})");
+                }
+
+                path[k].IsPathTile.Value = true;
+            }
+            
             GrassType GetPathType(List<Tile> path, int index)
             {
                 if (index == 0 || index == path.Count - 1)
                     return GrassType.End;
-
+    
                 var nextDirection = (path[index + 1].WorldPosition - path[index].WorldPosition).normalized;
                 var previousDirection = (path[index - 1].WorldPosition - path[index].WorldPosition).normalized;
-
+    
                 if (Vector3.Dot(nextDirection, previousDirection) < -.9)
                     return GrassType.Straight;
                 return GrassType.Bend60;
             }
-
+    
             float GetPathEndRotation(List<Tile> path, int index)
             {
                 Vector3 startDirection = Vector3.right;
-
+    
                 for (int i = 0; i < 6; i++)
                 {
                     Vector3 direction = startDirection.RotateVector(Vector3.up, i * 60);
                     int indexToCheck = index == 0 ? 1 : path.Count - 2;
-
+    
                     var targetDirection = (path[indexToCheck].WorldPosition - path[index].WorldPosition).normalized;
-
+    
                     if (Vector3.Dot(direction, targetDirection) > .9f)
                         return i * 60;
                 }
-
+    
                 throw new Exception("Cant Get Rotation (End Piece)");
             }
-
+    
             float GetPathStraightRotation(List<Tile> path, int index)
             {
                 float rotationOffset = 180;
                 Vector3 startDirection = Vector3.right;
-
+    
                 var targetDirectionIn = (path[index - 1].WorldPosition - path[index].WorldPosition).normalized;
                 var targetDirectionOut = (path[index + 1].WorldPosition - path[index].WorldPosition).normalized;
-
+    
                 for (int i = 0; i < 6; i++)
                 {
                     Vector3 directionIn = startDirection.RotateVector(Vector3.up, i * 60);
                     Vector3 directionOut = directionIn.RotateVector(Vector3.up, rotationOffset);
-
+    
                     var inDot = Vector3.Dot(directionIn, targetDirectionIn);
                     var outDot = Vector3.Dot(directionOut, targetDirectionOut);
-
+    
                     var altInDot = Vector3.Dot(directionIn, targetDirectionOut);
                     var altOutDot = Vector3.Dot(directionOut, targetDirectionIn);
-
+    
                     bool validRotation = inDot > .9f && outDot > .9f;
                     bool altValidRotation = altInDot > .9f && altOutDot > .9f;
-
+    
                     if (validRotation || altValidRotation)
                         return i * 60;
                 }
-
+    
                 throw new Exception("Cant Get Rotation (Straight Piece)");
-
+    
             }
-
+    
             float GetPathBendRotation(List<Tile> path, int index)
             {
                 float rotationOffset = 240;
                 Vector3 startDirection = Vector3.right;
-
+    
                 var targetDirectionIn = (path[index - 1].WorldPosition - path[index].WorldPosition).normalized;
                 var targetDirectionOut = (path[index + 1].WorldPosition - path[index].WorldPosition).normalized;
-
+    
                 for (int i = 0; i < 6; i++)
                 {
                     Vector3 directionIn = startDirection.RotateVector(Vector3.up, i * 60);
                     Vector3 directionOut = directionIn.RotateVector(Vector3.up, rotationOffset);
-
+    
                     var inDot = Vector3.Dot(directionIn, targetDirectionIn);
                     var outDot = Vector3.Dot(directionOut, targetDirectionOut);
-
+    
                     var altInDot = Vector3.Dot(directionIn, targetDirectionOut);
                     var altOutDot = Vector3.Dot(directionOut, targetDirectionIn);
-
+    
                     bool validRotation = inDot > .9f && outDot > .9f;
                     bool altValidRotation = altInDot > .9f && altOutDot > .9f;
-
+    
                     if (validRotation || altValidRotation)
                         return i * 60;
                 }
-
+    
                 throw new Exception("Cant Get Rotation (Bend Piece)");
             }
         }
