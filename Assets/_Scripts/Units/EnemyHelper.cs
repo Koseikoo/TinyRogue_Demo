@@ -8,7 +8,7 @@ public static class EnemyHelper
 {
     public static void AttackUnit(this Enemy enemy, Unit unit)
     {
-        Vector3 attackDirection = unit.Tile.Value.WorldPosition - enemy.Tile.Value.WorldPosition;
+        Vector3 attackDirection = unit.Tile.Value.FlatPosition - enemy.Tile.Value.FlatPosition;
         unit.Attack(enemy.ModSlots.GetMods(), attackDirection, enemy);
     }
     

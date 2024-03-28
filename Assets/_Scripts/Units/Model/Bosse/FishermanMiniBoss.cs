@@ -100,12 +100,12 @@ namespace Models
 
         private List<Tile> GetAimedRangedTiles()
         {
-            var targetDirection = GameStateContainer.Player.Tile.Value.WorldPosition - Tile.Value.WorldPosition;
-            var direction = Tile.Value.Neighbours[0].WorldPosition - Tile.Value.WorldPosition;
+            var targetDirection = GameStateContainer.Player.Tile.Value.FlatPosition - Tile.Value.FlatPosition;
+            var direction = Tile.Value.Neighbours[0].FlatPosition - Tile.Value.FlatPosition;
             
             for (int i = 1; i < Tile.Value.Neighbours.Count; i++)
             {
-                var newDirection = Tile.Value.Neighbours[i].WorldPosition - Tile.Value.WorldPosition;
+                var newDirection = Tile.Value.Neighbours[i].FlatPosition - Tile.Value.FlatPosition;
                 var lastDot = Vector3.Dot(direction.normalized, targetDirection);
                 var nextDot = Vector3.Dot(newDirection, targetDirection);
 
@@ -118,9 +118,9 @@ namespace Models
 
             for (int i = 1; i < FireRange; i++)
             {
-                var position = currentTile.WorldPosition + (direction * i);
-                var nextPosition = currentTile.WorldPosition + (direction.RotateVector(Vector3.up, 60) * i);
-                var previousPosition = currentTile.WorldPosition + (direction.RotateVector(Vector3.up, -60) * i);
+                var position = currentTile.FlatPosition + (direction * i);
+                var nextPosition = currentTile.FlatPosition + (direction.RotateVector(Vector3.up, 60) * i);
+                var previousPosition = currentTile.FlatPosition + (direction.RotateVector(Vector3.up, -60) * i);
                 List<Tile> tiles = new()
                 {
                     Tile.Value.Island.Tiles.GetTileClosestToPosition(position),

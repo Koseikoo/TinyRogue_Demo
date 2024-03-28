@@ -18,7 +18,7 @@ namespace Views
 
         private void UpdatePosition(Tile tile)
         {
-            transform.DOMove(tile.WorldPosition + offset, Weapon.AttackAnimationDuration)
+            transform.DOMove(tile.FlatPosition + offset, Weapon.AttackAnimationDuration)
                 .SetEase(Ease.Linear);
         }
     }

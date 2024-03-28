@@ -36,20 +36,22 @@ namespace Views
 
         private void Update()
         {
-            if(stateImage == null && _sequence != null)
-                _sequence.Kill();
+            if(_enemy.IsDead.Value)
+                _sequence?.Kill();
             
             if(!_visible)
                 return;
             
             if(!centerRect.IsInsideScreen())
-                imageRect.MoveIntoScreen(_enemy.Tile.Value.WorldPosition);
+                imageRect.MoveIntoScreen(_enemy.Tile.Value.FlatPosition);
             else
                 imageRect.localPosition = default;
         }
 
         private void ShowStatePopup(EnemyState state)
         {
+            if(_enemy.IsDead.Value)
+                return;
             ShowStateSprite(state);
             FadeOutSprite(showDuration);
         }

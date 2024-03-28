@@ -22,6 +22,7 @@ namespace Views
         private List<GameObject> _visualObjects = new();
         [SerializeField] private ActionIndicatorView _actionIndicator;
         [SerializeField] private GameObject _actionLocked;
+        [SerializeField] private GameObject _actionTile;
         private Tile _tile;
 
         [Inject] private ActionIndicatorFactory _actionIndicatorFactory;
@@ -34,15 +35,19 @@ namespace Views
             this.enabled = true;
 
             transform.position = tile.WorldPosition;
+            float scale = _tile.HeightLevel < 0 ? .7f : 1f;
+            transform.localScale = new Vector3(scale, 1, scale);
 
             _tile.Destroyed
                 .Where(destroyed => destroyed)
                 .Subscribe(_ => Destroy(gameObject))
                 .AddTo(this);
             
-            _actionLocked.SetActive(false);
-            if (tile.Island != null && tile.IsEndTile)
-                tile.Island.EndTileUnlocked.Subscribe(b => _actionLocked.SetActive(!b)).AddTo(this);
+            if (tile.Island != null && tile.IsStartTile)
+            {
+                _actionTile.SetActive(true);
+                tile.Island.IsHeartDestroyed.Subscribe(b => _actionLocked.SetActive(!b)).AddTo(this);
+            }
 
             _tile.Selections.ObserveAdd().Subscribe(_ => UpdateSelection()).AddTo(this);
             _tile.Selections.ObserveRemove().Subscribe(_ => UpdateSelection()).AddTo(this);
@@ -51,7 +56,7 @@ namespace Views
             _tile.WeaponOnTile.Where(_ => GameStateContainer.Player.Tile.Value != _tile).Subscribe(UpdateWeaponOnTileVisual).AddTo(this);
 
             // DEBUG
-            _tile.DebugElevate.Subscribe(DebugElevate).AddTo(this);
+            _tile.DebugElevate.Where(b => b).Subscribe(_ => DebugElevate()).AddTo(this);
         }
 
         private void Update()
@@ -110,11 +115,12 @@ namespace Views
             _moveSelection.SetActive(false);
             _weaponSelection.SetActive(false);
             _blockedSelection.SetActive(false);
+            _actionTile.SetActive(false);
         }
 
-        private void DebugElevate(bool elevate)
+        private void DebugElevate()
         {
-            transform.position = new Vector3(transform.position.x, elevate ? 1 : 0, transform.position.z);
+            transform.position = new Vector3(transform.position.x, 1, transform.position.z);
         }
     }
 }

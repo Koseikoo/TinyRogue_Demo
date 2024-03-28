@@ -77,7 +77,7 @@ namespace Views
                 })
                 .AddTo(this);
             
-            transform.position = _enemy.Tile.Value.WorldPosition;
+            transform.position = _enemy.Tile.Value.FlatPosition;
         }
 
         private void DamageEvent(Vector3 attackDirection)
@@ -100,8 +100,8 @@ namespace Views
 
         private void AimEvent()
         {
-            Vector3 attackDirection = GameStateContainer.Player.Tile.Value.WorldPosition -
-                                  _enemy.Tile.Value.WorldPosition;
+            Vector3 attackDirection = GameStateContainer.Player.Tile.Value.FlatPosition -
+                                  _enemy.Tile.Value.FlatPosition;
             attackDirection.Normalize();
             
             transform.DOLookAt(transform.position + attackDirection, .2f);
@@ -119,7 +119,7 @@ namespace Views
         private void LookAtPlayer(AnimationState state)
         {
             if(state.ToString().ToLower().Contains("attack"))
-                transform.DOLookAt(_enemy.AttackTarget.Tile.Value.WorldPosition, .2f);
+                transform.DOLookAt(_enemy.AttackTarget.Tile.Value.FlatPosition, .2f);
         }
     }
 }

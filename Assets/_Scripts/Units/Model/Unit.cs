@@ -92,7 +92,7 @@ namespace Models
         {
             if (_lastAttacker != null)
             {
-                Loot?.RewardTo(_lastAttacker, Tile.Value.WorldPosition);
+                Loot?.RewardTo(_lastAttacker, Tile.Value.FlatPosition);
             }
             WorldLootContainer.DropLoot.Execute();
 

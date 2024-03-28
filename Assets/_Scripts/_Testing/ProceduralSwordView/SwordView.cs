@@ -58,7 +58,7 @@ namespace Views
             weapon.Tile
                 .SkipLatestValueOnSubscribe()
                 .Where(tile => tile != _weapon.Owner.Tile.Value)
-                .Subscribe(tile => AttackAnimation(tile.WorldPosition))
+                .Subscribe(tile => AttackAnimation(tile.FlatPosition))
                 .AddTo(this);
             
             weapon.Tile
@@ -138,7 +138,7 @@ namespace Views
             var attackDirection = _weapon.AttackDirection.Value;
             Vector3 start = swordGrip.up;
             Vector3 end = attackDirection.normalized;
-            float distance = (position - _weapon.Owner.Tile.Value.WorldPosition).magnitude;
+            float distance = (position - _weapon.Owner.Tile.Value.FlatPosition).magnitude;
             float relativeDuration = Weapon.AttackAnimationDuration / (_weapon.Range * Island.TileDistance);
             //_lastPosition = position + Vector3.up;
 

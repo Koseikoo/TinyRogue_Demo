@@ -21,6 +21,7 @@ namespace Factories
         [Inject] private ModalFactory _modalFactory;
 
         [Inject] private UnitActionContainer _unitActionContainer;
+        [Inject] private UnitContainer _unitContainer;
 
         [Inject] private DiContainer _container;
         public (Player, PlayerView) CreatePlayer(PlayerDefinition definition, Weapon weapon)

@@ -100,7 +100,7 @@ public class GameInitializer : MonoBehaviour
 
         for (int i = 0; i < _playerManager.Player.SelectedTiles.Count; i++)
         {
-            Gizmos.DrawSphere(_playerManager.Player.SelectedTiles[i].WorldPosition, .1f + ((float)i / _playerManager.Player.SelectedTiles.Count));
+            Gizmos.DrawSphere(_playerManager.Player.SelectedTiles[i].FlatPosition, .1f + ((float)i / _playerManager.Player.SelectedTiles.Count));
         }
     }
 }

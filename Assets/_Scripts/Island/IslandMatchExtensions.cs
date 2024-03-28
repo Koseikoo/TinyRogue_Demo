@@ -21,7 +21,7 @@ public static class IslandMatchExtensions
 
         return tiles.GetMatchingTiles(tile =>
         {
-            float distance = (centerTile.WorldPosition - tile.WorldPosition).magnitude;
+            float distance = (centerTile.FlatPosition - tile.FlatPosition).magnitude;
             return distance <= range;
         });
     }
@@ -30,9 +30,9 @@ public static class IslandMatchExtensions
     {
         float range = (rangeInTiles * Island.TileDistance) + Island.TileBuffer;
 
-        return centerTile.Island.Tiles.GetMatchingTiles(tile =>
+        return tiles.GetMatchingTiles(tile =>
         {
-            float distance = (centerTile.WorldPosition - tile.WorldPosition).magnitude;
+            float distance = (centerTile.FlatPosition - tile.FlatPosition).magnitude;
             return distance > range;
         });
     }
@@ -60,18 +60,18 @@ public static class IslandMatchExtensions
     public static List<Tile> GetSwipedTiles(this List<Tile> tiles, Tile startTile, Tile endTile)
     {
         List<Tile> tilesToAttack = new List<Tile>();
-        Vector3 swipeVector = endTile.WorldPosition - startTile.WorldPosition;
+        Vector3 swipeVector = endTile.FlatPosition - startTile.FlatPosition;
         foreach (Tile tile in tiles)
         {
             Vector3 closestPoint =
-                MathHelper.GetClosestPointOnLine(startTile.WorldPosition, startTile.WorldPosition + swipeVector, tile.WorldPosition);
+                MathHelper.GetClosestPointOnLine(startTile.FlatPosition, startTile.FlatPosition + swipeVector, tile.FlatPosition);
 
-            bool swipedOverTile = Vector3.Distance(closestPoint, tile.WorldPosition) <= Island.HalfTileDistance + .1f;
+            bool swipedOverTile = Vector3.Distance(closestPoint, tile.FlatPosition) <= Island.HalfTileDistance + .1f;
             if(swipedOverTile)
                 tilesToAttack.Add(tile);
         }
 
-        tilesToAttack = tilesToAttack.OrderByDistanceToPosition(startTile.WorldPosition);
+        tilesToAttack = tilesToAttack.OrderByDistanceToPosition(startTile.FlatPosition);
         return tilesToAttack;
     }
     
@@ -81,7 +81,7 @@ public static class IslandMatchExtensions
         
         return tiles.GetMatchingTiles(tile =>
         {
-            var distance = Vector3.Distance(weapon.Tile.Value.WorldPosition, tile.WorldPosition);
+            var distance = Vector3.Distance(weapon.Tile.Value.FlatPosition, tile.FlatPosition);
             return distance <= maxDistanceToPlayer;
         });
     }

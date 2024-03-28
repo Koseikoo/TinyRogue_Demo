@@ -23,16 +23,16 @@ namespace Models
         public List<Segment> Segments = new();
 
         public Tile StartTile;
-        public Tile EndTile;
+        public Tile HeartTile;
         public ReactiveCollection<Unit> Units { get; private set; } = new();
         public BoolReactiveProperty IsDestroyed = new();
-        public BoolReactiveProperty EndTileUnlocked = new();
+        public BoolReactiveProperty IsHeartDestroyed = new();
 
-        public Island(List<Tile> islandTiles, Tile startTile, Tile endTile, List<Segment> segments, int level)
+        public Island(List<Tile> islandTiles, Tile startTile, Tile heartTile, List<Segment> segments, int level)
         {
             Tiles = islandTiles;
             StartTile = startTile;
-            EndTile = endTile;
+            HeartTile = heartTile;
             Segments = segments ?? new();
             Level = level;
             

@@ -98,7 +98,7 @@ namespace Views
             {
                 var playerPosition = transform.position;
                 playerPosition.y = 0;
-                var weaponPosition = _player.Weapon.Tile.Value.WorldPosition;
+                var weaponPosition = _player.Weapon.Tile.Value.FlatPosition;
 
                 Vector3 startPosition = playerPosition;
 
@@ -113,7 +113,7 @@ namespace Views
 
                 if (_player.SwipedTiles.Count >= _player.Weapon.Range)
                 {
-                    float maxLength = Vector3.Distance(startPosition, _player.SwipedTiles[^1].WorldPosition);
+                    float maxLength = Vector3.Distance(startPosition, _player.SwipedTiles[^1].FlatPosition);
                     swipeVector = Vector3.ClampMagnitude(swipeVector, maxLength);
                 }
 

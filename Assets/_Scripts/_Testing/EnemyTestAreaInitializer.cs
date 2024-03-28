@@ -23,6 +23,7 @@ namespace _Testing
         [Inject] private TurnManager _turnManager;
         [Inject] private IntuitiveInputManager _inputManager;
         [Inject] private SegmentContainer _segmentContainer;
+        [Inject] private GameSetup _gameSetup;
 
         [Inject] private DiContainer _container;
         
@@ -49,6 +50,7 @@ namespace _Testing
         [Inject]
         private void PostInject()
         {
+            _gameSetup.Setup();
             CreatePlayer();
             _gameAreaManager.SpawnNewIsland();
         

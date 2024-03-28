@@ -3,6 +3,7 @@ using System;
 public enum UnitType
 {
     Player = 0,
+    IslandHeart = 26,
     
     //Enemies
     TestEnemy = 1,

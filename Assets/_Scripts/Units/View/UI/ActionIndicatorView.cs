@@ -28,7 +28,7 @@ namespace Views
         public void Render(Tile tile)
         {
             CurrentTile = tile;
-            positioner.SetPosition(tile.WorldPosition);
+            positioner.SetPosition(tile.FlatPosition);
             int damage = GameStateContainer.Player.Weapon.CalculateDamage(CurrentTile);
             bool unitIsInvincible = tile.HasUnit && tile.Unit.Value.IsInvincible.Value;
             

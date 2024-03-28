@@ -15,7 +15,6 @@ namespace Models
         Village,
         Ruin,
         Start,
-        End,
         MiniBoss,
         Boss
     }

@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Container;
+using DG.Tweening;
 using Installer;
 using Models;
 using Views;
 using Zenject;
 using UniRx;
+using UnityEngine;
 using Unit = Models.Unit;
 
 namespace Factories
@@ -19,6 +21,9 @@ namespace Factories
         [Inject] private UnitFactory _unitFactory;
         [Inject] private UnitContainer _unitContainer;
         [Inject] private UnitDeathActionContainer _unitDeathActionContainer;
+        [Inject] private ItemContainer _itemContainer;
+
+        [Inject] private WorldShipView _shipView;
 
         [Inject] private SegmentContainer _segmentContainer;
         [Inject] private DiContainer _container;
@@ -27,11 +32,11 @@ namespace Factories
 
         public SegmentFactory()
         {
+            _segmentSpawnActions[SegmentType.Start] = CreateStartSegment;
             _segmentSpawnActions[SegmentType.Ruin] = CreateSimpleEnemySegment;
             _segmentSpawnActions[SegmentType.Forrest] = CreateSimpleEnemySegment;
             _segmentSpawnActions[SegmentType.WolfCamp] = CreateWolfCamp;
             _segmentSpawnActions[SegmentType.MiniBoss] = CreateMiniBossSegment;
-            _segmentSpawnActions[SegmentType.End] = CreateEndSegment;
         }
 
         public SegmentView CreateSegmentView(Segment segment, SegmentView prefab = null)
@@ -53,6 +58,11 @@ namespace Factories
                 {
                     unit =
                         _unitFactory.CreateEnemy(_unitContainer.GetEnemyDefinition(definition.Type), tile);
+                }
+                else if (definition.Type.ToString().ToLower().Contains("interact"))
+                {
+                    unit = _unitFactory.CreateUnit(
+                        _unitContainer.GetInteractableDefinition(definition.Type), tile);
                 }
                 else
                 {
@@ -77,7 +87,6 @@ namespace Factories
                 SegmentType.WolfCamp => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
                 SegmentType.Village => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
                 SegmentType.Start => _container.Instantiate<Segment>(new object[]{prefab, center}),
-                SegmentType.End => _container.Instantiate<Segment>(new object[]{prefab, center}),
                 SegmentType.Ruin => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
                 SegmentType.MiniBoss => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
                 SegmentType.Boss => _container.Instantiate<DefeatSegment>(new object[]{prefab, center}),
@@ -124,31 +133,42 @@ namespace Factories
         private void CreateMiniBossSegment(Segment segment)
         {
             Unit miniBoss = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.FishermanMiniBoss);
+            Unit heart = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.IslandHeart);
             if(miniBoss == null)
                 throw new Exception("No Mini Boss in End Segment");
-            miniBoss.DeathActions.Add(_unitDeathActionContainer.UnlockEndTileAction);
-
-            foreach (Tile tile in segment.ExitTiles)
+            miniBoss.DeathActions.Add(tile =>
             {
-                var definition = _unitContainer.GetUnitDefinition(UnitType.PathBlocker);
-                var obstacle = _unitFactory.CreateUnit(definition, tile);
+                heart.IsInvincible.Value = false;
+            });
+            
+            heart.DeathActions.Add(tile =>
+            {
+                Loot loot = _itemContainer.GetRandomUnitLoot(heart, 15);
+                loot.RewardTo(GameStateContainer.Player, tile.WorldPosition);
+                WorldLootContainer.AddToLootDrops(loot);
+                WorldLootContainer.DropLoot.Execute();
 
-                var sub = miniBoss.IsDead.Where(b => b).Subscribe(_ =>
+                Sequence sequence = DOTween.Sequence();
+                sequence.InsertCallback(.7f, () =>
                 {
-                    obstacle.Damage(obstacle.Health.Value, null, true);
+                    var explosionTargetTile = tile.Island.StartTile.Neighbours.FirstOrDefault(t => !t.HasUnit);
+                    explosionTargetTile?.MoveUnit(GameStateContainer.Player);
                 });
-                obstacle.UnitSubscriptions.Insert(0, sub);
-            }
+            });
         }
 
-        private void CreateEndSegment(Segment segment)
+        private void CreateStartSegment(Segment segment)
         {
-            for (int i = 0; i < 2; i++)
-            {
-                var rand = segment.Tiles.PickRandom();
-                var definition = _unitContainer.GetInteractableDefinition(UnitType.ChestInteractable);
-                var chest = _unitFactory.CreateUnit(definition, rand);
-            }
+            var center = segment.CenterTile;
+            var averageDirection = center.GetAverageDirection();
+
+            var worldShip = _container.InstantiatePrefab(_shipView).GetComponent<WorldShipView>();
+            worldShip.Initialize(center.Island);
+            
+            worldShip.transform.position = center.WorldPosition;
+            worldShip.transform.right = averageDirection;
+            
+            
         }
 
         private void CreateSimpleEnemySegment(Segment segment)

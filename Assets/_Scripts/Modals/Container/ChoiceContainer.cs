@@ -8,30 +8,29 @@ public enum Choices
     NextIsland,
     ToShip,
     IncreaseHealth,
-    IncreaseDamage
+    IncreaseDamage,
+    IncreaseRange
 }
 
 [System.Serializable]
 public class ChoiceDefinition
 {
-    public Sprite Icon;
     public string CardText;
+    public Sprite Icon;
+    public Choices Choice;
 }
 
 public class ChoiceContainer
 {
     private Dictionary<Choices, ChoiceDefinition> _choiceDefinitions = new();
     public ChoiceContainer(
-        ChoiceDefinition nextIsland,
-        ChoiceDefinition toShip,
-        ChoiceDefinition increaseHealth,
-        ChoiceDefinition increaseDamage
+        ChoiceDefinition[] choices
         )
     {
-        _choiceDefinitions[Choices.NextIsland] = nextIsland;
-        _choiceDefinitions[Choices.ToShip] = toShip;
-        _choiceDefinitions[Choices.IncreaseHealth] = increaseHealth;
-        _choiceDefinitions[Choices.IncreaseDamage] = increaseDamage;
+        foreach (ChoiceDefinition c in choices)
+        {
+            _choiceDefinitions[c.Choice] = c;
+        }
     }
 
     public Choice GetChoice(Choices choices, Action logic)

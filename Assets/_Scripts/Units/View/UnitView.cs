@@ -16,6 +16,7 @@ namespace Views
     {
         [SerializeField] private float deathDuration = .3f;
         [SerializeField] private Transform visual;
+        [SerializeField] private GameObject invincibilityVisual;
         [SerializeField] private Animator animator;
         [SerializeField] private float selectedPulseSpeed;
         [SerializeField] private float selectedPulseIntensity;
@@ -41,6 +42,8 @@ namespace Views
             
             transform.position = unit.Tile.Value.WorldPosition + offset;
 
+            unit.IsInvincible.Subscribe(isInvincible => invincibilityVisual.SetActive(isInvincible));
+            
             unit.IsDead
                 .Where(b => b)
                 .Subscribe(_ => DeathEvent())

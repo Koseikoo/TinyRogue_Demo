@@ -18,7 +18,7 @@ public static class IslandHelper
 
         for (int i = 0; i < center.Neighbours.Count; i++)
         {
-            Vector3 tileDir = (center.Neighbours[i].WorldPosition - center.WorldPosition).normalized;
+            Vector3 tileDir = (center.Neighbours[i].FlatPosition - center.FlatPosition).normalized;
             dot = Vector3.Dot(tileDir, direction);
             if(dot > lastDot)
             {
@@ -47,7 +47,7 @@ public static class IslandHelper
 
         foreach (Tile tile in tiles)
         {
-            float distance = (worldPosition - tile.WorldPosition).magnitude;
+            float distance = (worldPosition - tile.FlatPosition).magnitude;
             if (closest == null || distance < closestDistance)
             {
                 closest = tile;
@@ -61,10 +61,9 @@ public static class IslandHelper
         return closest;
     }
 
-    public static Segment GetClosestSegment(this List<Segment> segments, Segment segment)
+    public static Segment GetClosestSegment(this List<Segment> segments, Tile tile)
     {
-        var orderedSegments = segments.OrderBy(s => Vector3.Distance(s.CenterTile.WorldPosition, segment.CenterTile.WorldPosition));
-        return orderedSegments.First(s => s != segment);
+        return segments.OrderBy(s => Vector3.Distance(s.CenterTile.FlatPosition, tile.FlatPosition)).First();
     }
 
     public static Vector3 GetExtendedPositionFromCamera(this Camera camera, Vector2 screenPosition)
@@ -76,6 +75,19 @@ public static class IslandHelper
         var direction = (worldPosition - startPosition).normalized;
         float t = -startPosition.y / direction.y;
         return startPosition + t * direction;
+    }
+
+    public static Vector3 GetAverageDirection(this Tile tile)
+    {
+        Vector3 mean = default;
+
+        foreach (Tile n in tile.Neighbours)
+        {
+            mean += (n.FlatPosition - tile.FlatPosition).normalized;
+        }
+
+        Vector3 average = mean / tile.Neighbours.Count;
+        return average;
     }
 
     public static Vector3 GetWorldSwipeVector(this Camera camera, Vector2 startPosition, Vector2 touchPosition)
@@ -106,68 +118,27 @@ public static class IslandHelper
 
     public static List<Tile> OrderByDistanceToPosition(this List<Tile> tiles, Vector3 referencePosition)
     {
-        List<Tile> orderedTiles = tiles.OrderBy(tile => Vector3.Distance(tile.WorldPosition, referencePosition)).ToList();
+        List<Tile> orderedTiles = tiles.OrderBy(tile => Vector3.Distance(tile.FlatPosition, referencePosition)).ToList();
         return orderedTiles;
     }
 
     public static List<Tile> GetSegmentTiles(this List<Tile> tiles, Segment segment)
     {
         return tiles.GetMatchingTiles(tile =>
-            Vector3.Distance(tile.WorldPosition, segment.CenterTile.WorldPosition) < segment.Radius + Island.TileBuffer);
+            Vector3.Distance(tile.FlatPosition, segment.CenterTile.FlatPosition) < segment.Radius + Island.TileBuffer);
     }
     
     public static Tile GetTileClosestToPosition(this List<Tile> tiles, Vector3 position)
     {
-        List<Tile> matches = tiles.GetMatchingTiles(tile => Vector3.Distance(tile.WorldPosition, position) < Island.HexagonSize);
+        List<Tile> matches = tiles.GetMatchingTiles(tile => Vector3.Distance(tile.FlatPosition, position) < Island.HexagonSize);
         if (matches == null || matches.Count == 0)
             return null;
         return matches[0];
     }
 
-    public static List<Tile> GetSpacedTiles(this Island island, int amount, int spacingInTiles)
-    {
-        List<Tile> spacedTiles = new();
-        List<Tile> tempTiles = new(island.Tiles);
-
-        List<Tile> fromStartTile = tempTiles.GetTilesWithinDistance(island.StartTile, spacingInTiles);
-        List<Tile> fromEndTile = tempTiles.GetTilesWithinDistance(island.EndTile, spacingInTiles);
-
-        tempTiles.Remove(fromStartTile);
-        tempTiles.Remove(fromEndTile);
-
-        while (spacedTiles.Count < amount)
-        {
-            try
-            {
-                var tile = tempTiles.PickRandom();
-                List<Tile> tiles = tempTiles.GetTilesWithinDistance(tile, spacingInTiles);
-                tempTiles.Remove(tiles);
-                tempTiles.Remove(tile);
-                spacedTiles.Add(tile);
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"{e.Message}. Exited with {spacedTiles.Count}/{amount} Spaced Tiles!");
-                return spacedTiles;
-            }
-        }
-
-        return spacedTiles;
-
-    }
-
-    public static List<Tile> GetOrderedEnemyTiles(this List<Tile> tiles)
-    {
-        var enemyTiles = tiles
-            .GetMatchingTiles(tile => tile.HasUnit && tile.Unit.Value is Enemy)
-            .OrderBy(tile =>
-            (tile.WorldPosition - GameStateContainer.Player.Tile.Value.WorldPosition).magnitude);
-        return new List<Tile>(enemyTiles);
-    }
-    
     public static Tile GetTileFurthestAway(this List<Tile> tiles, Tile referenceTile)
     {
-        var orderedTiles = tiles.OrderByDistanceToPosition(referenceTile.WorldPosition);
+        var orderedTiles = tiles.OrderByDistanceToPosition(referenceTile.FlatPosition);
         return orderedTiles[^1];
     }
 }

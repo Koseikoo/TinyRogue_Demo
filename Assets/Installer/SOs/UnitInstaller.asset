@@ -261,3 +261,10 @@ MonoBehaviour:
     MaxHealth: 1
     Invincible: 1
     DropXp: 0
+  - name: IslandHeart
+    Type: 26
+    Prefab: {fileID: 7211317495799681698, guid: 702ff51311f664505bb2b5aa8c65a454,
+      type: 3}
+    MaxHealth: 3
+    Invincible: 1
+    DropXp: 1

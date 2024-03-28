@@ -18,20 +18,18 @@ MonoBehaviour:
     type: 3}
   _polygonConfig:
     Points: 20
-    Size: 6
+    Size: 7
     Distortion: 5
     LastPointWeight: 0.8
   Segments:
-  - {fileID: 6090336429288069753, guid: 4c1a6e5806a3149cfa895f9e2038d149, type: 3}
-  - {fileID: 7648519013306157072, guid: 56284974e6ae54ef8af38af4d847be78, type: 3}
-  - {fileID: 3743123127350617931, guid: 3222aa5208a534a2c919b15803a32d4f, type: 3}
+  - {fileID: 6733135655859725785, guid: fcbdf6a06b74044aba45462db9e0dd89, type: 3}
   StartSegment: {fileID: 4046348125292851383, guid: 0c4fb6282885049dc907b3e9abaa5c1a,
     type: 3}
-  EndSegment: {fileID: 9022113833237524630, guid: ab5e5cb4e81c34bec9d7e20efb9b974d,
-    type: 3}
   BossSegments:
-  - {fileID: 3643255497877157603, guid: 943615db5642e4211a339687a288c428, type: 3}
-  _basePrefab: {fileID: 3935859009403347093, guid: dccd15ffc06e84fc1bafbe09f55b453d,
+  - {fileID: 2926853637499116750, guid: 8647e58d183aa4b5bacb499574f2f1f6, type: 3}
+  _worldShipPrefab: {fileID: 8358080062198941260, guid: ec0824c805fb9433db3e8f20d7257079,
+    type: 3}
+  _basePrefab: {fileID: 3935859009403347093, guid: 60454f094c0204cf4b84449a40ae7f8a,
     type: 3}
   _boardPrefab: {fileID: 3935859009403347093, guid: bd15c8ca3c4994aa7929036b2a139fa2,
     type: 3}
@@ -58,6 +56,8 @@ MonoBehaviour:
   _topPrefab: {fileID: 2636663731325711598, guid: ff162b0b8fb704d3c889858497c4ac6a,
     type: 3}
   _topSurfacePrefab: {fileID: 3935859009403347093, guid: 3df72fba40a5f4e5298b2628aa855bf3,
+    type: 3}
+  _topWeakPrefab: {fileID: 1872842795892363305, guid: 8609d427f5407410794ece3b3fa6ddfb,
     type: 3}
   DEBUG_SPHERE: {fileID: 2231585923342052213, guid: b413be727a80a4647a3abba2a31a1e39,
     type: 3}

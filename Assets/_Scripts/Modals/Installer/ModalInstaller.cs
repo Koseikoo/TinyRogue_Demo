@@ -17,10 +17,7 @@ namespace Modals.Installer
         [SerializeField] private UnlockRecipeUIModal _unlockRecipeUIPrefab;
 
         [Header("Choice Modal")]
-        [SerializeField] private ChoiceDefinition NextIslandChoice;
-        [SerializeField] private ChoiceDefinition ToShipChoice;
-        [SerializeField] private ChoiceDefinition IncreaseHealthChoice;
-        [SerializeField] private ChoiceDefinition IncreaseDamageChoice;
+        [SerializeField] private ChoiceDefinition[] choiceDefinitions;
         public override void InstallBindings()
         {
             Container.Bind<EnemyInfoModalView>().FromInstance(_enemyInfoModalPrefab).AsSingle();
@@ -30,7 +27,7 @@ namespace Modals.Installer
             Container.Bind<CraftModalUIView>().FromInstance(craftModalUIPrefab).AsSingle();
             Container.Bind<UnlockRecipeUIModal>().FromInstance(_unlockRecipeUIPrefab).AsSingle();
 
-            Container.Bind<ChoiceContainer>().FromInstance(new(NextIslandChoice, ToShipChoice, IncreaseHealthChoice, IncreaseDamageChoice)).AsSingle();
+            Container.Bind<ChoiceContainer>().FromInstance(new(choiceDefinitions)).AsSingle();
 
             Container.Bind<ModalFactory>().AsSingle();
         }

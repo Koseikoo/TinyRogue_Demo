@@ -89,7 +89,7 @@ namespace Game
             if(_playerManager.Weapon.HasAttackCharge)
             {
                 var tilesFromWeapon = GetSwipedTiles(_playerManager.Weapon.Tile.Value,
-                    _gameAreaManager.TileCollection.GetClosestTileFromPosition(_playerManager.Weapon.Tile.Value.WorldPosition + swipeVector));
+                    _gameAreaManager.TileCollection.GetClosestTileFromPosition(_playerManager.Weapon.Tile.Value.FlatPosition + swipeVector));
 
                 var matching =
                     tilesFromWeapon.GetMatchingTiles(tile => tile.Unit.Value != GameStateContainer.Player);
@@ -117,7 +117,7 @@ namespace Game
         private void HandleMoveMode(Vector3 swipeVector)
         {
             var tilesFromPlayer = GetSwipedTiles(_playerManager.Player.Tile.Value,
-                _playerManager.Player.Tile.Value.TileCollection.GetClosestTileFromPosition(_playerManager.Player.Tile.Value.WorldPosition + swipeVector));
+                _playerManager.Player.Tile.Value.TileCollection.GetClosestTileFromPosition(_playerManager.Player.Tile.Value.FlatPosition + swipeVector));
 
             if(tilesFromPlayer.Count < 2)
                 return;
@@ -142,7 +142,7 @@ namespace Game
         private void HandleDefaultMode(Vector3 swipeVector)
         {
             var tilesFromPlayer = GetSwipedTiles(_playerManager.Player.Tile.Value,
-                _playerManager.Player.Tile.Value.TileCollection.GetClosestTileFromPosition(_playerManager.Player.Tile.Value.WorldPosition + swipeVector));
+                _playerManager.Player.Tile.Value.TileCollection.GetClosestTileFromPosition(_playerManager.Player.Tile.Value.FlatPosition + swipeVector));
 
             if (_playerManager.Player.SelectedTiles.Count > 0)
             {
@@ -162,7 +162,7 @@ namespace Game
                 return;
             
             Tile startTile = _playerManager.Weapon.Tile.Value;
-            Tile endTile = _gameAreaManager.TileCollection.GetClosestTileFromPosition(startTile.WorldPosition + swipeVector);
+            Tile endTile = _gameAreaManager.TileCollection.GetClosestTileFromPosition(startTile.FlatPosition + swipeVector);
             List<Tile> tiles = GetSwipedTiles(startTile, endTile);
             List<Tile> attackTiles = new();
             
@@ -204,7 +204,7 @@ namespace Game
         private void MovePlayer(Vector3 swipeVector)
         {
             Tile tile = _gameAreaManager.TileCollection.GetClosestTileFromPosition(
-                _playerManager.Player.Tile.Value.WorldPosition + swipeVector);
+                _playerManager.Player.Tile.Value.FlatPosition + swipeVector);
             if(tile == _playerManager.Player.Tile.Value)
                 return;
             
@@ -228,7 +228,7 @@ namespace Game
             if(InMoveMode || InWeaponMode)
                 return;
 
-            var worldPosition = _playerManager.Player.Tile.Value.WorldPosition + swipeVector;
+            var worldPosition = _playerManager.Player.Tile.Value.FlatPosition + swipeVector;
             Tile worldTile = _gameAreaManager.TileCollection.GetTileClosestToPosition(worldPosition);
             
             if(worldTile == null)

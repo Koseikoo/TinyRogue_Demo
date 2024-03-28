@@ -32,7 +32,7 @@ public class CameraView : MonoBehaviour
         cameraTransform = transform.GetChild(0);
         localStartRotation = cameraTransform.localRotation.eulerAngles;
 
-        player.Tile.Where(tile => tile != null).Subscribe(tile => CameraLerp(tile.WorldPosition)).AddTo(this);
+        player.Tile.Where(tile => tile != null).Subscribe(tile => CameraLerp(tile.FlatPosition)).AddTo(this);
         _cameraModel.ForwardShakeCommand
             .Subscribe(_ => ShakeAnimation(GameStateContainer.Player.Weapon.AttackDirection.Value * scaleIntensity))
             .AddTo(this);
@@ -53,7 +53,7 @@ public class CameraView : MonoBehaviour
 
     private void ShakeAnimation(Vector3 direction)
     {
-        Vector3 startPosition = GameStateContainer.Player.Tile.Value.WorldPosition;
+        Vector3 startPosition = GameStateContainer.Player.Tile.Value.FlatPosition;
         
         attackTween?.Kill();
         attackTween = transform

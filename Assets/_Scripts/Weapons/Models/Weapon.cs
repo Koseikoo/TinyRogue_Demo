@@ -107,6 +107,10 @@ namespace Models
                 {
                     var attackMod = ModSlots[0].Item.Value as Mod;
                     attackMod.Power.Value++;
+                }),
+                _choiceContainer.GetChoice(Choices.IncreaseRange, () =>
+                {
+                    Range++;
                 })
             };
             _modalFactory.CreateChoiceModal(choices, false);
@@ -138,7 +142,7 @@ namespace Models
             for (int i = 0; i < tiles.Count; i++)
             {
                 float t = Mathf.InverseLerp(0, 
-                    (startTile.WorldPosition - tiles[^1].WorldPosition).magnitude, (startTile.WorldPosition - tiles[i].WorldPosition).magnitude);
+                    (startTile.FlatPosition - tiles[^1].FlatPosition).magnitude, (startTile.FlatPosition - tiles[i].FlatPosition).magnitude);
                 int index = i;
                 sequence.InsertCallback(_attackDelayCurve.Evaluate(t) * AttackAnimationDuration,
                     () =>
@@ -163,7 +167,7 @@ namespace Models
         public void ReturnToHolster()
         {
             DropComboLootCommand.Execute();
-            Vector3 worldSwipeVector = Owner.Tile.Value.WorldPosition - Tile.Value.WorldPosition;
+            Vector3 worldSwipeVector = Owner.Tile.Value.FlatPosition - Tile.Value.FlatPosition;
 
             List<Tile> allTiles = Tile.Value.TileCollection;
             List<Tile> tiles = allTiles

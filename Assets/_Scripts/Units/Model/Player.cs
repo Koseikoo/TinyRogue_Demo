@@ -50,7 +50,7 @@ namespace Models
             if(swipedTile == null || swipedTile.HasUnit)
                 return false;
 
-            FacingDirection = (swipedTile.WorldPosition - Tile.Value.WorldPosition).normalized;
+            FacingDirection = (swipedTile.FlatPosition - Tile.Value.FlatPosition).normalized;
             swipedTile.MoveUnit(this);
             Weapon.RecoverAttackCharge();
             return true;
@@ -66,7 +66,7 @@ namespace Models
             Vector3 worldSwipeDirection = (Vector3.forward * swipe.y) + (Vector3.right * swipe.x);
             worldSwipeDirection.Normalize();
             worldSwipeDirection = MathHelper.RotateVector(worldSwipeDirection, Vector3.up, AnchorYRotation.Value);
-            float length = (Tile.Value.WorldPosition - Tile.Value.Neighbours[0].WorldPosition).magnitude;
+            float length = (Tile.Value.FlatPosition - Tile.Value.Neighbours[0].FlatPosition).magnitude;
             worldSwipeDirection *= length;
 
             Tile closestNeighbour = IslandHelper.GetNeighbourFromDirection(Tile.Value, worldSwipeDirection);

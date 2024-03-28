@@ -24,15 +24,35 @@ MonoBehaviour:
     type: 3}
   _unlockRecipeUIPrefab: {fileID: 9117847949292215577, guid: 538de92d867924f63ab488bbe64930d2,
     type: 3}
-  NextIslandChoice:
+  choiceDefinitions:
+  - CardText: Next Island
     Icon: {fileID: 21300000, guid: 0155b3c43d8ae4647901c44516fa5216, type: 3}
-    CardText: Next Island
-  ToShipChoice:
+    Choice: 0
+  - CardText: Return to Ship
     Icon: {fileID: 21300000, guid: 666eb5393fe20274fb4af49f04eab151, type: 3}
-    CardText: Return to Ship
-  IncreaseHealthChoice:
+    Choice: 1
+  - CardText: Health Up
     Icon: {fileID: 21300000, guid: 574945229bfba460da3e6cfcb65abd26, type: 3}
-    CardText: Health Up
-  IncreaseDamageChoice:
+    Choice: 2
+  - CardText: Damage Up
     Icon: {fileID: 21300000, guid: 898a891d03d184a568f9a7f5af83dd58, type: 3}
+    Choice: 3
+  - CardText: Range Up
+    Icon: {fileID: 21300000, guid: c37a0aa19715f4914b3d837c24a79237, type: 3}
+    Choice: 4
+  ToShipChoice:
+    CardText: Return to Ship
+    Icon: {fileID: 21300000, guid: 666eb5393fe20274fb4af49f04eab151, type: 3}
+    Choice: 1
+  IncreaseHealthChoice:
+    CardText: Health Up
+    Icon: {fileID: 21300000, guid: 574945229bfba460da3e6cfcb65abd26, type: 3}
+    Choice: 2
+  IncreaseDamageChoice:
     CardText: Damage Up
+    Icon: {fileID: 21300000, guid: 898a891d03d184a568f9a7f5af83dd58, type: 3}
+    Choice: 3
+  IncreaseRangeChoice:
+    CardText: Range Up
+    Icon: {fileID: 21300000, guid: c37a0aa19715f4914b3d837c24a79237, type: 3}
+    Choice: 4

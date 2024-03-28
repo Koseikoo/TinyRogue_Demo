@@ -21,8 +21,8 @@ namespace Installer
 
         [SerializeField] private SegmentView[] Segments;
         [SerializeField] private SegmentView StartSegment;
-        [SerializeField] private SegmentView EndSegment;
         [SerializeField] private SegmentView[] BossSegments;
+        [SerializeField] private WorldShipView _worldShipPrefab;
 
         [Header("Tile Visuals")]
         [Header("Grass")]
@@ -45,6 +45,7 @@ namespace Installer
         [Header("Terrain")]
         [SerializeField] private GameObject _topPrefab;
         [SerializeField] private GameObject _topSurfacePrefab;
+        [SerializeField] private GameObject _topWeakPrefab;
         
         #if UNITY_EDITOR
         [Header("DEBUG")]
@@ -63,6 +64,7 @@ namespace Installer
             Container.Bind<TileView>().FromInstance(_tilePrefab).AsSingle();
             Container.Bind<IslandView>().FromInstance(_islandPrefab).AsSingle();
             Container.Bind<PolygonConfig>().FromInstance(_polygonConfig).AsSingle();
+            Container.Bind<WorldShipView>().FromInstance(_worldShipPrefab).AsSingle();
 
 #if UNITY_EDITOR
             Container.Bind<GameObject>().WithId("Sphere").FromInstance(DEBUG_SPHERE).AsSingle();
@@ -90,11 +92,12 @@ namespace Installer
             
             Container.Bind<TerrainContainer>().FromInstance(new(
                 _topPrefab,
-                _topSurfacePrefab)).AsSingle();
+                _topSurfacePrefab,
+                _topWeakPrefab)).AsSingle();
 
             Container.Bind<TileActionContainer>().AsSingle();
 
-            Container.Bind<SegmentContainer>().FromInstance(new(Segments, StartSegment, EndSegment, BossSegments)).AsSingle();
+            Container.Bind<SegmentContainer>().FromInstance(new(Segments, StartSegment, BossSegments)).AsSingle();
         }
 
         private void BindFactories()
@@ -117,14 +120,11 @@ namespace Installer
         public SegmentContainer(
             SegmentView[] segmentDefinitions, 
             SegmentView start, 
-            SegmentView end, 
             SegmentView[] bossDefinitions)
         {
             SegmentPool = new(segmentDefinitions.ToList());
             
             StartSegment = start;
-            EndSegment = end;
-
             BossSegments = new(bossDefinitions.ToList());
         }
 
@@ -132,8 +132,6 @@ namespace Installer
         {
             if (type == SegmentType.Start)
                 return StartSegment;
-            if (type == SegmentType.End)
-                return EndSegment;
             
             SegmentView prefab = SegmentPool.FirstOrDefault(p => p.Type == type);
             if (prefab != null)

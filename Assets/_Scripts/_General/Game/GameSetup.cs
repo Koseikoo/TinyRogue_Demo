@@ -39,7 +39,7 @@ namespace Game
     
             _tileActionContainer.IslandEndAction = unit =>
             {
-                if (unit is Player && _gameAreaManager.Island.EndTileUnlocked.Value)
+                if (unit is Player && _gameAreaManager.Island.IsHeartDestroyed.Value)
                 {
                     List<Choice> choices = new()
                     {

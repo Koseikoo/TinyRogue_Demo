@@ -32,7 +32,7 @@ namespace Views
         public void Initialize(Segment segment)
         {
             _segment = segment;
-            transform.position = _segment.CenterTile.WorldPosition;
+            transform.position = _segment.CenterTile.FlatPosition;
 
             segment.IsDestroyed
                 .Where(b => b)
@@ -55,7 +55,7 @@ namespace Views
             if(Application.isEditor)
                 Gizmos.DrawWireSphere(transform.position + (Vector3.up * 2), Size * Island.TileDistance);
         }
-
+        
         private void CompleteSegmentAnimation()
         {
             Sequence sequence = DOTween.Sequence();
@@ -63,18 +63,17 @@ namespace Views
 
             sequence.AppendInterval(.2f);
 
-            foreach (Unit unit in _segment.Units.Where(unit => unit.Health.Value > 0))
-            {
-                sequence.InsertCallback(delay, () =>
-                {
-                    unit.IncreaseComboWithDeath = false;
-                    unit.Damage(unit.Health.Value, GameStateContainer.Player);
-            
-                    _cameraModel.RotationShakeCommand.Execute();
-                });
-
-                delay += destroyDelay;
-            }
+            //foreach (Unit unit in _segment.Units.Where(unit => unit.Health.Value > 0))
+            //{
+            //    sequence.InsertCallback(delay, () =>
+            //    {
+            //        unit.IncreaseComboWithDeath = false;
+            //        unit.Damage(unit.Health.Value, GameStateContainer.Player);
+            //
+            //        _cameraModel.RotationShakeCommand.Execute();
+            //    });
+            //    delay += destroyDelay;
+            //}
 
             sequence.OnComplete(() =>
             {

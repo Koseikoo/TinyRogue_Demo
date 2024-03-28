@@ -31,28 +31,29 @@ namespace Views
         {
             Vector3 startPosition = transform.position;
             Vector3 endPosition = tile.WorldPosition;
-            Vector3 lookDirection = endPosition - startPosition;
+            Vector3 lastLookDirection = transform.forward;
+            Vector3 lookDirection = new Vector3(endPosition.x, 0f, endPosition.z) - new Vector3(startPosition.x, 0f, startPosition.z);
             lookDirection.Normalize();
-            
+
             _sequence?.Kill();
             _sequence = DOTween.Sequence();
 
             _sequence
                 .Insert(0f, DOTween.To(() => 0f, t =>
-                {
-                    float adjustedT = movementCurve.Evaluate(t);
-                    Vector3 position = Vector3.Lerp(startPosition, endPosition, adjustedT);
-                    float yOffset = GetYOffset(startPosition, tile, adjustedT);
-                    transform.position = position;
-                    visual.localPosition = new Vector3(0f, yOffset, 0f);
-                    visual.localScale = GetScale(adjustedT);
-                }, 1f, animationDuration)
+                    {
+                        float adjustedT = movementCurve.Evaluate(t);
+                        Vector3 position = Vector3.Lerp(startPosition, endPosition, adjustedT);
+                        float yOffset = GetYOffset(startPosition, tile, adjustedT);
+                        transform.position = position;
+                        transform.forward = Vector3.Lerp(lastLookDirection, lookDirection, t).normalized;
+                        visual.localPosition = new Vector3(0f, yOffset, 0f);
+                        visual.localScale = GetScale(adjustedT);
+                    }, 1f, animationDuration)
                     .OnComplete(() => jumpImpactFX.Play()))
                 .Insert(0f, DOTween.To(() => 0f, t =>
                 {
                     visual.localScale = GetScale(movementCurve.Evaluate(t));
-                }, 1f, scaleAnimationDuration))
-                .Insert(0f, transform.DOLookAt(tile.WorldPosition, animationDuration));
+                }, 1f, scaleAnimationDuration));
 
         }
 
@@ -89,7 +90,7 @@ namespace Views
         private float GetYOffset(Vector3 startPosition, Tile targetTile, float t)
         {
             float startY = startPosition.y;
-            float endY = targetTile.WorldPosition.y + GetBoardOffset(targetTile);
+            float endY = targetTile.FlatPosition.y + GetBoardOffset(targetTile);
             float yJump = Mathf.Lerp(0f, maxJumpHeight, jumpCurve.Evaluate(t));
             yJump += Mathf.Lerp(startY, endY, t);
             return yJump;

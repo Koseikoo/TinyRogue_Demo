@@ -80,11 +80,11 @@ Material:
     m_Ints: []
     m_Floats:
     - Boolean_E4E707D1: 0
-    - Vector1_13DEACAE: 0.275
+    - Vector1_13DEACAE: 1
     - Vector1_661A11A: 0.264
     - Vector1_6D03B08B: -0.19
     - Vector1_AC160EDC: 0.04
-    - Vector1_C6F4E428: 0
+    - Vector1_C6F4E428: 1
     - Vector1_D2E099A1: 0
     - _AlphaClip: 0
     - _Blend: 0

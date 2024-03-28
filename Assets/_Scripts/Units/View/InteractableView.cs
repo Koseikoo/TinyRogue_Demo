@@ -12,7 +12,7 @@ namespace Views
         {
             _interactable = interactable;
 
-            transform.position = interactable.Tile.Value.WorldPosition;
+            transform.position = interactable.Tile.Value.FlatPosition;
         }
     }
 }

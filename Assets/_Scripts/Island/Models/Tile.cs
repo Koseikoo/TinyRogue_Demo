@@ -31,12 +31,16 @@ namespace Models
     {
         public const float BoardOffset = .15f;
         public const float GrassOffset = .1f;
+        
+        private const float HeightMult = .5f;
 
-        public Vector3 WorldPosition;
+        public Vector3 FlatPosition;
+        public int HeightLevel;
         public List<Tile> Neighbours = new();
         public ReactiveProperty<Unit> Unit = new();
 
         public bool IsSegmentTile;
+        public bool IsWeak;
         public BoolReactiveProperty Destroyed = new();
         public BoolReactiveProperty IsPathTile = new();
         public BoolReactiveProperty WeaponOnTile = new();
@@ -64,7 +68,9 @@ namespace Models
         public bool HasUnit => Unit.Value != null;
         public bool HasAliveUnit => Unit.Value != null && Unit.Value.Health.Value > 0;
         public bool IsStartTile => _island.StartTile == this;
-        public bool IsEndTile => _island.EndTile == this;
+        public bool IsHeartTile => _island.HeartTile == this;
+
+        public Vector3 WorldPosition => FlatPosition + (HeightLevel * HeightMult * Vector3.up);
 
         public Island Island => _island;
         public Ship Ship => _ship;
@@ -73,9 +79,9 @@ namespace Models
         public bool AttackBouncesFromTile => HasUnit && (Unit.Value.Health.Value > GameStateContainer.Player.Weapon.GetAttackDamage() || Unit.Value.IsInvincible.Value);
 
 
-        public Tile(Vector3 worldPosition)
+        public Tile(Vector3 flatPosition)
         {
-            WorldPosition = worldPosition;
+            FlatPosition = flatPosition;
             Node = new Node(this);
 
             _turnSubscription = GameStateContainer.TurnState
@@ -114,6 +120,14 @@ namespace Models
         public void RemoveUnit()
         {
             Unit.Value = null;
+            if (IsWeak && Island != null)
+            {
+                Island.Tiles.Remove(this);
+                foreach (Tile n in Neighbours)
+                    n.Neighbours.Remove(this);
+                Destroyed.Value = true;
+                
+            }
         }
 
         public void AddSelector(TileSelection selection)

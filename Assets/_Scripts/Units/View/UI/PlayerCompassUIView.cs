@@ -26,8 +26,8 @@ namespace Views
 
         private void UpdateNeedle(float yRotation)
         {
-            var needleDirection = _player.Tile.Value.Island.EndTile.WorldPosition -
-                                  _player.Tile.Value.WorldPosition;
+            var needleDirection = _player.Tile.Value.Island.HeartTile.FlatPosition -
+                                  _player.Tile.Value.FlatPosition;
             needleDirection.Normalize();
             var lookDirection = MathHelper.RotateVector(Vector3.forward, Vector3.up, yRotation);
 

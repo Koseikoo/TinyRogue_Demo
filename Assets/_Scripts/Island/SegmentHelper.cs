@@ -8,12 +8,12 @@ public static class SegmentHelper
     {
         for (int i = 0; i < segments.Count; i++)
         {
-            if (Vector3.Distance(segments[i].CenterTile.WorldPosition, segment.CenterTile.WorldPosition) < segments[i].Radius.GetSegmentDistance(segment.Radius))
+            if (Vector3.Distance(segments[i].CenterTile.FlatPosition, segment.CenterTile.FlatPosition) < segments[i].Radius.GetSegmentDistance(segment.Radius))
                 return true;
         }
         return false;
     }
-        
+
     public static bool IsWithinPolygon(this Vector3 position, Vector3[] polygon, float radius)
     {
         int numPointsOnCircle = 16;

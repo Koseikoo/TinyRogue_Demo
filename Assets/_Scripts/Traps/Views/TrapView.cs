@@ -18,7 +18,7 @@ namespace Views
             
             _tile.AddMoveToLogic(OnTrapTrigger);
 
-            Vector3 position = tile.WorldPosition;
+            Vector3 position = tile.FlatPosition;
             Vector3 offset = tile.BoardType != BoardType.None ? Vector3.up * Tile.BoardOffset : default;
 
             tile.Island.IsDestroyed

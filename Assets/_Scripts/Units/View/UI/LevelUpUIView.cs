@@ -39,7 +39,7 @@ namespace Views
         {
             if (_player == null)
                 return;
-            transform.position = UIHelper.Camera.WorldToScreenPoint(_player.Tile.Value.WorldPosition);
+            transform.position = UIHelper.Camera.WorldToScreenPoint(_player.Tile.Value.FlatPosition);
         }
     }
 }

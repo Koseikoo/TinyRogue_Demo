@@ -80,6 +80,9 @@ namespace _Testing
             if(definition == null)
                 definition = Assets.Enemies.FirstOrDefault(v => v.Type == type);
 
+            if (definition == null)
+                definition = Assets.Interactables.FirstOrDefault(v => v.Type == type);
+
             if (definition != null)
             {
                 

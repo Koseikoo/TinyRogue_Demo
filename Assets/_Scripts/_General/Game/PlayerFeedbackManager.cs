@@ -37,7 +37,7 @@ namespace Game
             
             if (GameStateContainer.GameState.Value == GameState.Ship)
             {
-                Tile endTile = _gameAreaManager.TileCollection.GetClosestTileFromPosition(_playerManager.Player.Tile.Value.WorldPosition + swipeVector);
+                Tile endTile = _gameAreaManager.TileCollection.GetClosestTileFromPosition(_playerManager.Player.Tile.Value.FlatPosition + swipeVector);
 
                 List<Tile> tiles = _gameAreaManager.TileCollection
                     .GetSwipedTiles(_playerManager.Player.Tile.Value, endTile)
@@ -58,13 +58,13 @@ namespace Game
                 Tile startTile = GameStateContainer.Player.Weapon.HasAttackCharge
                     ? _playerManager.Weapon.Tile.Value
                     : _playerManager.Player.Tile.Value;
-                Tile endTile = _gameAreaManager.TileCollection.GetClosestTileFromPosition(startTile.WorldPosition + swipeVector);
+                Tile endTile = _gameAreaManager.TileCollection.GetClosestTileFromPosition(startTile.FlatPosition + swipeVector);
 
                 List<Tile> tiles = _gameAreaManager.TileCollection
                     .GetSwipedTiles(startTile, endTile)
                     .GetTilesInWeaponRange(_playerManager.Weapon);
                     
-                _playerManager.Weapon.AimedPoint.Value = endTile.WorldPosition;
+                _playerManager.Weapon.AimedPoint.Value = endTile.FlatPosition;
                 UpdateSwipedTiles(new(tiles));
                 UpdateSelectedTiles(new List<Tile>(tiles)
                     .Truncate(1)
@@ -105,7 +105,7 @@ namespace Game
             }
             
             _playerManager.Player.SwipedTiles = new(_playerManager.Player.SwipedTiles.OrderBy(tile =>
-                Vector3.Distance(tile.WorldPosition, _playerManager.Weapon.Tile.Value.WorldPosition)));
+                Vector3.Distance(tile.FlatPosition, _playerManager.Weapon.Tile.Value.FlatPosition)));
         }
 
         private void UpdateAimTile()
@@ -143,7 +143,7 @@ namespace Game
             }
 
             List<Tile> orderedTiles = new(_playerManager.Player.SelectedTiles.OrderBy(tile =>
-                Vector3.Distance(tile.WorldPosition, _playerManager.Weapon.Tile.Value.WorldPosition)));
+                Vector3.Distance(tile.FlatPosition, _playerManager.Weapon.Tile.Value.FlatPosition)));
 
             _playerManager.Player.SelectedTiles = new(orderedTiles.FilterForBounceBack());
         }

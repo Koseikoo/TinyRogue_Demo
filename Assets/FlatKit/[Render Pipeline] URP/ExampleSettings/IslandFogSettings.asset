@@ -43,8 +43,8 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
-  near: 27
-  far: 34.8
+  near: 29.2
+  far: 31.4
   distanceFogIntensity: 1
   useDistanceFogOnSky: 1
   useHeight: 0

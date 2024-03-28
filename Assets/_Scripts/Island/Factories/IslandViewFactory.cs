@@ -80,14 +80,36 @@ namespace Factories
             GameObject terrain = Object.Instantiate(_terrain.GetTerrain(_currentTile.TerrainType),
                 _currentTileView.Visual);
             _currentTileView.AddVisual(terrain);
-
+            
+            float widthScale = terrain.transform.localScale.x;
+            
             if (_currentTile.TerrainType == TerrainType.Top)
             {
                 int randScale = Random.Range(4, 8);
-                terrain.transform.localScale = new(1, randScale, 1);
+                
+                terrain.transform.localScale = new(widthScale, randScale, widthScale);
                 terrain.transform.localPosition -= Vector3.up * (NegativeTerrainOffset * (randScale - 1));
             }
+            else if (_currentTile.TerrainType == TerrainType.Weak)
+            {
+                int weakScale = Random.Range(2, 4);
+                terrain.transform.localScale = new(widthScale, weakScale, widthScale);
+                terrain.transform.localPosition = new(0f, 1.3f, 0f);
+            }
             
+            return this;
+        }
+
+        public IslandViewFactory WithTerrainTest()
+        {
+            GameObject terrain = Object.Instantiate(_terrain.GetTerrain(TerrainType.Top),
+                _currentTileView.Visual);
+            _currentTileView.AddVisual(terrain);
+            
+            int randScale = Random.Range(4, 8);
+            terrain.transform.localScale = new(1, randScale, 1);
+            terrain.transform.localPosition -= Vector3.up * (NegativeTerrainOffset * (randScale - 1));
+
             return this;
         }
 

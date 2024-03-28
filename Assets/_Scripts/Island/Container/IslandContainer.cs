@@ -33,6 +33,7 @@ public enum TerrainType
 {
     None,
     Top,
+    Weak,
     Surface
 }
 
@@ -157,13 +158,16 @@ public class TerrainContainer
 {
     private GameObject _top;
     private GameObject _topSurface;
+    private GameObject _topWeak;
 
     public TerrainContainer(
         GameObject top,
-        GameObject topSurface)
+        GameObject topSurface,
+        GameObject topWeak)
     {
         _top = top;
         _topSurface = topSurface;
+        _topWeak = topWeak;
     }
 
     public GameObject GetTerrain(TerrainType type)
@@ -172,6 +176,7 @@ public class TerrainContainer
         {
             TerrainType.Top => _top,
             TerrainType.Surface => _topSurface,
+            TerrainType.Weak => _topWeak,
             _ => null
         };
     }

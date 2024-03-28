@@ -317,7 +317,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8480459645476490002}
   m_Layer: 0
-  m_Name: TileActionLockedSelection
+  m_Name: TileActionSelection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -430,7 +430,8 @@ MonoBehaviour:
   _weaponSelection: {fileID: 5988578670094908606}
   _blockedSelection: {fileID: 4023327465134561667}
   _actionIndicator: {fileID: 0}
-  _actionLocked: {fileID: 8543285009349999120}
+  _actionLocked: {fileID: 3777764398050755923}
+  _actionTile: {fileID: 8543285009349999120}
 --- !u!1001 &3955288317246280021
 PrefabInstance:
   m_ObjectHideFlags: 0

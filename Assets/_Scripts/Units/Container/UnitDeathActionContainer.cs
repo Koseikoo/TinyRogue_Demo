@@ -20,7 +20,7 @@ namespace Container
         {
             UnlockEndTileAction = tile =>
             {
-                tile.Island.EndTileUnlocked.Value = true;
+                tile.Island.IsHeartDestroyed.Value = true;
             };
             
             _unitDeathActions[UnitType.Grave] = tile =>
@@ -35,6 +35,11 @@ namespace Container
 
                 Unit golem = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.GolemEnemy);
                 golem.Damage(1, GameStateContainer.Player, true);
+            };
+            
+            _unitDeathActions[UnitType.IslandHeart] = tile =>
+            {
+                tile.Island.IsHeartDestroyed.Value = true;
             };
         }
 

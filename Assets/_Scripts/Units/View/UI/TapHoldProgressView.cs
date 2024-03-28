@@ -17,7 +17,7 @@ namespace Views
             if(GameStateContainer.Player == null)
                 return;
             
-            transform.position = UIHelper.Camera.WorldToScreenPoint(GameStateContainer.Player.Tile.Value.WorldPosition);
+            transform.position = UIHelper.Camera.WorldToScreenPoint(GameStateContainer.Player.Tile.Value.FlatPosition);
             _progressImage.fillAmount = _inputManager.MoveModeTracker / IntuitiveInputManager.MoveModeTimer;
         }
     }

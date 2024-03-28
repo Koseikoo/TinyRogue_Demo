@@ -42,17 +42,17 @@ public static class AStar
                 return AssignPath();
             }
 
-            Vector3 currentPosition = curNode.Tile.WorldPosition;
+            Vector3 currentPosition = curNode.Tile.FlatPosition;
             foreach (Tile tile in curNode.Tile.Neighbours)
             {
                 Node neighbour = tile.Node;
                 if (closed.Contains(neighbour)) continue;
 
-                float curGCost = curNode.G + Vector3.Distance(currentPosition, tile.WorldPosition);
+                float curGCost = curNode.G + Vector3.Distance(currentPosition, tile.FlatPosition);
                 if (curGCost < neighbour.G || !open.Contains(neighbour))
                 {
                     neighbour.G = curGCost;
-                    neighbour.H = Vector3.Distance(currentPosition, endTile.WorldPosition);
+                    neighbour.H = Vector3.Distance(currentPosition, endTile.FlatPosition);
                     neighbour.parentNode = curNode;
 
                     if (!open.Contains(neighbour))
