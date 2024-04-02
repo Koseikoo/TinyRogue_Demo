@@ -133,13 +133,13 @@ namespace Installer
             if (type == SegmentType.Start)
                 return StartSegment;
             
-            SegmentView prefab = SegmentPool.FirstOrDefault(p => p.Type == type);
-            if (prefab != null)
-                return prefab;
+            var prefabs = SegmentPool.Where(p => p.Type == type).ToList();
+            if (prefabs.Any())
+                return prefabs.PickRandom();
 
-            prefab = BossSegments.FirstOrDefault(p => p.Type == type);
-            if (prefab != null)
-                return prefab;
+            prefabs = BossSegments.Where(p => p.Type == type).ToList();
+            if (prefabs.Any())
+                return prefabs.PickRandom();
 
             throw new Exception($"No Segment Prefab of Type {type} in SegmentContainer");
         }

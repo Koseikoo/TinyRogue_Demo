@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UniRx;
 using Zenject;
@@ -22,7 +23,6 @@ namespace Models
     public class Weapon : IAttacker, IDisposable
     {
         public const int MaxCombo = 5;
-        public const float AttackAnimationDuration = .15f;
         
         private const int WeaponMods = 3;
         private const int RingDistanceInTiles = 2;
@@ -43,12 +43,14 @@ namespace Models
         public ReactiveProperty<Tile> Tile = new();
         public ReactiveProperty<Vector3> AttackDirection = new();
         public ReactiveProperty<Vector3> AimedPoint = new();
+        public ReactiveProperty<List<Tile>> AttackPath = new();
         public BoolReactiveProperty IsDestroyed = new();
 
         public ReactiveCommand DropComboLootCommand = new();
 
         public bool FixToHolster = new();
         public bool BounceBack;
+        public bool InAttack;
 
         public IntReactiveProperty Xp = new();
         public IntReactiveProperty Level = new();
@@ -122,7 +124,7 @@ namespace Models
             Level.Value = WeaponHelper.GetLevel(Xp.Value);
         }
 
-        public void AttackTiles(List<Tile> tiles, Tile startTile)
+        public void AttackTiles(List<Tile> tiles)
         {
             if(tiles == null || tiles.Count == 0)
                 throw new Exception("No Tiles To Attack!");
@@ -133,35 +135,27 @@ namespace Models
                 Debug.Log("Trigger 'no charge left' feedback here");
                 return;
             }
+            
+            var positions = tiles.Where(t => t.HasUnit && t != tiles[0] && t != tiles[^1]).ToList();
+            positions.Insert(0, tiles[0]);
+            positions.Add(tiles[^1]);
+            AttackPath.Value = new(positions);
 
-            Sequence sequence = DOTween.Sequence();
-
-            Move(tiles[^1]);
+            Move(positions[^1]);
             GameStateContainer.TurnState.Value = TurnState.PlayerTurnEnd;
-            
-            for (int i = 0; i < tiles.Count; i++)
-            {
-                float t = Mathf.InverseLerp(0, 
-                    (startTile.FlatPosition - tiles[^1].FlatPosition).magnitude, (startTile.FlatPosition - tiles[i].FlatPosition).magnitude);
-                int index = i;
-                sequence.InsertCallback(_attackDelayCurve.Evaluate(t) * AttackAnimationDuration,
-                    () =>
-                    {
-                        AttackTile(tiles[index], AttackDirection.Value);
-                    });
+        }
+        
+        public void AttackTile(Tile tile, Vector3 attackDirection)
+        {
+            Unit tileUnit = tile.Unit.Value;
+            if (tileUnit != null && tileUnit != GameStateContainer.Player) {
+                tileUnit.Attack(ModSlots.GetMods(), attackDirection, Owner);
+                _cameraModel.ForwardShakeCommand.Execute();
+                if (tileUnit.IsDead.Value)
+                {
+                    RecoverAttackCharge();
+                }
             }
-
-            sequence.OnComplete(() =>
-            {
-                BounceBack = tiles[^1].HasAliveUnit;
-                if (!HasAttackCharge || BounceBack)
-                    ReturnToHolster();
-
-            });
-
-            sequence.SetEase(Ease.Linear);
-            
-            sequence.Play();
         }
 
         public void ReturnToHolster()
@@ -217,19 +211,6 @@ namespace Models
         {
             if(GameStateContainer.Player.InAttackMode.Value)
                 GameStateContainer.Player.InAttackMode.Value = AttackCharges.Value > 0;
-        }
-        
-        private void AttackTile(Tile tile, Vector3 attackDirection)
-        {
-            Unit tileUnit = tile.Unit.Value;
-            if (tileUnit != null && tileUnit != GameStateContainer.Player) {
-                tileUnit.Attack(ModSlots.GetMods(), attackDirection, Owner);
-                _cameraModel.ForwardShakeCommand.Execute();
-                if (tileUnit.IsDead.Value)
-                {
-                    RecoverAttackCharge();
-                }
-            }
         }
         
         public void Move(Tile tappedTile)

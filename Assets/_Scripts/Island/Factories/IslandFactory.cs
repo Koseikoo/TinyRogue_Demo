@@ -43,6 +43,33 @@ namespace Factories
             return island;
         }
 
+        public Island CreateEnemyTestIsland(int size = 8)
+        {
+            Vector3[] polygon = _polygonFactory.Create(size);
+            Bounds bounds = polygon.GetBounds();
+            Vector3[,] baseGrid = _hexGridFactory.Create(bounds, Island.HexagonSize);
+            
+            (Dictionary<Vector2Int, Tile> tileDict, List<Tile> tiles, Vector2Int maxValue) = GetIslandTiles(baseGrid, polygon);
+            List<Tile> islandTiles = LinkTiles(tileDict, maxValue);
+            
+            var edgeTiles = SetEdgeTiles(tiles);
+            var startTile = edgeTiles.PickRandom();
+            startTile.AddMoveToLogic(_tileActionContainer.IslandEndAction);
+            var endTile = tiles.GetTileFurthestAway(startTile);
+            
+            Island island = _container.Instantiate<Island>(
+                new object[] {islandTiles, startTile, endTile, new List<Segment>(), 0});
+            
+            foreach (Tile tile in island.Tiles)
+            {
+                SetVisualAttributes(tile);
+            }
+            
+            _islandViewFactory.CreateIslandView(island);
+
+            return island;
+        }
+
         public Island CreateSegmentTestIsland(SegmentView segmentToTest)
         {
 

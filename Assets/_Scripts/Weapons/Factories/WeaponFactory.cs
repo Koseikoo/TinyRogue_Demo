@@ -6,7 +6,6 @@ namespace Factories
 {
     public class WeaponFactory
     {
-        [Inject] private WeaponView _weaponPrefab;
         [Inject] private SwordView _swordPrefab;
         [Inject] private DiContainer _container;
 
@@ -30,13 +29,6 @@ namespace Factories
                 weapon.AddMod(modDefinition.ItemDefinition.Type.GetModInstance(modDefinition.Power));
             
             return weapon;
-        }
-
-        private WeaponView CreateTestWeaponView(Weapon weapon)
-        {
-            WeaponView view = _container.InstantiatePrefab(_weaponPrefab).GetComponent<WeaponView>();
-            view.Initialize(weapon);
-            return view;
         }
 
         private SwordView CreateSwordView(Weapon weapon)

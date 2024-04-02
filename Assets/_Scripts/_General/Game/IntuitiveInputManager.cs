@@ -172,11 +172,12 @@ namespace Game
 
             for (int i = 0; i < tiles.Count; i++)
             {
-                if (tiles[i].Unit.Value == _playerManager.Player)
-                    continue;
-                
                 attackTiles.Add(tiles[i]);
                 Unit unit = tiles[i].Unit.Value;
+                
+                if(unit is Player)
+                    continue;
+                
                 if (unit != null && (unit.Health.Value > attackDamage || unit.IsInvincible.Value))
                 {
                     endTile = tiles[i];
@@ -195,7 +196,7 @@ namespace Game
             InWeaponMode = !bounceBack;
 
             _playerManager.Weapon.AttackDirection.Value = swipeVector.normalized;
-            _playerManager.Weapon.AttackTiles(attackTiles, startTile);
+            _playerManager.Weapon.AttackTiles(attackTiles);
             _playerManager.Weapon.UseAttackCharge();
             GameStateContainer.TurnState.Value = TurnState.PlayerTurnEnd;
         }

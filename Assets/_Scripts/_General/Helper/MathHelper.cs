@@ -78,4 +78,85 @@ public static class MathHelper
 
         return intersectionPoint;
     }
+    
+    public static Vector3 CatmullLerp(this Vector3[] points, float t)
+    {
+        int numSections = points.Length - 1;
+        int currentIndex = Mathf.FloorToInt(t * numSections);
+        float u = t * numSections - currentIndex;
+
+        Vector3 p0 = points[Mathf.Clamp(currentIndex - 1, 0, numSections)];
+        Vector3 p1 = points[currentIndex];
+        Vector3 p2 = points[Mathf.Clamp(currentIndex + 1, 0, numSections)];
+        Vector3 p3 = points[Mathf.Clamp(currentIndex + 2, 0, numSections)];
+
+        return CatmullRomInterpolation(p0, p1, p2, p3, u);
+    }
+    
+    public static float[] GetCatmullSegmentLength(this Vector3[] points, int numSamples = 15)
+    {
+        int numSections = points.Length - 1;
+        float[] segmentLengths = new float[numSections];
+
+        for (int i = 0; i < numSections; i++)
+        {
+            Vector3 p0 = points[Mathf.Clamp(i - 1, 0, numSections)];
+            Vector3 p1 = points[i];
+            Vector3 p2 = points[Mathf.Clamp(i + 1, 0, numSections)];
+            Vector3 p3 = points[Mathf.Clamp(i + 2, 0, numSections)];
+
+            float length = 0f;
+
+            for (int j = 0; j < numSamples; j++)
+            {
+                float t0 = (float)j / numSamples;
+                float t1 = (float)(j + 1) / numSamples;
+                Vector3 pt0 = CatmullRomInterpolation(p0, p1, p2, p3, t0);
+                Vector3 pt1 = CatmullRomInterpolation(p0, p1, p2, p3, t1);
+                length += Vector3.Distance(pt0, pt1);
+            }
+
+            segmentLengths[i] = length;
+        }
+
+        return segmentLengths;
+    }
+    
+    public static float[] GetCatmullSegmentLengthCumulative(this Vector3[] points, int numSamples = 15)
+    {
+        int numSections = points.Length - 1;
+        float[] segmentLengths = new float[numSections];
+        float length = 0f;
+
+        for (int i = 0; i < numSections; i++)
+        {
+            Vector3 p0 = points[Mathf.Clamp(i - 1, 0, numSections)];
+            Vector3 p1 = points[i];
+            Vector3 p2 = points[Mathf.Clamp(i + 1, 0, numSections)];
+            Vector3 p3 = points[Mathf.Clamp(i + 2, 0, numSections)];
+
+            for (int j = 0; j < numSamples; j++)
+            {
+                float t0 = (float)j / numSamples;
+                float t1 = (float)(j + 1) / numSamples;
+                Vector3 pt0 = CatmullRomInterpolation(p0, p1, p2, p3, t0);
+                Vector3 pt1 = CatmullRomInterpolation(p0, p1, p2, p3, t1);
+                length += Vector3.Distance(pt0, pt1);
+            }
+
+            segmentLengths[i] = length;
+        }
+
+        return segmentLengths;
+    }
+
+    private static Vector3 CatmullRomInterpolation(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    {
+        return 0.5f * (
+            (2f * p1) +
+            (-p0 + p2) * t +
+            (2f * p0 - 5f * p1 + 4f * p2 - p3) * t * t +
+            (-p0 + 3f * p1 - 3f * p2 + p3) * t * t * t
+        );
+    }
 }

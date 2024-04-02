@@ -52,14 +52,14 @@ namespace _Testing
         {
             _gameSetup.Setup();
             CreatePlayer();
-            _gameAreaManager.SpawnNewIsland();
+            _gameAreaManager.SpawnEnemyTestIsland();
         
             GameStateContainer.GameState.Value = GameState.Island;
             _turnManager.StartTurn(this);
 
 
-            _enemySpawnTile = _gameAreaManager.Island.Segments[2].CenterTile;
-            _segmentSpawnTile = _gameAreaManager.Island.Segments[2].CenterTile;
+            _enemySpawnTile = _gameAreaManager.Island.Tiles.GetClosestTileFromPosition(default);
+            _segmentSpawnTile = _gameAreaManager.Island.Tiles.GetClosestTileFromPosition(default);
         }
         
         private void Update()

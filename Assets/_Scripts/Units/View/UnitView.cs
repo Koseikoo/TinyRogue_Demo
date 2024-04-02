@@ -21,6 +21,7 @@ namespace Views
         [SerializeField] private float selectedPulseSpeed;
         [SerializeField] private float selectedPulseIntensity;
         [SerializeField] private ParticleSystem deathFX;
+        [SerializeField] private ParticleSystem hitFX;
         
         private Unit _unit;
         private bool _pulseActive;
@@ -43,7 +44,7 @@ namespace Views
             transform.position = unit.Tile.Value.WorldPosition + offset;
 
             unit.IsInvincible.Subscribe(isInvincible => invincibilityVisual.SetActive(isInvincible));
-            
+
             unit.IsDead
                 .Where(b => b)
                 .Subscribe(_ => DeathEvent())
@@ -81,6 +82,7 @@ namespace Views
             Sequence sequence = DOTween.Sequence();
             _unit.Death();
             deathFX.Play();
+            hitFX.Play();
             
             Destroy(visual.gameObject);
             sequence.AppendInterval(1f);

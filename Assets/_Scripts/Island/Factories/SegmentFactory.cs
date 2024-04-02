@@ -33,7 +33,7 @@ namespace Factories
         public SegmentFactory()
         {
             _segmentSpawnActions[SegmentType.Start] = CreateStartSegment;
-            _segmentSpawnActions[SegmentType.Ruin] = CreateSimpleEnemySegment;
+            _segmentSpawnActions[SegmentType.Ruin] = CreateRuinSegment;
             _segmentSpawnActions[SegmentType.Forrest] = CreateSimpleEnemySegment;
             _segmentSpawnActions[SegmentType.WolfCamp] = CreateWolfCamp;
             _segmentSpawnActions[SegmentType.MiniBoss] = CreateMiniBossSegment;
@@ -98,7 +98,7 @@ namespace Factories
 
         private void CreateWolfCamp(Segment segment)
         {
-            var cave = segment.Units.First(unit => unit.Type == UnitType.WolfCave);
+            var cave = segment.Units.First(unit => unit.Type == UnitType.Cave);
             
             Action<Tile> caveDestroyAction = tile =>
             {
@@ -127,6 +127,36 @@ namespace Factories
             {
                 IDisposable wolfSub = wolf.IsDead.Where(b => b).Subscribe(_ => allWolfsDefeatedCheck(segment));
                 wolf.UnitSubscriptions.Insert(0, wolfSub);
+            }
+        }
+
+        private void CreateRuinSegment(Segment segment)
+        {
+            Unit cave = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.Cave);
+            
+            Action<Tile> caveDestroyAction = tile =>
+            {
+                var wolfDefinition = _unitContainer.GetEnemyDefinition(UnitType.BigWolfEnemy);
+                var wolf = _unitFactory.CreateEnemy(wolfDefinition, tile);
+
+                var deathSub = wolf.IsDead.Where(b => b).Subscribe(_ =>
+                {
+                    segment.IsCompleted.Value = true;
+                });
+                wolf.UnitSubscriptions.Insert(0, deathSub);
+            };
+
+            foreach (Unit wolf in segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy))
+            {
+                wolf.DeathActions.Add(t =>
+                {
+                    var wolfs = segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy && !unit.IsDead.Value);
+                    if (!wolfs.Any())
+                    {
+                        cave.Damage(cave.Health.Value, null, true);
+                        caveDestroyAction(cave.Tile.Value);
+                    }
+                });
             }
         }
 

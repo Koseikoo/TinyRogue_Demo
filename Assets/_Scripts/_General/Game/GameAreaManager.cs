@@ -49,6 +49,19 @@ namespace Game
                 
             StartGame();
         }
+
+        public void SpawnEnemyTestIsland()
+        {
+            GameStateContainer.LockCameraRotation = false;
+            DestroyIsland();
+            DestroyShip();
+            
+            _island = _islandFactory.CreateEnemyTestIsland();
+            _island.StartTile.MoveUnit(_playerManager.Player);
+            _playerManager.Player.Weapon.Tile.Value = _island.StartTile;
+                
+            StartGame();
+        }
         
         public void SpawnNewIsland()
         {

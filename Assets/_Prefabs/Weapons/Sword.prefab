@@ -25,12 +25,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 435708113729647681}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.04312849, y: -0, z: -0, w: 0.9990695}
-  m_LocalPosition: {x: 0, y: 0.634, z: -0.052}
+  m_LocalRotation: {x: -0.04312852, y: -0, z: -0, w: 0.9990696}
+  m_LocalPosition: {x: 0, y: -0.29, z: 0}
   m_LocalScale: {x: 0.10065347, y: 0.10065347, z: 0.10065347}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 3596841020192701942}
+  m_Father: {fileID: 9160117807294499969}
   m_LocalEulerAnglesHint: {x: -4.944, y: 0, z: 0}
 --- !u!96 &7584782061578416183
 TrailRenderer:
@@ -74,11 +74,11 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.3
+  m_Time: 0.7
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 2.2
+    widthMultiplier: 0.3
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -133,14 +133,14 @@ TrailRenderer:
       m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
-    numCornerVertices: 0
-    numCapVertices: 0
+    numCornerVertices: 10
+    numCapVertices: 10
     alignment: 0
     textureMode: 2
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
     generateLightingData: 0
-  m_MinVertexDistance: 0
+  m_MinVertexDistance: 0.01
   m_MaskInteraction: 0
   m_Autodestruct: 0
   m_Emitting: 1
@@ -173,7 +173,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3019475267586294145}
@@ -5089,7 +5089,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3019475267586294145}
@@ -9987,7 +9987,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3019475267586294145}
@@ -14885,7 +14885,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3019475267586294145}
@@ -19783,7 +19783,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.3420201, y: -0, z: -0, w: 0.9396927}
   m_LocalPosition: {x: 0, y: 2.1106803, z: -0.44791096}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3019232987905335451}
@@ -24855,18 +24855,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   holsterAttackAngle: 90
+  attackDuration: 0.15
   dummy: {fileID: 4094363652805544012}
   swordGrip: {fileID: 9160117807294499969}
   swordAnchor: {fileID: 2429273166275374087}
-  sideMoveAmount: 1
-  startRotation: {x: 0.34202012, y: 0, z: 0, w: 0.9396926}
   trailRenderer: {fileID: 7584782061578416183}
-  attackCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
   returnCurve:
     serializedVersion: 2
     m_Curve:
@@ -25308,11 +25301,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8f5c3665138964137a43f68a35c41bbf,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4196195438857923330}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f5c3665138964137a43f68a35c41bbf, type: 3}
 --- !u!4 &3596841020192701942 stripped
@@ -25386,7 +25375,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1438834820960701544, guid: 8834751dd782467ba53c998ab0af61b0,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4196195438857923330}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8834751dd782467ba53c998ab0af61b0, type: 3}
 --- !u!4 &9160117807294499969 stripped

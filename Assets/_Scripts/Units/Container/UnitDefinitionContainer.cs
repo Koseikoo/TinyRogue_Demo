@@ -27,7 +27,7 @@ public enum UnitType
     Wheat = 20,
     CampWall = 22,
     CampFire = 23,
-    WolfCave = 24,
+    Cave = 24,
     
     //Interactables
     HelmInteractable = 7,
