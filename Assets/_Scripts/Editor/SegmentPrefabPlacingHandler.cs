@@ -63,6 +63,11 @@ namespace DefaultNamespace
             selectedUnitType = (UnitType)EditorGUILayout.EnumPopup(selectedUnitType);
             _placeSegmentUnits = EditorGUILayout.Toggle("Place", _placeSegmentUnits);
             
+            if (GUILayout.Button("Remove Last"))
+            {
+                RemoveLast();
+            }
+            
             if (GUILayout.Button("Reset Segment"))
             {
                 ResetSegment();
@@ -92,6 +97,23 @@ namespace DefaultNamespace
 
             view.SegmentUnitDefinitions = Array.Empty<SegmentUnitDefinition>();
             
+            UpdateVisualization(view);
+            SavePrefab(view.gameObject);
+            DestroyImmediate(view.gameObject);
+        }
+
+        private void RemoveLast()
+        {
+            SegmentView view = GetTempPrefabInstance();
+            if(view.SegmentUnitDefinitions.Length == 0)
+                return;
+            
+            DestroyImmediate(view.SegmentUnitDefinitions[^1].Point.gameObject);
+
+            var list = view.SegmentUnitDefinitions.ToList();
+            list.RemoveAt(list.Count - 1);
+            view.SegmentUnitDefinitions = list.ToArray();
+
             UpdateVisualization(view);
             SavePrefab(view.gameObject);
             DestroyImmediate(view.gameObject);

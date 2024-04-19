@@ -73,6 +73,7 @@ namespace Game
             _currentIslandLevel++;
             _island.StartTile.MoveUnit(_playerManager.Player);
             _playerManager.Player.Weapon.Tile.Value = _island.StartTile;
+            _playerManager.Player.EnterIsland.Execute();
                 
             StartGame();
         }

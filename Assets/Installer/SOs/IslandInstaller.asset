@@ -25,6 +25,8 @@ MonoBehaviour:
   - {fileID: 6733135655859725785, guid: fcbdf6a06b74044aba45462db9e0dd89, type: 3}
   - {fileID: 2607679268975258995, guid: 168027f2455634a3fa1b151189f1842b, type: 3}
   - {fileID: 8764063906109930226, guid: d8ce43055d85e49fda54709c5a33505e, type: 3}
+  - {fileID: 8677725663953278200, guid: 6d48977fe316048208ae2d9263373654, type: 3}
+  - {fileID: 1933253373672393367, guid: a81f7b4e64ce14d07936034df4f5e7f4, type: 3}
   StartSegment: {fileID: 4046348125292851383, guid: 0c4fb6282885049dc907b3e9abaa5c1a,
     type: 3}
   BossSegments:

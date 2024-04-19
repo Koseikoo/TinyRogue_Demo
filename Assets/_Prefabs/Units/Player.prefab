@@ -560,6 +560,33 @@ MonoBehaviour:
   lineRenderer: {fileID: 208391414016603709}
   lineHeight: 0.4
   lineWidth: 0.3
+  enterCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1.5966667
+      outSlope: 1.5966667
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.052192066
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  enterDuration: 0.4
+  jumpHeight: 6
+  delay: 0.4
 --- !u!114 &7423524648342550310
 MonoBehaviour:
   m_ObjectHideFlags: 0

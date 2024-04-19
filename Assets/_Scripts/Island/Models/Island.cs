@@ -28,6 +28,10 @@ namespace Models
         public BoolReactiveProperty IsDestroyed = new();
         public BoolReactiveProperty IsHeartDestroyed = new();
 
+        public ReactiveCommand DissolveIslandCommand = new();
+
+        public Vector3 IslandShipPosition;
+        
         public Island(List<Tile> islandTiles, Tile startTile, Tile heartTile, List<Segment> segments, int level)
         {
             Tiles = islandTiles;
@@ -55,6 +59,24 @@ namespace Models
             Units.Remove(unit);
         }
 
+        public void DestroyTile(Tile tile)
+        {
+            Tiles.Remove(tile);
+            foreach (Tile n in tile.Neighbours)
+                n.Neighbours.Remove(tile);
+
+            if (tile.HasUnit)
+            {
+                if (tile.Unit.Value is Player player)
+                    player.Damage(player.Health.Value, null, true);
+                else
+                    tile.Unit.Value.IsDestroyed.Value = true;
+            }
+            tile.Destroyed.Value = true;
+            
+            
+        }
+
         public void DestroyIslandContent()
         {
             for (int i = Units.Count - 1; i >= 0; i--)
@@ -65,6 +87,20 @@ namespace Models
             for (int i = Segments.Count - 1; i >= 0; i--)
             {
                 Segments[i].IsDestroyed.Value = true;
+            }
+        }
+
+        public class B
+        {
+        }
+
+        public class C
+        {
+            public int number;
+            public void methode(){
+                int newNumber = 1;
+                number = newNumber;
+                B newClass = new();
             }
         }
     }

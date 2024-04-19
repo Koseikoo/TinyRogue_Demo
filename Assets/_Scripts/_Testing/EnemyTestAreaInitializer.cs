@@ -32,6 +32,7 @@ namespace _Testing
         [SerializeField] private WeaponDefinition _weaponDefinition;
 
         public bool SpawnNewIsland;
+        public bool DissolveIsland;
         
         [Header("Enemy Spawning")]
         
@@ -69,6 +70,13 @@ namespace _Testing
                 SpawnNewIsland = false;
                 _gameAreaManager.SpawnNewIsland();
             }
+
+            if (DissolveIsland && _gameAreaManager.Island != null)
+            {
+                DissolveIsland = false;
+                _gameAreaManager.Island.DissolveIslandCommand.Execute();
+            }
+            
             SpawnUnit();
             SpawnSegment();
 

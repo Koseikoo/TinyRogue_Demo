@@ -20,7 +20,7 @@ public enum UnitType
     FishermanMiniBoss = 17,
     WerewolfBoss = 18,
     
-    PathBlocker = 5,
+    Rock = 5,
     Tree = 6,
     Grave = 19,
     Pillar = 21,
@@ -32,13 +32,6 @@ public enum UnitType
     //Interactables
     HelmInteractable = 7,
     ChestInteractable = 8,
-    
-    // Other
-    OrcFenceVisual = 10,
-    OrcTentVisual = 11,
-    CampFireVisual = 12,
-    TreeStumpVisual = 13,
-    
 }
 
 namespace Container
@@ -70,7 +63,7 @@ namespace Container
         {
             return type switch
             {
-                UnitType.PathBlocker => _obstacleDefinition,
+                UnitType.Rock => _obstacleDefinition,
                 UnitType.Tree => _treeDefinition,
                 UnitType.Pillar => _pillarDefinition,
                 UnitType.CampWall => _campWallDefinition,

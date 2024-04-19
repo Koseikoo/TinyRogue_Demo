@@ -11,6 +11,7 @@ public class GameInstaller : MonoInstaller<GameInstaller>
         Container.Bind<PlayerFeedbackManager>().AsSingle();
         Container.Bind<TurnManager>().AsSingle();
         Container.Bind<IntuitiveInputManager>().AsSingle();
+        Container.Bind<MoveInputTracker>().AsSingle();
         Container.Bind<PlayerManager>().AsSingle();
     }
 }

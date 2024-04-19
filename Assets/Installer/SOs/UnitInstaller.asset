@@ -254,12 +254,12 @@ MonoBehaviour:
     MaxHealth: 1
     Invincible: 1
     DropXp: 0
-  - name: PathObstacle
+  - name: Rock
     Type: 5
     Prefab: {fileID: 1861494755789565353, guid: bbf06e6d3231c4c3c8b8e34eb42cc094,
       type: 3}
     MaxHealth: 1
-    Invincible: 1
+    Invincible: 0
     DropXp: 0
   - name: IslandHeart
     Type: 26

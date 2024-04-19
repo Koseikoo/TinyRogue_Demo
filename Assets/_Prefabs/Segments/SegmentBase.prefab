@@ -79,7 +79,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Type: 0
-  Size: 2
+  Size: 4
   PointParent: {fileID: 1535746284512030615}
   SegmentUnitDefinitions: []
   segmentCompletedParent: {fileID: 1337407087544074339}

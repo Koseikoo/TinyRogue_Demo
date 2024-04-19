@@ -12,31 +12,14 @@ namespace Container
         [Inject] private UnitFactory _unitFactory;
         [Inject] private UnitContainer _unitContainer;
         
-        public Action<Tile> UnlockEndTileAction;
-
         private Dictionary<UnitType, Action<Tile>> _unitDeathActions = new();
-
         public UnitDeathActionContainer()
         {
-            UnlockEndTileAction = tile =>
-            {
-                tile.Island.IsHeartDestroyed.Value = true;
-            };
-            
             _unitDeathActions[UnitType.Grave] = tile =>
             {
                 var enemy = _unitFactory.CreateEnemy(_unitContainer.GetEnemyDefinition(UnitType.SpecterEnemy), tile);
             };
 
-            _unitDeathActions[UnitType.Pillar] = tile =>
-            {
-                Island island = tile.Island;
-                Segment segment = island.Segments.FirstOrDefault(segment => segment.Tiles.Contains(tile));
-
-                Unit golem = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.GolemEnemy);
-                golem.Damage(1, GameStateContainer.Player, true);
-            };
-            
             _unitDeathActions[UnitType.IslandHeart] = tile =>
             {
                 tile.Island.IsHeartDestroyed.Value = true;

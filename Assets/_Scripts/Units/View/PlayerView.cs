@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Models;
 using UniRx;
 using DG.Tweening;
 using Factory;
+using Game;
 using Zenject;
 using AnimationState = Models.AnimationState;
 
@@ -13,6 +15,9 @@ namespace Views
     public class PlayerView : MonoBehaviour
     {
         private const int LinePoints = 5;
+
+        public static float EnterDuration;
+        public static float EnterDelay;
         
         [SerializeField] private Animator animator;
         [SerializeField] private Transform holsterTransform;
@@ -24,7 +29,13 @@ namespace Views
         [SerializeField] private float lineHeight;
         [SerializeField] private float lineWidth;
         
-        [Inject] private ModalFactory _modalFactory;
+        [Header("Enter/Exit Animation")]
+        [SerializeField] private AnimationCurve enterCurve;
+        [SerializeField] private float enterDuration;
+        [SerializeField] private float jumpHeight;
+        [SerializeField] private float delay;
+        
+        [Inject] private GameAreaManager _gameAreaManager;
         
         private MovementView _move;
         private PlayerSelectionView _selectionView;
@@ -37,6 +48,9 @@ namespace Views
         private List<Tile> _lastBlockedTiles = new();
         public void Initialize(Player player)
         {
+            EnterDelay = delay;
+            EnterDuration = enterDuration;
+            
             _player = player;
             _player.HolsterTransform = holsterTransform;
             _move = GetComponent<MovementView>();
@@ -47,16 +61,24 @@ namespace Views
             _bagView.Initialize(_player.Bag);
 
             _player.Tile
-                .Where(tile => tile != null)
-                .Subscribe(_move.ToTile)
-                .AddTo(this);
-            
-            _player.Tile.SkipLatestValueOnSubscribe()
-                .Subscribe(tile =>
+                .Pairwise()
+                .Where(pair => pair.Current != null && pair.Current.Island == pair.Previous?.Island)
+                .Subscribe(pair =>
                 {
-                    UpdateBlockedTiles(tile);
+                    _move.ToTile(pair.Current);
+                    UpdateBlockedTiles(pair.Current);
                     TriggerPlayerAnimation(AnimationState.MoveToTile);
-                }).AddTo(this);
+                })
+                .AddTo(this);
+
+            _player.EnterIsland.Subscribe(_ =>
+            {
+                EnterIslandAnimation();
+            }).AddTo(this);
+            
+            _player.ExitIsland
+                .Subscribe(ExitIslandAnimation)
+                .AddTo(this);
 
             _player.SkippedTurns
                 .SkipLatestValueOnSubscribe()
@@ -121,7 +143,7 @@ namespace Views
                 lineRenderer.positionCount = LinePoints;
                 lineRenderer.SetPositions(GetLinePoints(startPosition, startPosition + swipeVector));
                 float maxRangeProgress = swipeVector.magnitude / (_player.Weapon.Range * Island.TileDistance);
-                lineRenderer.widthCurve = GetLerpedCurve(maxRangeProgress);
+                lineRenderer.widthCurve = MathHelper.GetLerpedCurve(minCurve, maxCurve, maxRangeProgress);
                 lineRenderer.widthMultiplier = lineWidth;
             }
             else
@@ -143,15 +165,6 @@ namespace Views
             return points;
         }
 
-        private void ClearSelection()
-        {
-            if (_lastSelectedTile != null)
-            {
-                _lastSelectedTile.RemoveSelector(_player);
-                _lastSelectedTile = null;
-            }
-        }
-
         private void UpdateBlockedTiles(Tile currentTile)
         {
             for (int i = 0; i < _lastBlockedTiles.Count; i++)
@@ -165,36 +178,71 @@ namespace Views
         {
             animator.SetTrigger(animationState.ToString());
         }
-        
-        private AnimationCurve GetLerpedCurve(float curveLerp)
+
+        private void EnterIslandAnimation()
         {
-            int keyCount = Mathf.Min(minCurve.length, maxCurve.length);
-            AnimationCurve lerpedCurve = new AnimationCurve();
-
-            for (int i = 0; i < keyCount; i++)
-            {
-                Keyframe keyA = minCurve[i];
-                Keyframe keyB = maxCurve[i];
-
-                float inTangent = Mathf.Lerp(keyA.inTangent, keyB.inTangent, curveLerp);
-                float outTangent = Mathf.Lerp(keyA.outTangent, keyB.outTangent, curveLerp);
-                float inWeight = Mathf.Lerp(keyA.inWeight, keyB.inWeight, curveLerp);
-                float outWeight = Mathf.Lerp(keyA.outWeight, keyB.outWeight, curveLerp);
-                float time = Mathf.Lerp(keyA.time, keyB.time, curveLerp);
-                float value = Mathf.Lerp(keyA.value, keyB.value, curveLerp);
-
-                Keyframe lerpedKey = new Keyframe(time, value);
-                lerpedKey.inTangent = inTangent;
-                lerpedKey.outTangent = outTangent;
-                lerpedKey.inWeight = inWeight;
-                lerpedKey.outWeight = outWeight;
+            GameStateContainer.TurnState.Value = TurnState.Disabled;
+            Transform player = transform; 
             
-                lerpedCurve.AddKey(lerpedKey);
-            }
+            var island = _gameAreaManager.Island;
+            Vector3 startPosition = island.IslandShipPosition;
+            Vector3 endPosition = island.StartTile.WorldPosition;
+            Vector3 anchorPosition = Vector3.Lerp(startPosition, endPosition, .5f) + (Vector3.up * jumpHeight);
 
-            return lerpedCurve;
+            player.position = startPosition;
+            player.localScale = Vector3.zero;
+            var forward = (island.StartTile.FlatPosition - startPosition);
+            forward.y = 0;
+            forward.Normalize();
+            player.forward = forward;
+
+            Sequence sequence = DOTween.Sequence();
+
+            sequence.Insert(delay, DOTween.To(() => 0f, t =>
+            {
+                var evalT = enterCurve.Evaluate(t);
+                var position = MathHelper.BezierLerp(startPosition, anchorPosition, endPosition, evalT);
+                player.position = position;
+                var scale = Mathf.Lerp(0f, 1f, evalT) * Vector3.one;
+                player.localScale = scale;
+                holsterTransform.localScale = scale;
+
+            }, 1f, enterDuration));
+
+            sequence.OnComplete(() =>
+            {
+                GameStateContainer.TurnState.Value = TurnState.PlayerTurnStart;
+            });
         }
-        
-        
+
+        private void ExitIslandAnimation(Action action)
+        {
+            var turnState = GameStateContainer.TurnState.Value;
+            GameStateContainer.TurnState.Value = TurnState.Disabled;
+            
+            var island = _gameAreaManager.Island;
+            Vector3 startPosition = island.StartTile.WorldPosition;
+            Vector3 endPosition = island.IslandShipPosition;
+            Vector3 anchorPosition = Vector3.Lerp(startPosition, endPosition, .5f) + Vector3.up;
+            
+            Sequence sequence = DOTween.Sequence();
+
+            sequence.Insert(0f, DOTween.To(() => 0f, t =>
+            {
+                var evalT = enterCurve.Evaluate(t);
+                var position = MathHelper.BezierLerp(startPosition, anchorPosition, endPosition, evalT);
+                transform.position = position;
+                var scale = Mathf.Lerp(1f, 0f, evalT) * Vector3.one;
+                transform.localScale = scale;
+                holsterTransform.localScale = scale;
+                
+            }, 1f, enterDuration));
+            
+            sequence.InsertCallback(enterDuration + .4f, () =>
+            {
+                action?.Invoke();
+                GameStateContainer.TurnState.Value = turnState;
+            });
+        }
     }
 }

@@ -32,7 +32,14 @@ namespace Factories
         public Island CreateIsland(int level)
         {
             bool isBossLevel = level % 5 == 0 && level > 0;
-            Island island = CreateIslandModel(0);
+            Island island = CreateIslandModel(level);
+            
+            int timeout = 0;
+            while (timeout < 10 && island.Segments.Count < 3)
+            {
+                island = CreateIslandModel(level);
+                timeout++;
+            }
 
             for (int i = 0; i < island.Segments.Count; i++)
             {
@@ -165,6 +172,7 @@ namespace Factories
             var endTile = tiles.GetTileFurthestAway(startTile);
 
             var segments = CreateSegments(startTile, endTile, tiles, polygon);
+            
             foreach (var segment in segments)
             {
                 var segmentTiles = islandTiles.GetSegmentTiles(segment);                       
@@ -182,11 +190,11 @@ namespace Factories
                 });
             }
 
-            tileDict = RemoveUnusedTiles(tileDict);
-            islandTiles = LinkTiles(tileDict, maxValue);
-            
+            islandTiles = LinkTiles(RemoveUnusedTiles(tileDict), maxValue);
+
+            var heartSegment = segments.First(s => s.Type == SegmentType.MiniBoss);
             Island island = _container.Instantiate<Island>(
-                new object[] {islandTiles, startTile, endTile, segments, 0});
+                new object[] {islandTiles, startTile, heartSegment.CenterTile, segments, 0});
             
             foreach (Tile tile in island.Tiles)
             {

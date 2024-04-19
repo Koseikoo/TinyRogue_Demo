@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Container;
 using DG.Tweening;
+using Game;
 using Installer;
 using Models;
 using Views;
@@ -26,6 +27,7 @@ namespace Factories
         [Inject] private WorldShipView _shipView;
 
         [Inject] private SegmentContainer _segmentContainer;
+        [Inject] private GameAreaManager _gameAreaManager;
         [Inject] private DiContainer _container;
 
         private Dictionary<SegmentType, Action<Segment>> _segmentSpawnActions = new();
@@ -181,24 +183,15 @@ namespace Factories
                 Sequence sequence = DOTween.Sequence();
                 sequence.InsertCallback(.7f, () =>
                 {
-                    var explosionTargetTile = tile.Island.StartTile.Neighbours.FirstOrDefault(t => !t.HasUnit);
-                    explosionTargetTile?.MoveUnit(GameStateContainer.Player);
+                    _gameAreaManager.Island.DissolveIslandCommand.Execute();
                 });
             });
         }
 
         private void CreateStartSegment(Segment segment)
         {
-            var center = segment.CenterTile;
-            var averageDirection = center.GetAverageDirection();
-
             var worldShip = _container.InstantiatePrefab(_shipView).GetComponent<WorldShipView>();
-            worldShip.Initialize(center.Island);
-            
-            worldShip.transform.position = center.WorldPosition;
-            worldShip.transform.right = averageDirection;
-            
-            
+            worldShip.Initialize(segment);
         }
 
         private void CreateSimpleEnemySegment(Segment segment)

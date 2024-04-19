@@ -149,6 +149,35 @@ public static class MathHelper
 
         return segmentLengths;
     }
+    
+    public static AnimationCurve GetLerpedCurve(AnimationCurve minCurve, AnimationCurve maxCurve, float curveLerp)
+    {
+        int keyCount = Mathf.Min(minCurve.length, maxCurve.length);
+        AnimationCurve lerpedCurve = new AnimationCurve();
+
+        for (int i = 0; i < keyCount; i++)
+        {
+            Keyframe keyA = minCurve[i];
+            Keyframe keyB = maxCurve[i];
+
+            float inTangent = Mathf.Lerp(keyA.inTangent, keyB.inTangent, curveLerp);
+            float outTangent = Mathf.Lerp(keyA.outTangent, keyB.outTangent, curveLerp);
+            float inWeight = Mathf.Lerp(keyA.inWeight, keyB.inWeight, curveLerp);
+            float outWeight = Mathf.Lerp(keyA.outWeight, keyB.outWeight, curveLerp);
+            float time = Mathf.Lerp(keyA.time, keyB.time, curveLerp);
+            float value = Mathf.Lerp(keyA.value, keyB.value, curveLerp);
+
+            Keyframe lerpedKey = new Keyframe(time, value);
+            lerpedKey.inTangent = inTangent;
+            lerpedKey.outTangent = outTangent;
+            lerpedKey.inWeight = inWeight;
+            lerpedKey.outWeight = outWeight;
+            
+            lerpedCurve.AddKey(lerpedKey);
+        }
+
+        return lerpedCurve;
+    }
 
     private static Vector3 CatmullRomInterpolation(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
     {

@@ -10,6 +10,6 @@ namespace Models
         public ReactiveCommand ForwardShakeCommand = new();
         public ReactiveCommand RotationShakeCommand = new();
         public ReactiveCommand SideShakeCommand = new();
-        public ReactiveProperty<Vector3> WorldPosition = new();
+        public ReactiveCommand<Vector3> LookCommand = new();
     }
 }

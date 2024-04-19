@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO.IsolatedStorage;
 using System.Threading.Tasks;
@@ -30,6 +31,9 @@ namespace Models
         public FloatReactiveProperty AnchorYRotation = new();
         public BoolReactiveProperty InAttackMode = new();
         public List<Slot> EquipmentSlots = new();
+
+        public ReactiveCommand EnterIsland = new();
+        public ReactiveCommand<Action> ExitIsland = new();
 
         public bool InMovementFlow;
 

@@ -20,6 +20,7 @@ namespace Game
         [Inject] private UnitRecipeDropContainer _unitRecipeDropContainer;
 
         [Inject] private GameAreaManager _gameAreaManager;
+        [Inject] private PlayerManager _playerManager;
 
         public void Setup()
         {
@@ -43,10 +44,22 @@ namespace Game
                 {
                     List<Choice> choices = new()
                     {
-                        _choiceContainer.GetChoice(Choices.NextIsland, _gameAreaManager.SpawnNewIsland),
+                        
+                        _choiceContainer.GetChoice(Choices.NextIsland, () =>
+                        {
+                            _playerManager.Player.ExitIsland.Execute(() =>
+                            {
+                                _gameAreaManager.SpawnNewIsland();
+                            });
+
+                        }),
                         _choiceContainer.GetChoice(Choices.ToShip, () =>
                         {
-                            GameStateContainer.GameState.Value = GameState.Ship;
+                            _playerManager.Player.ExitIsland.Execute(() =>
+                            {
+                                GameStateContainer.GameState.Value = GameState.Ship;
+                            });
+                            
                         })
                     };
                     _modalFactory.CreateChoiceModal(choices);

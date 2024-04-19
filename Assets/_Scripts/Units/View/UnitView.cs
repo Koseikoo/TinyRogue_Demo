@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using DG.Tweening;
 using Factories;
 using Models;
@@ -29,6 +30,7 @@ namespace Views
         public void Initialize(Unit unit)
         {
             _unit = unit;
+            InitializeAttachedUnitViews(unit);
 
             Vector3 offset = Vector3.zero;
             
@@ -43,7 +45,9 @@ namespace Views
             
             transform.position = unit.Tile.Value.WorldPosition + offset;
 
-            unit.IsInvincible.Subscribe(isInvincible => invincibilityVisual.SetActive(isInvincible));
+            unit.IsInvincible
+                .Subscribe(isInvincible => invincibilityVisual.SetActive(isInvincible))
+                .AddTo(this);
 
             unit.IsDead
                 .Where(b => b)
@@ -57,11 +61,13 @@ namespace Views
                     Destroy(gameObject);
                 })
                 .AddTo(this);
+            
+            
         }
 
         private void Update()
         {
-            if(GameStateContainer.Player == null || _unit == null)
+            if(GameStateContainer.Player == null || _unit == null || visual == null)
                 return;
             
             if (GameStateContainer.Player.SelectedTiles.Contains(_unit.Tile.Value) && !_unit.IsInvincible.Value)
@@ -69,12 +75,21 @@ namespace Views
                 var sin = (Mathf.Sin(Time.time * selectedPulseSpeed) + 1) * 0.5f;
                 float max = 1 + selectedPulseIntensity;
                 float min = 1 - selectedPulseIntensity;
-                transform.localScale = Mathf.Lerp(min, max, sin) * Vector3.one;
+                visual.localScale = Mathf.Lerp(min, max, sin) * Vector3.one;
             }
             else
             {
-                transform.localScale = Vector3.one;
+                visual.localScale = Vector3.one;
             }
+        }
+
+        private void InitializeAttachedUnitViews(Unit unit)
+        {
+            Component[] components = gameObject.GetComponents<Component>();
+
+            foreach (IUnitViewInitialize i in components.OfType<IUnitViewInitialize>())
+                i.Initialize(unit);
+
         }
 
         private void DeathEvent()

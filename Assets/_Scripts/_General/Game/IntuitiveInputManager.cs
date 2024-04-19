@@ -17,6 +17,7 @@ namespace Game
         
         [Inject] private PlayerManager _playerManager;
         [Inject] private GameAreaManager _gameAreaManager;
+        [Inject] private MoveInputTracker _moveInputTracker;
         
         [Inject] private CameraModel _cameraModel;
 
@@ -221,6 +222,8 @@ namespace Game
                 GameStateContainer.TurnState.Value = TurnState.PlayerTurnEnd;
                 _playerManager.Weapon.ReturnToHolster();
                 InWeaponMode = false;
+                
+                _moveInputTracker.AddMovement(swipeVector.normalized);
             }
         }
 

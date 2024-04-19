@@ -35,7 +35,7 @@ namespace Models
                 StabAttack();
                 _stabAim = false;
             }
-            else
+            else if (path.Count > 0)
             {
                 this.FollowTarget(path[0]);
             }

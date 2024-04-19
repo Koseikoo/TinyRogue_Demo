@@ -216,6 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TileParent: {fileID: 1024879873804080525}
+  dissolveInterval: 0.4
 --- !u!1 &4826440678866580864
 GameObject:
   m_ObjectHideFlags: 0

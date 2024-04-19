@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 using Models;
 using UniRx;
@@ -19,10 +20,16 @@ namespace Views
         [SerializeField] private GameObject _weaponSelection;
         [SerializeField] private GameObject _blockedSelection;
 
-        private List<GameObject> _visualObjects = new();
         [SerializeField] private ActionIndicatorView _actionIndicator;
         [SerializeField] private GameObject _actionLocked;
         [SerializeField] private GameObject _actionTile;
+        
+        [Header("Destruction")]
+        [SerializeField] private float deathDuration;
+        [SerializeField] private float fallDistance;
+        [SerializeField] private AnimationCurve deathCurve;
+        
+        private List<GameObject> _visualObjects = new();
         private Tile _tile;
 
         [Inject] private ActionIndicatorFactory _actionIndicatorFactory;
@@ -36,11 +43,11 @@ namespace Views
 
             transform.position = tile.WorldPosition;
             float scale = _tile.HeightLevel < 0 ? .7f : 1f;
-            transform.localScale = new Vector3(scale, 1, scale);
+            visual.localScale = new Vector3(scale, 1, scale);
 
             _tile.Destroyed
                 .Where(destroyed => destroyed)
-                .Subscribe(_ => Destroy(gameObject))
+                .Subscribe(_ => DestroyTile())
                 .AddTo(this);
             
             if (tile.Island != null && tile.IsStartTile)
@@ -79,11 +86,24 @@ namespace Views
                 Destroy(v);
 
             _visualObjects.Clear();
+            ResetSelection();
         }
 
         public void AddVisual(GameObject visual)
         {
             _visualObjects.Add(visual);
+        }
+
+        private void DestroyTile()
+        {
+            var startPosition = transform.position;
+            var endPosition = startPosition + (Vector3.down * fallDistance);
+
+            Sequence sequence = DOTween.Sequence();
+            
+            sequence.Append(transform.DOMove(endPosition, deathDuration)
+                .SetEase(deathCurve));
+            sequence.OnComplete(() => Destroy(gameObject));
         }
 
         private void UpdateWeaponOnTileVisual(bool isOnTile)

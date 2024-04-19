@@ -122,11 +122,7 @@ namespace Models
             Unit.Value = null;
             if (IsWeak && Island != null)
             {
-                Island.Tiles.Remove(this);
-                foreach (Tile n in Neighbours)
-                    n.Neighbours.Remove(this);
-                Destroyed.Value = true;
-                
+                Island.DestroyTile(this);
             }
         }
 

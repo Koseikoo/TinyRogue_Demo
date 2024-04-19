@@ -56,12 +56,6 @@ namespace Views
         {
             _weapon = weapon;
 
-            //weapon.Tile
-            //    .SkipLatestValueOnSubscribe()
-            //    .Where(tile => tile != _weapon.Owner.Tile.Value)
-            //    .Subscribe(tile => AttackAnimation(tile.FlatPosition))
-            //    .AddTo(this);
-
             weapon.AttackPath
                 .SkipLatestValueOnSubscribe()
                 .Where(t => t.Count >= 2)
@@ -88,58 +82,15 @@ namespace Views
 
         private void Update()
         {
+            if (_weapon.Owner != null && _weapon.Owner.HolsterTransform != null)
+                transform.localScale = _weapon.Owner.HolsterTransform.localScale;
+            
             if (_weapon.FixToHolster)
             {
                 swordAnchor.position = _weapon.Owner.HolsterTransform.position;
                 swordGrip.rotation = _weapon.Owner.HolsterTransform.rotation;
                 swordGrip.transform.localScale = new Vector3(.63f, .72f, .63f);
             }
-        }
-
-        private void HolsterAttackAnimation(Vector3 position)
-        {
-            _weapon.FixToHolster = false;
-            trailRenderer.enabled = true;
-
-            var forward = (position - _lastPosition).normalized;
-            dummy.forward = forward;
-            dummy.rotation = Quaternion.AngleAxis(holsterAttackAngle, forward) * dummy.rotation;
-            
-            Sequence s = DOTween.Sequence();
-            s.Insert(0f, swordAnchor.DOMove(position + Vector3.up - (dummy.up * .5f), attackDuration).SetEase(Ease.InCubic));
-            s.Insert(0f, swordGrip.DORotateQuaternion(dummy.rotation, attackDuration));
-            s.AppendInterval(trailRenderer.time)
-                .OnComplete(() => trailRenderer.enabled = false);
-            _lastPosition = position;
-        }
-        
-        private void AttackAnimation(Vector3 position)
-        {
-            _weapon.FixToHolster = false;
-            
-            Debug.Log("attack");
-
-            Vector3 startPosition = swordGrip.position;
-            startPosition.y = 0;
-            
-            var attackDirection = _weapon.AttackDirection.Value;
-            Vector3 start = swordGrip.up;
-            Vector3 end = attackDirection.normalized;
-            float distance = (position - startPosition).magnitude;
-            float relativeDuration = attackDuration / (_weapon.Range * Island.TileDistance);
-            //_lastPosition = position + Vector3.up;
-
-            float moveDuration = distance * relativeDuration;
-
-            Sequence sequence = DOTween.Sequence();
-
-            sequence.Insert(0f, swordAnchor.DOMove(position + Vector3.up, moveDuration)
-                .SetEase(Ease.Linear));
-            sequence.Insert(0f, DOTween.To(() => 0f, t =>
-            {
-                swordGrip.up = Vector3.Lerp(start, end, t).normalized;
-            }, 1f, attackRotateDuration));
-
         }
 
         private void AttackAnimation(List<Tile> attackPath)
