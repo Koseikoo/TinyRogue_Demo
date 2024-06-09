@@ -24,16 +24,15 @@ namespace Views
         private void Update()
         {
             if (visual == null)
+            {
                 _sequence?.Kill();
+            }
         }
 
         public void ToTile(Tile tile)
         {
             Vector3 startPosition = transform.position;
             Vector3 endPosition = tile.WorldPosition;
-            Vector3 lastLookDirection = transform.forward;
-            Vector3 lookDirection = new Vector3(endPosition.x, 0f, endPosition.z) - new Vector3(startPosition.x, 0f, startPosition.z);
-            lookDirection.Normalize();
 
             _sequence?.Kill();
             _sequence = DOTween.Sequence();
@@ -45,7 +44,6 @@ namespace Views
                         Vector3 position = Vector3.Lerp(startPosition, endPosition, adjustedT);
                         float yOffset = GetYOffset(startPosition, tile, adjustedT);
                         transform.position = position;
-                        transform.forward = Vector3.Lerp(lastLookDirection, lookDirection, t).normalized;
                         visual.localPosition = new Vector3(0f, yOffset, 0f);
                         visual.localScale = GetScale(adjustedT);
                     }, 1f, animationDuration)
@@ -99,7 +97,10 @@ namespace Views
         private float GetBoardOffset(Tile tile)
         {
             if (tile.BoardType == BoardType.Chiseled || tile.BoardType == BoardType.Stone)
+            {
                 return Tile.BoardOffset;
+            }
+
             return 0;
         }
     }

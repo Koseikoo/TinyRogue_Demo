@@ -18,9 +18,8 @@ namespace Game
         {
             while (true)
             {
-                yield return new WaitUntil(() => GameStateContainer.TurnState.Value == TurnState.PlayerTurnEnd && !GameStateContainer.Player.Weapon.InAttack);
-                
-                yield return new WaitForSeconds(PlayerTurnDuration);
+                yield return new WaitUntil(() => GameStateContainer.TurnState.Value == TurnState.PlayerTurnEnd);
+                yield return new WaitUntil(() => !GameStateContainer.Player.InAction);
                 GameStateContainer.TurnState.Value = TurnState.EnemyTurn;
                 yield return new WaitForSeconds(EnemyTurnDuration);
                 GameStateContainer.TurnState.Value = TurnState.IslandTurn;

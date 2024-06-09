@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public static partial class Utils
+public static class Utils
 {
     public static Bounds GetBounds(this Vector3[] polygon)
     {

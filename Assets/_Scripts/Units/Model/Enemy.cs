@@ -52,16 +52,16 @@ namespace Models
             }
             
             AttackTarget = GameStateContainer.Player;
-            var turnSubscription = GameStateContainer.TurnState
+            IDisposable turnSubscription = GameStateContainer.TurnState
                 .Where(state => state == TurnState.EnemyTurn)
                 .Subscribe(_ => OnEnemyTurn());
 
-            var stateSubscription = State
+            IDisposable stateSubscription = State
                 .Pairwise()
                 .Where(pair => pair.Previous == EnemyState.Idle)
                 .Subscribe(_ => CurrentTurnDelay.Value = TurnDelay);
 
-            var destroySubscription = IsDestroyed.Where(b => b).Subscribe(_ =>
+            IDisposable destroySubscription = IsDestroyed.Where(b => b).Subscribe(_ =>
             {
                 RemoveLastSelection();
             });
@@ -106,16 +106,18 @@ namespace Models
 
         protected virtual bool IsAttackPathTile(Tile tile)
         {
-            var tileUnit = tile.Unit.Value;
-            bool isPathTile = !tile.HasUnit || tile.Unit.Value is Player;
-            return isPathTile && !tile.WeaponOnTile.Value;
+            bool isPlayerOnTile = tile.Unit.Value is Player;
+            return !tile.HasUnit || isPlayerOnTile;
         }
         
         protected EnemyState ScanSurroundingTiles()
         {
             if (Island == null)
+            {
                 return EnemyState.Idle;
-            var tiles = Island.Tiles.GetTilesWithinDistance(Tile.Value, ScanRange);
+            }
+
+            List<Tile> tiles = Island.Tiles.GetTilesWithinDistance(Tile.Value, ScanRange);
 
             Tile tileWithAttackTarget = tiles.FirstOrDefault(tile => tile.Unit.Value == AttackTarget);
             return tileWithAttackTarget == null ? EnemyState.Idle : EnemyState.TargetFound;
@@ -124,14 +126,18 @@ namespace Models
         protected virtual void RenderAttackPath()
         {
             if(!AimAtTarget.Value)
+            {
                 return;
-            
-            var path = AStar.FindPath(Tile.Value,
+            }
+
+            List<Tile> path = AStar.FindPath(Tile.Value,
                 AttackTarget.Tile.Value);
             
             if(path == null)
+            {
                 return;
-            
+            }
+
             if (path.Count <= AttackRange)
             {
                 UpdateSelectedTiles(path, TileSelectionType.Attack);
@@ -146,9 +152,13 @@ namespace Models
         private void ProgressTurnDelay()
         {
             if (CurrentTurnDelay.Value > 0)
+            {
                 CurrentTurnDelay.Value--;
+            }
             else
+            {
                 CurrentTurnDelay.Value = TurnDelay;
+            }
 
             AimAtTarget.Value = CurrentTurnDelay.Value == 0;
         }

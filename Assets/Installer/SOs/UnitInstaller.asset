@@ -24,9 +24,9 @@ MonoBehaviour:
     type: 3}
   _enemyStateUIPrefab: {fileID: 397070358651327445, guid: f7072f46ed4854d56adeb02e404a0dcb,
     type: 3}
-  _interactableUIPrefab: {fileID: 7029866548729505452, guid: 33ecfd4827d5040dba763cee19484954,
+  _xpUIPrefab: {fileID: 148100502505623432, guid: d940b3352b663461fa24e45d40746d21,
     type: 3}
-  _xpBarUIPrefab: {fileID: 6421722430859455272, guid: d940b3352b663461fa24e45d40746d21,
+  _interactableUIPrefab: {fileID: 7029866548729505452, guid: 33ecfd4827d5040dba763cee19484954,
     type: 3}
   _playerUIPrefab: {fileID: 6321765108990706805, guid: 6c7a2a6255c194a97b15ebb16afe4e91,
     type: 3}
@@ -38,12 +38,12 @@ MonoBehaviour:
     Type: 2
     Prefab: {fileID: 7390938553989648233, guid: 6c1736239fbb54fad8d1466b87082c21,
       type: 3}
-    MaxHealth: 1
+    MaxHealth: 2
     Invincible: 0
-    DropXp: 2
+    DropXp: 10
     AttackRange: 1
     ScanRange: 3
-    TurnDelay: 0
+    TurnDelay: 1
     Mods:
     - ItemDefinition:
         Type: 0
@@ -218,12 +218,12 @@ MonoBehaviour:
       type: 3}
     MaxHealth: 1
     Invincible: 0
-    DropXp: 0
+    DropXp: 15
     InteractButtonText: Open
   Units:
   - name: Tree
     Type: 6
-    Prefab: {fileID: 6606058479457096494, guid: b61b99316964d42e0833e6799abdfdd0,
+    Prefab: {fileID: 6056633611536564334, guid: ba789b675fe3942b59487fa4d671c397,
       type: 3}
     MaxHealth: 1
     Invincible: 0

@@ -10,7 +10,6 @@ namespace Views
     public class ModSmithView : MonoBehaviour
     {
         [SerializeField] private BuyResourceSlotUIView[] sellSlots;
-        [SerializeField] private UpgradeModSlotUIView[] upgradeSlots;
 
         [SerializeField] private Transform CameraTradePoint;
         
@@ -24,7 +23,7 @@ namespace Views
 
         private void Start()
         {
-            var camTransform = UIHelper.Camera.transform;
+            Transform camTransform = UIHelper.Camera.transform;
             _startPosition = camTransform.localPosition;
             _startRotation = camTransform.rotation;
         }
@@ -36,14 +35,16 @@ namespace Views
             _modSmith.InTrade.SkipLatestValueOnSubscribe().Subscribe(b =>
             {
                 if(b)
+                {
                     OnTradeStart();
+                }
                 else
+                {
                     OnTradeEnd();
-                
+                }
             }).AddTo(this);
             
             HideModsToSell();
-            HideWeaponMods();
         }
 
         private void OnTradeStart()
@@ -52,7 +53,6 @@ namespace Views
             UIHelper.Camera.DOFieldOfView(30, .4f);
             
             ShowModsToSell();
-            ShowWeaponMods();
         }
 
         private void OnTradeEnd()
@@ -61,12 +61,11 @@ namespace Views
             UIHelper.Camera.DOFieldOfView(60, .4f);
             
             HideModsToSell();
-            HideWeaponMods();
         }
 
         private void MoveCamera(Vector3 position, Quaternion rotation)
         {
-            var camTransform = UIHelper.Camera.transform;
+            Transform camTransform = UIHelper.Camera.transform;
 
             Sequence moveSequence = DOTween.Sequence();
 
@@ -76,7 +75,7 @@ namespace Views
 
         private void MoveCameraLocal(Vector3 localPosition, Quaternion rotation)
         {
-            var camTransform = UIHelper.Camera.transform;
+            Transform camTransform = UIHelper.Camera.transform;
 
             Sequence moveSequence = DOTween.Sequence();
 
@@ -106,18 +105,10 @@ namespace Views
         private void ShowWeaponMods()
         {
             
-            for (int i = 0; i < upgradeSlots.Length; i++)
-            {
-                upgradeSlots[i].gameObject.SetActive(true);
-            }
         }
         
         private void HideWeaponMods()
         {
-            for (int i = 0; i < upgradeSlots.Length; i++)
-            {
-                upgradeSlots[i].gameObject.SetActive(false);
-            }
         }
 
         private void SubscribeToBuyModSlot(int index)
@@ -125,10 +116,13 @@ namespace Views
             IDisposable disposable = _modSmith.SellSlots[index].Item.Subscribe(item =>
             {
                 if(item == null)
+                {
                     sellSlots[index].RenderEmpty();
+                }
                 else
+                {
                     sellSlots[index].Render(item);
-                    
+                }
             }).AddTo(this);
             _buySlotsDisposable.Add(disposable);
         }

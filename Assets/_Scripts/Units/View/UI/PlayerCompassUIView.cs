@@ -26,6 +26,7 @@ namespace Views
 
         private void UpdateNeedle(float yRotation)
         {
+            return;
             var needleDirection = _player.Tile.Value.Island.HeartTile.FlatPosition -
                                   _player.Tile.Value.FlatPosition;
             needleDirection.Normalize();

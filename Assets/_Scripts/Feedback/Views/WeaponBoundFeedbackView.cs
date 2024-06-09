@@ -34,9 +34,7 @@ public class WeaponBoundFeedbackView : MonoBehaviour
 
     private bool Snapped()
     {
-        float currentMagnitude = (_playerView.position - _nextWeaponPosition).magnitude;
-        bool weaponOutsideRange = currentMagnitude > GameStateContainer.Player.Weapon.Range * Island.TileDistance;
-        return weaponOutsideRange;
+        return false;
     }
 
     public void Initialize(Transform weaponView, Transform playerView)
@@ -49,16 +47,21 @@ public class WeaponBoundFeedbackView : MonoBehaviour
     private void Update()
     {
         if(_playerView == null || _weaponView == null)
+        {
             return;
+        }
 
-        bool previewWeaponBond = InputHelper.IsTouching() && !InputHelper.StartedOverUI &&
-                                 !GameStateContainer.Player.Weapon.FixToHolster;
+        bool previewWeaponBond = InputHelper.IsTouching() && !InputHelper.StartedOverUI;
                                  
         if(previewWeaponBond)
+        {
             _nextWeaponPosition = UIHelper.Camera.GetExtendedPositionFromCamera(InputHelper.GetTouchPosition());
+        }
         else
+        {
             _nextWeaponPosition = _weaponView.position;
-        
+        }
+
         Vector3[] playerPoints = new Vector3[LinePoints];
         Vector3[] weaponPoints = new Vector3[LinePoints];
 
@@ -70,10 +73,6 @@ public class WeaponBoundFeedbackView : MonoBehaviour
         Vector3 offsetWeaponPosition = weaponPosition - (positionOffset * direction);
         Vector3 offsetPlayerPosition = playerPosition + (positionOffset * direction);
         Vector3 midPosition = Vector3.Lerp(offsetPlayerPosition, offsetWeaponPosition, .5f);
-
-        curveLerp = Mathf.InverseLerp(0f, GameStateContainer.Player.Weapon.Range * Island.TileDistance,
-            (weaponPosition - playerPosition).magnitude);
-
 
         for (int i = 0; i < LinePoints; i++)
         {

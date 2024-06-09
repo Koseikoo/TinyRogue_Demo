@@ -13,9 +13,9 @@ namespace Factories
         [Inject] private EnemyTurnDelayUIView _enemyTurnDelayUIPrefab;
         [Inject] private EnemyTurnClockUIView _enemyTurnClockUIPrefab;
         [Inject] private EnemyStateUIView _enemyStateUIPrefab;
+        [Inject] private XpUIView _xpUIPrefab;
         [Inject] private PlayerUIView _playerUIPrefab;
         [Inject] private InteractableUIView _interactableUIPrefab;
-        [Inject] private XpBarUIView _xpBarUIPrefab;
 
         [Inject] private DiContainer _container;
 
@@ -32,7 +32,7 @@ namespace Factories
 
         public PlayerUIView CreatePlayerUI(Player player)
         {
-            var view = _container.InstantiatePrefab(_playerUIPrefab, _playerUICanvas).GetComponent<PlayerUIView>();
+            PlayerUIView view = _container.InstantiatePrefab(_playerUIPrefab, _playerUICanvas).GetComponent<PlayerUIView>();
             view.Initialize(player);
             return view;
         }
@@ -59,6 +59,13 @@ namespace Factories
             return this;
         }
         
+        public UnitUIFactory AddXpUI(Player player)
+        {
+            XpUIView view = _container.InstantiatePrefab(_xpUIPrefab, _currentUnitUI.transform).GetComponent<XpUIView>();
+            view.Initialize(player);
+            return this;
+        }
+        
         public UnitUIFactory AddTurnDelayUI(Enemy enemy)
         {
             EnemyTurnClockUIView delayUI = _container.InstantiatePrefab(_enemyTurnClockUIPrefab, _currentUnitUI.transform).GetComponent<EnemyTurnClockUIView>();
@@ -70,13 +77,6 @@ namespace Factories
         {
             InteractableUIView interactUI = _container.InstantiatePrefab(_interactableUIPrefab, _currentUnitUI.transform).GetComponent<InteractableUIView>();
             interactUI.Initialize(interactable);
-            return this;
-        }
-
-        public UnitUIFactory AddXpBarUI(Player player)
-        {
-            XpBarUIView xpUI = _container.InstantiatePrefab(_xpBarUIPrefab, _currentUnitUI.transform).GetComponent<XpBarUIView>();
-            xpUI.Initialize(player);
             return this;
         }
     }

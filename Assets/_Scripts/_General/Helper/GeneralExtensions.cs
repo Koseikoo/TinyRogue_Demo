@@ -1,20 +1,27 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Models;
 using UnityEngine;
 
 public static class GeneralExtensions
 {
-    public static T PickRandom<T>(this ICollection<T> collection)
+    public static T Random<T>(this ICollection<T> collection)
     {
         if (collection == null || collection.Count == 0)
+        {
             throw new System.InvalidOperationException("Collection is Null or Empty");
+        }
 
-        int index = Random.Range(0, collection.Count);
+        int index = UnityEngine.Random.Range(0, collection.Count);
         int i = 0;
         foreach (T item in collection)
         {
             if (i == index)
+            {
                 return item;
+            }
+
             i++;
         }
 
@@ -27,8 +34,35 @@ public static class GeneralExtensions
         for (int i = 0; i < toRemove.Count; i++)
         {
             if (temp.Contains(toRemove[i]))
+            {
                 temp.Remove(toRemove[i]);
+            }
         }
+    }
+
+    public static string AddSpace(this string name)
+    {
+        List<int> capitalIndexList = new List<int>();
+        for (int charIndex = 0; charIndex < name.Length; charIndex++)
+        {
+            if (Char.IsUpper(name[charIndex]))
+            {
+                capitalIndexList.Add(charIndex);
+            }
+        }
+        
+        capitalIndexList.RemoveAt(0);
+        if (capitalIndexList.Count == 0)
+        {
+            return name;
+        }
+
+        for (int i = 0; i < capitalIndexList.Count; i++)
+        {
+            name = name.Insert(capitalIndexList[i], " ");
+        }
+
+        return name;
     }
 
     public static List<T> PickRandomUniqueCollection<T>(this ICollection<T> collection, int amount)
@@ -36,9 +70,11 @@ public static class GeneralExtensions
         List<T> picked = new();
         while (picked.Count < amount)
         {
-            T pick = collection.PickRandom();
+            T pick = collection.Random();
             if(!picked.Contains(pick))
+            {
                 picked.Add(pick);
+            }
         }
 
         return picked;
@@ -53,8 +89,10 @@ public static class GeneralExtensions
     {
         List<T> truncatedCollection = new(collection);
         if (truncatedCollection.Count <= amount)
+        {
             return new List<T>();
-        
+        }
+
         for (int i = truncatedCollection.Count - 1; i >= collection.Count - amount; i--)
             truncatedCollection.RemoveAt(i);
 

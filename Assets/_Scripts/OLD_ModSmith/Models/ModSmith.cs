@@ -34,12 +34,14 @@ namespace Models
         private void GetRandomItems()
         {
             if(_sellModsCreated)
+            {
                 return;
+            }
 
             _sellModsCreated = true;
             for (int i = 0; i < SellSlots.Count; i++)
             {
-                ItemType modType = PersistentPlayerState.UnlockedEquipmentRecipes.PickRandom().Output;
+                ItemType modType = PersistentPlayerState.UnlockedEquipmentRecipes.Random().Output;
                 SellSlots[i].SetItem(modType.GetModInstance(1));
             }
         }

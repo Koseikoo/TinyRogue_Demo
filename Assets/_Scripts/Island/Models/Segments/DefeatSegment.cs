@@ -19,9 +19,9 @@ namespace Models
 
         public override void SegmentCompleteAction(Transform parent)
         {
-            var chestSpawnTile = GameStateContainer.Player.Tile.Value.Neighbours.GetMatchingTiles(tile => !tile.HasUnit && !tile.IsWeak).PickRandom();
-            var definition = _unitContainer.GetInteractableDefinition(UnitType.ChestInteractable);
-            var chest = _unitFactory.CreateInteractable(definition, chestSpawnTile);
+            Tile chestSpawnTile = GameStateContainer.Player.Tile.Value.Neighbours.GetMatchingTiles(tile => !tile.HasUnit && !tile.IsWeak).Random();
+            InteractableDefinition definition = _unitContainer.GetInteractableDefinition(UnitType.ChestInteractable);
+            Interactable chest = _unitFactory.CreateInteractable(definition, chestSpawnTile);
         }
     }
 }

@@ -14,6 +14,6 @@ public class CharacterCreationModalView : MonoBehaviour
 
     public void CreateDefaultCharacter()
     {
-        GameStateContainer.GameState.Value = GameState.Ship;
+        GameStateContainer.GameState.Value = GameState.Island;
     }
 }

@@ -14,13 +14,17 @@ namespace Models
         protected override void EnemyAction()
         {
             if (TurnDelay == LeapTurnDelay)
+            {
                 TurnDelay = BaseTurnDelay;
-            
-            var path = AStar.FindPath(Tile.Value,
+            }
+
+            List<Tile> path = AStar.FindPath(Tile.Value,
                 AttackTarget.Tile.Value, 
                 IsAttackPathTile);
             if(path == null)
+            {
                 return;
+            }
 
             if (_leapPath.Count > 0)
             {
@@ -37,14 +41,18 @@ namespace Models
         protected override void RenderAttackPath()
         {
             if(!AimAtTarget.Value)
+            {
                 return;
-            
-            var path = AStar.FindPath(Tile.Value,
+            }
+
+            List<Tile> path = AStar.FindPath(Tile.Value,
                 AttackTarget.Tile.Value);
             
             if(path == null)
+            {
                 return;
-            
+            }
+
             if (path.Count <= AttackRange)
             {
                 UpdateSelectedTiles(path, TileSelectionType.Attack);
@@ -75,12 +83,14 @@ namespace Models
             
             if (jumpIndex >= 0 && !path[jumpIndex].HasUnit)
             {
-                path[jumpIndex].MoveUnit(this);
+                path[jumpIndex].MoveUnitWithAction(this);
             }
             
             if(attack)
+            {
                 this.AttackUnit(AttackTarget);
-            
+            }
+
             TurnDelay = LeapTurnDelay;
             AimAtTarget.Value = false;
         }

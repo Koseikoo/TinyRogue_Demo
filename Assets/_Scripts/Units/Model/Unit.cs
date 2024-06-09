@@ -34,24 +34,25 @@ namespace Models
         public List<Action<Tile>> DeathActions = new();
         private Unit _lastAttacker;
 
-        [Inject] private UnitRecipeDropContainer _unitRecipeDropContainer;
-        [Inject] private ModalFactory _modalFactory;
-
         protected Unit()
         {
-            var destroySubscription = IsDestroyed.Where(b => b).Subscribe(_ => Dispose());
+            IDisposable destroySubscription = IsDestroyed.Where(b => b).Subscribe(_ => Dispose());
             UnitSubscriptions.Add(destroySubscription);
         }
 
         public virtual void Attack(IEnumerable<Mod> mods, Vector3 attackVector, Unit attacker = null)
         {
             if(IsInvincible.Value)
+            {
                 return;
+            }
 
             _lastAttacker = attacker;
             if(_lastAttacker != null)
+            {
                 _lastAttacker.AttackCounter.Value++;
-            
+            }
+
             foreach (Mod mod in mods)
             {
                 mod.ApplyToUnit(this, attacker);
@@ -66,15 +67,19 @@ namespace Models
             {
                 Dispose();
                 if(this is Enemy)
+                {
                     PersistentPlayerState.IncreaseHeritage(DropXp);
+                }
             }
         }
 
         public virtual void Damage(int damage, Unit attacker = null, bool pierceInvincibility = false)
         {
             if(IsInvincible.Value && !pierceInvincibility)
+            {
                 return;
-            
+            }
+
             _lastAttacker = attacker;
             Health.Value -= damage;
             IsDead.Value = Health.Value <= 0;
@@ -84,23 +89,21 @@ namespace Models
             {
                 Dispose();
                 if(this is Enemy)
+                {
                     PersistentPlayerState.IncreaseHeritage(DropXp);
+                }
             }
         }
 
         public virtual void Death()
         {
-            if (_lastAttacker != null)
-            {
-                Loot?.RewardTo(_lastAttacker, Tile.Value.FlatPosition);
-            }
+            Unit lootReceiver = _lastAttacker ?? GameStateContainer.Player;
+            Loot?.RewardTo(lootReceiver, Tile.Value.FlatPosition);
             WorldLootContainer.DropLoot.Execute();
 
-            if (_lastAttacker == GameStateContainer.Player)
+            if (lootReceiver == GameStateContainer.Player)
             {
-                if(IncreaseComboWithDeath)
-                    GameStateContainer.Player.Weapon.ActiveCombo.Add(this);
-                GameStateContainer.Player.Weapon.AddXp(DropXp);
+                GameStateContainer.Player.DropXP(Tile.Value, DropXp);
             }
             
             Tile.Value.RemoveUnit();
@@ -108,7 +111,9 @@ namespace Models
                 AdditionalTiles[i].RemoveUnit();
             
             if(Tile.Value.Island != null)
+            {
                 Tile.Value.Island.RemoveUnit(this);
+            }
 
             for (int i = 0; i < DeathActions.Count; i++)
                 DeathActions[i]?.Invoke(Tile.Value);

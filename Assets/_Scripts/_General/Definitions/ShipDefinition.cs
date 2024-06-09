@@ -16,7 +16,7 @@ public class ShipDefinition
 
         foreach (var view in shipViews)
         {
-            Tile tile = new(view.transform.position);
+            Tile tile = new(view.transform.position, null);
             view.Initialize(tile);
             ship.Tiles.Add(tile);
 

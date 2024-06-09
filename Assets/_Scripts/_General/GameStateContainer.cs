@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Models;
+using TinyRogue;
 using UniRx;
 using UnityEngine;
 
@@ -29,6 +30,7 @@ public static class GameStateContainer
     public static Player Player;
     public static Slot SelectedSlot;
     public static ReactiveCommand CloseOpenUIElements = new();
+    public static Dictionary<WeaponType, WeaponSkill> InitialSkillDict = new();
     public static List<GameObject> OpenUIElements = new();
     public static bool OpenUI => OpenUIElements.Count > 0;
     public static bool LockCameraRotation;

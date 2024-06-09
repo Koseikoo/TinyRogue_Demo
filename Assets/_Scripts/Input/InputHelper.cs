@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Models;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -30,6 +31,7 @@ public static class InputHelper
             _touchPosition = GetTouchPosition();
         }
     }
+    
     public static bool TouchStarted()
     {
         if (Input.touchCount < 1)

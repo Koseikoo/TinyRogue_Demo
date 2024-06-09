@@ -12,6 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bde508bc17a94283aa68d91be5bd15ef, type: 3}
   m_Name: IslandInstaller
   m_EditorClassIdentifier: 
+  _archipelConfig:
+    Islands: 2
+    IslandBoundsMargin: 4
+    separationAmount: 0.5
+    extraConnections: 2
+    Segments: 32
+    SizeRange: {x: 5, y: 8}
+    Deformation: 0.8
+    LastDeformationWeight: 0.6
+    HeightLevels: 1
+    HillSizeMult: 0.5
   _tilePrefab: {fileID: 4614991492188209575, guid: e141cfd30870441c7ac11a217c529a87,
     type: 3}
   _islandPrefab: {fileID: 2998173085399440179, guid: e4091c42c93e249e9b086220259f7da2,

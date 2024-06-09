@@ -1,4 +1,5 @@
 using Container;
+using Installer;
 using Models;
 using UnityEngine;
 using Views;
@@ -11,9 +12,12 @@ namespace Factories
         [Inject] private PlayerView _playerPrefab;
         [Inject] private DiContainer _container;
 
+        [Inject(Id = UnitInstaller.UnitParent)] private Transform _unitParent;
+
         public PlayerView CreatePlayerView(Player player)
         {
             PlayerView view = _container.InstantiatePrefab(_playerPrefab).GetComponent<PlayerView>();
+            view.transform.SetParent(_unitParent);
             view.Initialize(player);
             return view;
         }
@@ -21,6 +25,7 @@ namespace Factories
         public EnemyView CreateEnemyView(Enemy enemy, UnitDefinition definition)
         {
             EnemyView view = _container.InstantiatePrefab(definition.Prefab).GetComponent<EnemyView>();
+            view.transform.SetParent(_unitParent);
             view.Initialize(enemy);
             return view;
         }
@@ -28,6 +33,7 @@ namespace Factories
         public UnitView CreateUnitView(Unit unit, UnitDefinition definition)
         {
             var view = _container.InstantiatePrefab(definition.Prefab).GetComponent<UnitView>();
+            view.transform.SetParent(_unitParent);
             view.Initialize(unit);
             return view;
         }
@@ -35,6 +41,7 @@ namespace Factories
         public InteractableView CreateInteractableView(Interactable interactable, UnitDefinition definition)
         {
             var view = _container.InstantiatePrefab(definition.Prefab).GetComponent<InteractableView>();
+            view.transform.SetParent(_unitParent);
             view.Initialize(interactable);
             return view;
         }

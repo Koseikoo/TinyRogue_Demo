@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
@@ -34,10 +35,16 @@ namespace Views
 
         [Inject] private ActionIndicatorFactory _actionIndicatorFactory;
 
+        [SerializeField] private bool debug;
+        [SerializeField] private TextMeshPro debugText;
+
+        private Sequence _destroySequence;
+
         public Transform Visual => visual;
 
         public void Initialize(Tile tile)
         {
+            debugText.gameObject.SetActive(debug);
             _tile = tile;
             this.enabled = true;
 
@@ -49,11 +56,12 @@ namespace Views
                 .Where(destroyed => destroyed)
                 .Subscribe(_ => DestroyTile())
                 .AddTo(this);
-            
-            if (tile.Island != null && tile.IsStartTile)
+
+            if (tile.MoveToActions > 0)
             {
                 _actionTile.SetActive(true);
-                tile.Island.IsHeartDestroyed.Subscribe(b => _actionLocked.SetActive(!b)).AddTo(this);
+                _actionLocked.SetActive(tile.Island.EnemiesOnIsland != 0);
+                tile.Island.Units.ObserveRemove().Subscribe(_ => _actionLocked.SetActive(tile.Island.EnemiesOnIsland != 0)).AddTo(this);
             }
 
             _tile.Selections.ObserveAdd().Subscribe(_ => UpdateSelection()).AddTo(this);
@@ -68,10 +76,15 @@ namespace Views
 
         private void Update()
         {
+            Debug();
+                
             if (GameStateContainer.Player.SelectedTiles.Contains(_tile))
             {
                 if (_actionIndicator == null)
+                {
                     _actionIndicator = _actionIndicatorFactory.CreateActionIndicator(_tile);
+                }
+
                 _actionIndicator.Render(_tile);
             }
             else if(_actionIndicator != null)
@@ -80,9 +93,17 @@ namespace Views
             }
         }
 
+        private void Debug()
+        {
+            if (debug)
+            {
+                debugText.text = _tile.DistanceTo(GameStateContainer.Player.Tile.Value).ToString();
+            }
+        }
+
         public void RemoveVisuals()
         {
-            foreach (var v in _visualObjects)
+            foreach (GameObject v in _visualObjects)
                 Destroy(v);
 
             _visualObjects.Clear();
@@ -96,14 +117,15 @@ namespace Views
 
         private void DestroyTile()
         {
-            var startPosition = transform.position;
-            var endPosition = startPosition + (Vector3.down * fallDistance);
+            Vector3 startPosition = transform.position;
+            Vector3 endPosition = startPosition + (Vector3.down * fallDistance);
 
-            Sequence sequence = DOTween.Sequence();
+            _destroySequence?.Kill();
+            _destroySequence = DOTween.Sequence();
             
-            sequence.Append(transform.DOMove(endPosition, deathDuration)
+            _destroySequence.Append(transform.DOMove(endPosition, deathDuration)
                 .SetEase(deathCurve));
-            sequence.OnComplete(() => Destroy(gameObject));
+            _destroySequence.OnComplete(() => Destroy(gameObject));
         }
 
         private void UpdateWeaponOnTileVisual(bool isOnTile)
@@ -131,6 +153,8 @@ namespace Views
 
         private void ResetSelection()
         {
+            _destroySequence?.Kill();
+            
             _attackSelection.SetActive(false);
             _moveSelection.SetActive(false);
             _weaponSelection.SetActive(false);

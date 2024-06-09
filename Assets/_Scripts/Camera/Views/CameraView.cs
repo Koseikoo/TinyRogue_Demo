@@ -30,14 +30,21 @@ public class CameraView : MonoBehaviour
 
     [Inject] private CameraModel _cameraModel;
 
+    private Camera _camera;
+
     public void Initialize(Player player)
     {
+        _camera = Camera.main;
+        
         cameraTransform = transform.GetChild(0);
         localStartRotation = cameraTransform.localRotation.eulerAngles;
 
+        player.EnterIsland.Subscribe(_ => _camera.nearClipPlane = 10);
+        player.EnterShip.Subscribe(_ => _camera.nearClipPlane = .1f);
+
         player.Tile.Where(tile => tile != null).Subscribe(tile => CameraLerp(tile.FlatPosition)).AddTo(this);
         _cameraModel.ForwardShakeCommand
-            .Subscribe(_ => ShakeAnimation(GameStateContainer.Player.Weapon.AttackDirection.Value * scaleIntensity))
+            .Subscribe(_ => ShakeAnimation(GameStateContainer.Player.LookDirection.Value * scaleIntensity))
             .AddTo(this);
 
         _cameraModel.SideShakeCommand
@@ -50,7 +57,6 @@ public class CameraView : MonoBehaviour
         
         _cameraModel.RotationShakeCommand.Subscribe(_ => RotationShakeAnimation()).AddTo(this);
         _cameraModel.DestroyCommand.Subscribe(_ => Destroy(gameObject)).AddTo(this);
-        player.Weapon.Level.SkipLatestValueOnSubscribe().Subscribe(_ => RotationShakeAnimation()).AddTo(this);
     }
     
     private void CameraLerp(Vector3 targetPosition)
@@ -90,7 +96,7 @@ public class CameraView : MonoBehaviour
         rotationTween?.Kill();
         rotationTween = DOTween.To(() => 0f, t =>
         {
-            var tEval = rotationCurve.Evaluate(t);
+            float tEval = rotationCurve.Evaluate(t);
             cameraTransform.localRotation =
                 Quaternion.Euler(new Vector3(localStartRotation.x, 0f, tEval * rotationIntensity));
         }, 1f, shakeDuration);

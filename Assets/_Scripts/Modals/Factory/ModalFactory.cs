@@ -8,6 +8,8 @@ namespace Factory
 {
     public class ModalFactory
     {
+        [Inject] private WeaponDataModalView _weaponDataModalPrefab;
+        [Inject] private WeaponSkillTreeModalView _weaponSkillTreeModalPrefab;
         [Inject] private EnemyInfoModalView _enemyInfoModalPrefab;
         [Inject] private DeathModalView _deathModalPrefab;
         [Inject] private CharacterCreationModalView _characterCreationModalPrefab;
@@ -26,15 +28,32 @@ namespace Factory
 
         public EnemyInfoModalView CreateUnitInfoModal(Unit unit)
         {
-            var view = _container.InstantiatePrefab(_enemyInfoModalPrefab, _modalUICanvas)
+            EnemyInfoModalView view = _container.InstantiatePrefab(_enemyInfoModalPrefab, _modalUICanvas)
                 .GetComponent<EnemyInfoModalView>();
             view.Initialize(unit);
+            return view;
+        }
+        
+        public WeaponDataModalView CreateWeaponDataModal(WeaponData data, Tile tile)
+        {
+            WeaponDataModalView view = _container.InstantiatePrefab(_weaponDataModalPrefab, _modalUICanvas)
+                .GetComponent<WeaponDataModalView>();
+            view.Initialize(data);
+            view.SetPosition(tile);
+            return view;
+        }
+        
+        public WeaponSkillTreeModalView CreateWeaponSkillTreeModal(WeaponData data)
+        {
+            WeaponSkillTreeModalView view = _container.InstantiatePrefab(_weaponSkillTreeModalPrefab, _modalUICanvas)
+                .GetComponent<WeaponSkillTreeModalView>();
+            view.Initialize(data);
             return view;
         }
 
         public DeathModalView CreateDeathModal()
         {
-            var view = _container.InstantiatePrefab(_deathModalPrefab, _modalUICanvas)
+            DeathModalView view = _container.InstantiatePrefab(_deathModalPrefab, _modalUICanvas)
                 .GetComponent<DeathModalView>();
             view.Initialize();
             return view;
@@ -42,7 +61,7 @@ namespace Factory
         
         public CharacterCreationModalView CreateCharacterCreationModal()
         {
-            var view = _container.InstantiatePrefab(_characterCreationModalPrefab, _modalUICanvas)
+            CharacterCreationModalView view = _container.InstantiatePrefab(_characterCreationModalPrefab, _modalUICanvas)
                 .GetComponent<CharacterCreationModalView>();
             view.Initialize();
             return view;
@@ -50,7 +69,7 @@ namespace Factory
 
         public ChoiceModalView CreateChoiceModal(List<Choice> choices, bool canClose = true)
         {
-            var view = _container.InstantiatePrefab(_choiceModalPrefab, _modalUICanvas)
+            ChoiceModalView view = _container.InstantiatePrefab(_choiceModalPrefab, _modalUICanvas)
                 .GetComponent<ChoiceModalView>();
             view.Initialize(choices, canClose);
             return view;
@@ -58,7 +77,7 @@ namespace Factory
         
         public CraftModalUIView CreateCraftModal(BlackSmith blackSmith)
         {
-            var view = _container.InstantiatePrefab(_craftModalPrefab, _modalUICanvas)
+            CraftModalUIView view = _container.InstantiatePrefab(_craftModalPrefab, _modalUICanvas)
                 .GetComponent<CraftModalUIView>();
             view.Initialize(blackSmith);
             return view;
@@ -67,7 +86,7 @@ namespace Factory
         public UnlockRecipeUIModal CreateUnlockRecipeModal(ItemType unlockedRecipe)
         {
             // modal doesnt appear
-            var view = _container.InstantiatePrefab(_unlockRecipeUIPrefab, _modalUICanvas)
+            UnlockRecipeUIModal view = _container.InstantiatePrefab(_unlockRecipeUIPrefab, _modalUICanvas)
                 .GetComponent<UnlockRecipeUIModal>();
             view.Initialize(unlockedRecipe);
             return view;

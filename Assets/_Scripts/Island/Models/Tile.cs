@@ -51,7 +51,8 @@ namespace Models
         private Ship _ship;
         
         private IDisposable _turnSubscription;
-        private event Action<Unit> _onMoveTo;
+        public event Action<Unit> OnMoveTo;
+        private List<Action<Unit>> _singleExecutionFunctions = new();
 
         // Visual Properties
 
@@ -74,15 +75,16 @@ namespace Models
 
         public Island Island => _island;
         public Ship Ship => _ship;
-        public List<Tile> TileCollection => _island == null ? _ship.Tiles : _island.Tiles;
+        public List<Tile> TileCollection => _island.Tiles;
         
-        public bool AttackBouncesFromTile => HasUnit && (Unit.Value.Health.Value > GameStateContainer.Player.Weapon.GetAttackDamage() || Unit.Value.IsInvincible.Value);
+        public bool AttackBouncesFromTile => HasUnit && (Unit.Value.Health.Value > GameStateContainer.Player.Weapon.Value.Damage || Unit.Value.IsInvincible.Value);
+        public int MoveToActions => OnMoveTo == null ? 0 : OnMoveTo.GetInvocationList().Length;
 
-
-        public Tile(Vector3 flatPosition)
+        public Tile(Vector3 flatPosition, Island island, int heightLevel = 0)
         {
             FlatPosition = flatPosition;
             Node = new Node(this);
+            _island = island;
 
             _turnSubscription = GameStateContainer.TurnState
                 .Where(state => state == TurnState.IslandTurn)
@@ -101,20 +103,31 @@ namespace Models
 
         public void AddMoveToLogic(Action<Unit> moveToAction)
         {
-            _onMoveTo += moveToAction;
+            OnMoveTo += moveToAction;
+        }
+
+        public void AddSingleExecutionLogic(Action<Unit> moveToAction)
+        {
+            OnMoveTo += moveToAction;
+            _singleExecutionFunctions.Add(moveToAction);
         }
 
         public void MoveUnit(Unit unit)
         {
             if (unit.Tile.Value != null)
+            {
                 unit.Tile.Value.RemoveUnit();
-            
+            }
+
             unit.Tile.Value = this;
             Unit.Value = unit;
-            _onMoveTo?.Invoke(unit);
-            
-            if (unit is Player player)
-                player.Weapon.Tile.Value = this;
+        }
+
+        public void MoveUnitWithAction(Unit unit)
+        {
+            MoveUnit(unit);
+            OnMoveTo?.Invoke(unit);
+            RemoveSingleExecutionActions();
         }
 
         public void RemoveUnit()
@@ -128,26 +141,37 @@ namespace Models
 
         public void AddSelector(TileSelection selection)
         {
-            var previousSelection = Selections.FirstOrDefault(s => s.Unit == selection.Unit);
+            TileSelection previousSelection = Selections.FirstOrDefault(s => s.Unit == selection.Unit);
             if(previousSelection != null && previousSelection.Type == selection.Type)
+            {
                 return;
-            
+            }
+
             Selections.Add(selection);
         }
 
         public void RemoveSelector(Unit unit, TileSelectionType type = TileSelectionType.None)
         {
-            var selectionsToRemove =
+            List<TileSelection> selectionsToRemove =
                 Selections.Where(s => s.Unit == unit && (type == TileSelectionType.None || s.Type == type)).ToList();
-            for (int i = 0; i < selectionsToRemove.Count; i++)
+            foreach (TileSelection selection in selectionsToRemove)
             {
-                Selections.Remove(selectionsToRemove[i]);
+                Selections.Remove(selection);
             }
         }
 
         private void TurnAction()
         {
             // TODO Implement Tile Logic per Turn
+        }
+
+        private void RemoveSingleExecutionActions()
+        {
+            foreach (Action<Unit> func in _singleExecutionFunctions)
+            {
+                OnMoveTo -= func;
+            }
+            _singleExecutionFunctions.Clear();
         }
     }
 }

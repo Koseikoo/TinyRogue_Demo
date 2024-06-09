@@ -49,7 +49,8 @@ namespace Game
                         {
                             _playerManager.Player.ExitIsland.Execute(() =>
                             {
-                                _gameAreaManager.SpawnNewIsland();
+                                //_gameAreaManager.SpawnNewIsland();
+                                _gameAreaManager.SpawnNewArchipel();
                             });
 
                         }),

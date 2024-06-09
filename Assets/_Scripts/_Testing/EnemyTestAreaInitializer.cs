@@ -21,7 +21,7 @@ namespace _Testing
         [Inject] private GameAreaManager _gameAreaManager;
         [Inject] private PlayerFeedbackManager _playerFeedbackManager;
         [Inject] private TurnManager _turnManager;
-        [Inject] private IntuitiveInputManager _inputManager;
+        [Inject] private InputManager _inputManager;
         [Inject] private SegmentContainer _segmentContainer;
         [Inject] private GameSetup _gameSetup;
 
@@ -91,7 +91,6 @@ namespace _Testing
         
             _inputManager.ProcessInput();
         
-            _playerFeedbackManager.UpdateTileSelection();
         }
 
         private void CreatePlayer()

@@ -2,22 +2,25 @@ using System;
 using Models;
 using UnityEngine;
 using DG.Tweening;
+using Factory;
 using UniRx;
+using Zenject;
 
 namespace Views
 {
     public class PlayerUIView : MonoBehaviour
     {
+        [Inject]
+        private ModalFactory _modalFactory;
+        
         [SerializeField] private UnitHealthUIView _healthUIView;
-        [SerializeField] private WeaponChargesUIView _attackChargesUIView;
         [SerializeField] private BagUIView _bagUIView;
         [SerializeField] private PlayerCompassUIView _compassUIView;
-        [SerializeField] private WeaponUIView _weaponUIView;
-        [SerializeField] private WeaponComboUIView _weaponComboUIView;
-        [SerializeField] private LevelUpUIView _levelUpUIView;
         [SerializeField] private LootHistoryView _lootHistoryView;
         
         [SerializeField] private RectTransform navBar;
+
+        private Player _player;
 
         private float _yOffset;
 
@@ -29,13 +32,10 @@ namespace Views
 
         public void Initialize(Player player)
         {
+            _player = player;
             _healthUIView?.Initialize(player);
-            _attackChargesUIView?.Initialize(player.Weapon);
             _bagUIView?.Initialize(player.Bag);
-            _weaponUIView?.Initialize(player.Weapon);
             _compassUIView?.Initialize(player);
-            _weaponComboUIView?.Initialize(player);
-            _levelUpUIView?.Initialize(player);
             //_lootHistoryView.Initialize(player);
 
             player.IsDestroyed
@@ -44,6 +44,11 @@ namespace Views
                 .AddTo(this);
 
             GameStateContainer.CloseOpenUIElements.Subscribe(_ => HideNavButton()).AddTo(this);
+        }
+
+        public void OnSkillTreeButton()
+        {
+            _modalFactory.CreateWeaponSkillTreeModal(_player.Weapon.Value);
         }
 
         public void OnNavButtonPressed()

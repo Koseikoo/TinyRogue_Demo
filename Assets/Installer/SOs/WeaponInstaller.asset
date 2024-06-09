@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 140c6364248e432aaf3fd4d8c8e99fba, type: 3}
   m_Name: WeaponInstaller
   m_EditorClassIdentifier: 
-  weaponPrefab: {fileID: 4946567695195306359, guid: d418aed4b6bc04817bd0eca18832a7b2,
-    type: 3}
-  swordPrefab: {fileID: 4090735022220168478, guid: 196e1a3cb41d64ab585ea987aa9508ed,
-    type: 3}
   actionIndicatorPrefab: {fileID: 4399518328928691170, guid: 792591b2bc61a42fbbee5a193c1ecfd1,
+    type: 3}
+  weaponViewPrefab: {fileID: 2562286951228193429, guid: 1bd07b9297d484e01a30527a4da32a07,
     type: 3}

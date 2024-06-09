@@ -18,7 +18,7 @@ namespace _Testing
         [Inject] private GameAreaManager _gameAreaManager;
         [Inject] private PlayerFeedbackManager _playerFeedbackManager;
         [Inject] private TurnManager _turnManager;
-        [Inject] private IntuitiveInputManager _inputManager;
+        [Inject] private InputManager _inputManager;
         [Inject] private SegmentContainer _segmentContainer;
         [Inject] private GameSetup _gameSetup;
         
@@ -54,7 +54,6 @@ namespace _Testing
                 return;
             
             _inputManager.ProcessInput();
-            _playerFeedbackManager.UpdateTileSelection();
             
             if (ReSpawnSegment)
             {

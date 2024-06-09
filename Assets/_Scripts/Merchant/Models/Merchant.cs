@@ -40,7 +40,9 @@ namespace Models
         public void AddSelectedItemToTrade(int index)
         {
             if(GameStateContainer.SelectedSlot == null)
+            {
                 return;
+            }
 
             CurrentTradeGold.Value += GameStateContainer.SelectedSlot.Item.Value.Value;
             LastTradedIndex = index;
@@ -63,7 +65,9 @@ namespace Models
             {
                 ItemType type = (ItemType)i;
                 if(type.ToString().ToLower().Contains("resource"))
+                {
                     _resourcePool.Add(type);
+                }
             }
             
             // Item Pool
@@ -73,14 +77,16 @@ namespace Models
         private void PopulateSellSlots()
         {
             if(_shopFilled)
+            {
                 return;
+            }
 
             _shopFilled = true;
             
-            SellSlots[0].SetItem(_itemPool.PickRandom().GetItemInstance(1));
+            SellSlots[0].SetItem(_itemPool.Random().GetItemInstance(1));
             for (int i = 1; i < SellSlots.Count; i++)
             {
-                ItemType resource = _resourcePool.PickRandom();
+                ItemType resource = _resourcePool.Random();
                 SellSlots[i].SetItem(resource.GetResourceInstance(1));
             }
         }

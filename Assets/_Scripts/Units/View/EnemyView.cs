@@ -27,18 +27,23 @@ namespace Views
             _enemy = enemy;
             _move = GetComponent<MovementView>();
             if(TryGetComponent(out _enrage))
+            {
                 _enrage.Initialize(enemy);
-            
-            
+            }
+
+
             _enemy.AimAtTarget
                 .SkipLatestValueOnSubscribe()
                 .Subscribe(b =>
                 {
                     if (b)
+                    {
                         aimFX.Play();
+                    }
                     else
+                    {
                         aimFX.Stop();
-
+                    }
                 })
                 .AddTo(this);
 
@@ -47,8 +52,9 @@ namespace Views
                 _move.ToTile(tile);
                 
                 if(_enemy.AimAtTarget.Value)
+                {
                     AimEvent();
-                
+                }
             }).AddTo(this);
 
             _enemy.AttackDirection
@@ -70,12 +76,19 @@ namespace Views
                 .Subscribe(b =>
                 {
                     if(b)
+                    {
                         AimEvent();
+                    }
                     else
+                    {
                         IdleEvent();
-                    
+                    }
                 })
                 .AddTo(this);
+
+            _enemy.IsDead
+                .Where(b => b)
+                .Subscribe(_ => aimFX.gameObject.SetActive(false));
             
             transform.position = _enemy.Tile.Value.FlatPosition;
         }
@@ -84,7 +97,7 @@ namespace Views
         {
             transform.DOLookAt(transform.position - attackDirection, .2f);
             Debug.Log("damage event");
-            var knockbackPosition = visual.position + (attackDirection * hitImpact);
+            Vector3 knockbackPosition = visual.position + (attackDirection * hitImpact);
             DOTween.To(() => 0f, t =>
             {
                 body.position = Vector3.Lerp(visual.position, knockbackPosition, hitCurve.Evaluate(t));
@@ -111,7 +124,10 @@ namespace Views
         private void SetAnimationTrigger(AnimationState state)
         {
             if(animator == null)
+            {
                 return;
+            }
+
             animator.SetTrigger(state.ToString());
             LookAtPlayer(state);
         }
@@ -119,7 +135,9 @@ namespace Views
         private void LookAtPlayer(AnimationState state)
         {
             if(state.ToString().ToLower().Contains("attack"))
+            {
                 transform.DOLookAt(_enemy.AttackTarget.Tile.Value.FlatPosition, .2f);
+            }
         }
     }
 }

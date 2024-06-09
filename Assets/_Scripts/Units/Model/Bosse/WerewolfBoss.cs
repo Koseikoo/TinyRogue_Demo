@@ -32,15 +32,19 @@ namespace Models
         }
         protected override void EnemyAction()
         {
-            var path = AStar.FindPath(Tile.Value,
+            List<Tile> path = AStar.FindPath(Tile.Value,
                 AttackTarget.Tile.Value, 
                 IsAttackPathTile);
             
             if(path == null)
+            {
                 return;
+            }
 
             if (TurnDelay == LeapRecoverTurns)
+            {
                 TurnDelay = _defaultTurnDelay;
+            }
 
             if (path.Count <= LeapRange || _leapPath.Count > 0)
             {
@@ -57,14 +61,18 @@ namespace Models
         protected override void RenderAttackPath()
         {
             if (!AimAtTarget.Value)
+            {
                 return;
+            }
 
-            var path = AStar.FindPath(Tile.Value,
+            List<Tile> path = AStar.FindPath(Tile.Value,
                 AttackTarget.Tile.Value);
 
             if (path == null)
+            {
                 return;
-            
+            }
+
             if (_damaged)
             {
                 Debug.Log("Show Teleportation Indicator");
@@ -92,7 +100,9 @@ namespace Models
             base.Attack(mods, attackVector, attacker);
             _damaged = true;
             if ((float)Health.Value / MaxHealth <= .6f)
+            {
                 _enraged = true;
+            }
         }
 
         private void DefaultAction(List<Tile> path)
@@ -146,7 +156,7 @@ namespace Models
             
             if (jumpIndex >= 0 && !path[jumpIndex].HasUnit)
             {
-                path[jumpIndex].MoveUnit(this);
+                path[jumpIndex].MoveUnitWithAction(this);
             }
 
             if (attack)
@@ -173,10 +183,10 @@ namespace Models
             Tile wolfSpawnTile = Tile.Value.Island.Tiles
                 .GetTilesWithinDistance(Tile.Value, WolfSpawnRange)
                 .WithoutUnitOnTile()
-                .PickRandom();
+                .Random();
 
-            var wolfDefinition = _unitContainer.GetEnemyDefinition(UnitType.WolfEnemy);
-            var wolf = _unitFactory.CreateEnemy(wolfDefinition, wolfSpawnTile);
+            EnemyDefinition wolfDefinition = _unitContainer.GetEnemyDefinition(UnitType.WolfEnemy);
+            Enemy wolf = _unitFactory.CreateEnemy(wolfDefinition, wolfSpawnTile);
             wolf.State.Value = EnemyState.TargetFound;
         }
 
@@ -187,7 +197,7 @@ namespace Models
                 .GetTilesOutsideOfDistance(Tile.Value, TeleportRange-2)
                 .WithoutUnitOnTile();
                 
-            teleportTiles.PickRandom().MoveUnit(this);
+            teleportTiles.Random().MoveUnitWithAction(this);
         }
         
         

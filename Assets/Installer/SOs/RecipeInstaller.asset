@@ -12,16 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37456c85d6dc45ccb942e684b57f8695, type: 3}
   m_Name: RecipeInstaller
   m_EditorClassIdentifier: 
-  _unitRecipeDropDefinitions:
-  - unitType: 2
-    recipe:
-      Type: 1
-      Cost:
-      - Type: 2
-        Amount: 5
-      - Type: 3
-        Amount: 5
-      - Type: 5
-        Amount: 5
-      Output: 6
-    dropChance: 1
+  _unitRecipeDropDefinitions: []

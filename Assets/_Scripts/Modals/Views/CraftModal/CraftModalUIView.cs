@@ -19,7 +19,6 @@ namespace Views
 
         [SerializeField] private RecipeUIView[] modRecipeRenderer;
         [SerializeField] private RecipeUIView[] equipmentRecipeRenderer;
-        [SerializeField] private UpgradeModSlotUIView[] upgradeSlots;
 
         private BlackSmith _blackSmith;
 
@@ -30,8 +29,6 @@ namespace Views
             InitializeRecipes();
             ShowMods();
             
-            foreach (var slot in upgradeSlots)
-                slot.Initialize(_blackSmith);
         }
 
         public void ShowMods()

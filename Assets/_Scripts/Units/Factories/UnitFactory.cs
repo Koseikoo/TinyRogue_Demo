@@ -20,17 +20,20 @@ namespace Factories
         [Inject] private UnitRecipeDropContainer _unitRecipeDropContainer;
         [Inject] private ModalFactory _modalFactory;
 
+        [Inject]
+        private WeaponFactory _weaponFactory;
+
         [Inject] private UnitActionContainer _unitActionContainer;
         [Inject] private UnitContainer _unitContainer;
 
         [Inject] private DiContainer _container;
-        public (Player, PlayerView) CreatePlayer(PlayerDefinition definition, Weapon weapon)
+        public (Player, PlayerView) CreatePlayer(PlayerDefinition definition)
         {
-            Player player = CreatePlayerModel(definition, weapon);
-            var view = _unitViewFactory.CreatePlayerView(player);
+            Player player = CreatePlayerModel(definition);
+            PlayerView view = _unitViewFactory.CreatePlayerView(player);
             _unitUIFactory.CreatePlayerUI(player);
             _unitUIFactory.CreateUI(player, view.transform)
-                .AddXpBarUI(player);
+                .AddXpUI(player);
             return (player, view);
         }
         
@@ -92,9 +95,11 @@ namespace Factories
             
             unit.DeathActions.Add(tile =>
             {
-                var recipe = _unitRecipeDropContainer.TryUnlockRecipe(unit.Type);
+                RecipeDefinition recipe = _unitRecipeDropContainer.TryUnlockRecipe(unit.Type);
                 if (recipe != null)
+                {
                     _modalFactory.CreateUnlockRecipeModal(recipe.Output);
+                }
             });
         }
 
@@ -104,7 +109,7 @@ namespace Factories
             enemy.ScanRange = definition.ScanRange;
             enemy.TurnDelay = definition.TurnDelay;
             
-            foreach (var modDefinition in definition.Mods)
+            foreach (ModDefinition modDefinition in definition.Mods)
                 enemy.AddMod(modDefinition.ItemDefinition.Type.GetModInstance(modDefinition.Power));
         }
 
@@ -112,8 +117,15 @@ namespace Factories
         {
             interactable.InteractButtonText = definition.InteractButtonText;
             interactable.InteractionLogic = _unitActionContainer.GetUnitAction(definition.Type);
-        }
 
+            
+            interactable.DeathActions.Add(tile =>
+            {
+                WeaponData weapon = new(WeaponName.BaseSword, WeaponSkillHelper.BasePattern, 2);
+                _weaponFactory.CreateWeaponView(weapon, tile);
+            });
+        }
+        
         private void BindUnitToIsland(Unit unit, Tile tile)
         {
             if (tile.Island != null)
@@ -125,17 +137,14 @@ namespace Factories
             tile.MoveUnit(unit);
         }
         
-        private Player CreatePlayerModel(PlayerDefinition definition, Weapon weapon)
+        private Player CreatePlayerModel(PlayerDefinition definition)
         {
-            Player player = _container.Instantiate<Player>(
-                new object[] {weapon});
+            Player player = _container.Instantiate<Player>();
             
             player.Type = UnitType.Player;
             player.MaxHealth = definition.Unit.MaxHealth;
             player.Health.Value = definition.Unit.MaxHealth;
-            player.Loot = new(0);
-
-            weapon.Owner = player;
+            player.Loot = new Loot(0);
             return player;
         }
 

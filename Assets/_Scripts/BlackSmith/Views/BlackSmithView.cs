@@ -15,7 +15,6 @@ namespace Views
         [SerializeField] private Transform CameraTradePoint;
         [SerializeField] private GameObject moveSelection;
         [SerializeField] private MoveCameraView _moveCameraView;
-        [SerializeField] private UpgradeModSlotUIView[] upgradeSlots;
 
         private BlackSmith _blackSmith;
         
@@ -35,13 +34,14 @@ namespace Views
             _blackSmith.InTrade.SkipLatestValueOnSubscribe().Subscribe(b =>
             {
                 if(b)
+                {
                     OnTradeStart();
+                }
                 else
+                {
                     OnTradeEnd();
-                
+                }
             }).AddTo(this);
-            
-            HideWeaponMods();
         }
         
         private void OnTradeStart()
@@ -73,28 +73,14 @@ namespace Views
         {
             anvilUI.SetActive(false);
         }
-        
-        private void ShowWeaponMods()
-        {
-            
-            for (int i = 0; i < upgradeSlots.Length; i++)
-            {
-                upgradeSlots[i].gameObject.SetActive(true);
-            }
-        }
-        
-        private void HideWeaponMods()
-        {
-            for (int i = 0; i < upgradeSlots.Length; i++)
-            {
-                upgradeSlots[i].gameObject.SetActive(false);
-            }
-        }
 
         public void OpenCraftingUI()
         {
             if(_currentCraftModal != null)
+            {
                 return;
+            }
+
             _currentCraftModal = _modalFactory.CreateCraftModal(_blackSmith);
             GameStateContainer.OpenUIElements.Add(_currentCraftModal.gameObject);
         }
@@ -102,7 +88,10 @@ namespace Views
         public void CloseCraftingUI()
         {
             if(_currentCraftModal == null)
+            {
                 return;
+            }
+
             GameStateContainer.OpenUIElements.Remove(_currentCraftModal.gameObject);
             _currentCraftModal.DestroyModal();
         }

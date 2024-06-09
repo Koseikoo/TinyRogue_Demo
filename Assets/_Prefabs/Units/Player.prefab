@@ -471,6 +471,7 @@ GameObject:
   - component: {fileID: 7423524648342550310}
   - component: {fileID: 2255254540275826890}
   - component: {fileID: 1460024939811605109}
+  - component: {fileID: 4041386778036944800}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -509,6 +510,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 477502600482979930}
   holsterTransform: {fileID: 2809218053405219999}
+  animationView: {fileID: 4041386778036944800}
   minCurve:
     serializedVersion: 2
     m_Curve:
@@ -587,6 +589,33 @@ MonoBehaviour:
   enterDuration: 0.4
   jumpHeight: 6
   delay: 0.4
+  shipEnterCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.033194736
+      outSlope: 0.033194736
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.07724426
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 3.3775642
+      outSlope: 3.3775642
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.01670146
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  shipEnterDuration: 0.5
+  shipEnterDelay: 0.2
+  dropHeight: 12
 --- !u!114 &7423524648342550310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -761,6 +790,28 @@ MonoBehaviour:
   anchorPointDistance: 1.5
   lootFX: {fileID: 4940895058724480983}
   lootSequenceDuration: 0.2
+--- !u!114 &4041386778036944800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3159393774722595565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9941373985864e46adad25d7a20c6499, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 477502600482979930}
+  noWeaponController: {fileID: 9100000, guid: f6124f53914bf4828b2824f755d01405, type: 2}
+  singleSwordController: {fileID: 22100000, guid: 6e09813d22de34e1a840e673d395df69,
+    type: 2}
+  singleSwordPiercingController: {fileID: 22100000, guid: 455ee3eead56645d492e1892603b9370,
+    type: 2}
+  baseSword: {fileID: 6517796088241599041}
+  baseBow: {fileID: 0}
+  baseHammer: {fileID: 0}
+  baseShield: {fileID: 0}
 --- !u!1 &3596851309602563407
 GameObject:
   m_ObjectHideFlags: 0
@@ -2406,12 +2457,22 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2401314376971798011, guid: b5b4314ecab5493dbb1a3a21af7dd612,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2508414231007487230, guid: b5b4314ecab5493dbb1a3a21af7dd612,
         type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3665188120438473366, guid: b5b4314ecab5493dbb1a3a21af7dd612,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4546488303805020239, guid: b5b4314ecab5493dbb1a3a21af7dd612,
         type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -2506,6 +2567,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7543586217660832583, guid: b5b4314ecab5493dbb1a3a21af7dd612,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8001354749718593143, guid: b5b4314ecab5493dbb1a3a21af7dd612,
         type: 3}
       propertyPath: m_Name
@@ -2584,7 +2650,11 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8553158292019582815}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8001354749718593143, guid: b5b4314ecab5493dbb1a3a21af7dd612,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2908344887339701667}
   m_SourcePrefab: {fileID: 100100000, guid: b5b4314ecab5493dbb1a3a21af7dd612, type: 3}
 --- !u!4 &84116387651006147 stripped
 Transform:
@@ -2598,6 +2668,24 @@ Animator:
     type: 3}
   m_PrefabInstance: {fileID: 7308077775336114702}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &747887552438629497 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8001354749718593143, guid: b5b4314ecab5493dbb1a3a21af7dd612,
+    type: 3}
+  m_PrefabInstance: {fileID: 7308077775336114702}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2908344887339701667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 747887552438629497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44eb2bba8b9643cc9ba3c60643827275, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1558458160990289518 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8127664122158675040, guid: b5b4314ecab5493dbb1a3a21af7dd612,
@@ -2607,6 +2695,12 @@ Transform:
 --- !u!4 &4533943257753323342 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6593357105455697216, guid: b5b4314ecab5493dbb1a3a21af7dd612,
+    type: 3}
+  m_PrefabInstance: {fileID: 7308077775336114702}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6517796088241599041 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4546488303805020239, guid: b5b4314ecab5493dbb1a3a21af7dd612,
     type: 3}
   m_PrefabInstance: {fileID: 7308077775336114702}
   m_PrefabAsset: {fileID: 0}

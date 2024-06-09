@@ -8,7 +8,6 @@ namespace Views
 {
     public class TapHoldProgressView : MonoBehaviour
     {
-        [Inject] private IntuitiveInputManager _inputManager;
 
         [SerializeField] private ProceduralImage _progressImage;
 
@@ -18,7 +17,7 @@ namespace Views
                 return;
             
             transform.position = UIHelper.Camera.WorldToScreenPoint(GameStateContainer.Player.Tile.Value.FlatPosition);
-            _progressImage.fillAmount = _inputManager.MoveModeTracker / IntuitiveInputManager.MoveModeTimer;
+            //_progressImage.fillAmount = _inputManager.MoveModeTracker / IntuitiveInputManager.MoveModeTimer;
         }
     }
 }

@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Container;
+using Game;
 using Installer;
 using Models;
+using TinyRogue;
 using UnityEngine;
 using Views;
 using Zenject;
@@ -13,6 +16,7 @@ namespace Factories
 {
     public class IslandFactory
     {
+        [Inject] private ArchipelConfig _archipelConfig;
         [Inject] private PolygonConfig _islandPolygonConfig;
         [Inject] private PolygonFactory _polygonFactory;
         [Inject] private HexGridFactory _hexGridFactory;
@@ -21,14 +25,123 @@ namespace Factories
         [Inject] private SegmentContainer _segmentContainer;
         [Inject] private TileActionContainer _tileActionContainer;
         [Inject] private SegmentFactory _segmentFactory;
+        
+        [Inject] private UnitFactory _unitFactory;
+        [Inject] private UnitContainer _unitContainer;
+        [Inject] private GameAreaManager _gameAreaManager;
 
         [Inject] private DiContainer _container;
+
+        private DungeonGenerator _dungeonGenerator;
+        private System.Random _rand = new();
+
         
         #if UNITY_EDITOR
         [Inject(Id = "Sphere")] private GameObject _debugSphere;
         #endif
 
+
+        public Archipel CreateArchipel()
+        {
+            if (_dungeonGenerator == null)
+            {
+                _dungeonGenerator = new(_archipelConfig);
+            }
+
+            Archipel archipel = _dungeonGenerator.GenerateDungeon();
+            _gameAreaManager.Archipel = archipel;
+            archipel.EndTile.AddMoveToLogic(unit =>
+            {
+                if (unit is Player && archipel.EndIsland.EnemiesOnIsland == 0)
+                {
+                    _gameAreaManager.SpawnNewArchipel();
+                }
+            });
+
+            foreach (Island island in archipel.Islands)
+            {
+                AddBaseContent(island);
+            }
+            
+            _islandViewFactory.CreateArchipelVisuals(archipel);
+            return archipel;
+        }
         
+        private void AddBaseContent(Island island)
+        {
+            List<Tile> tilePool = new(island.Tiles);
+            List<Tile> edgeTiles = tilePool.Where(tile => tile.Neighbours.Count < 6).ToList();
+            
+            int resourceAreas = 6;
+            int enemies = 5;
+
+            UnitType[] resourceTypes = new[]
+            {
+                UnitType.Tree,
+                UnitType.Rock
+            };
+
+            for (int i = 0; i < resourceAreas; i++)
+            {
+                List<Tile> sectionTiles = new();
+                Tile tile = edgeTiles.Random();
+                sectionTiles.Add(tile);
+                sectionTiles.AddRange(tile.Neighbours);
+                
+                UnitDefinition definition = _unitContainer.GetUnitDefinition(resourceTypes.Random());
+                
+                foreach (Tile sectionTile in sectionTiles)
+                {
+                    bool spawnUnit = sectionTile == tile || _rand.Next(0, 100) > 50;
+                    bool isNoConnectionTile = island.Connections
+                        .FirstOrDefault(pair => pair.start == sectionTile || pair.end == sectionTile) == default;
+                    bool isStartTile = _gameAreaManager.Archipel.StartTile == sectionTile;
+                    
+                    if (!sectionTile.HasUnit && isNoConnectionTile && !isStartTile && spawnUnit)
+                    {
+                        _unitFactory.CreateUnit(definition, sectionTile);
+
+                        tilePool.Remove(sectionTile);
+                        if (edgeTiles.Contains(sectionTile))
+                        {
+                            edgeTiles.Remove(sectionTile);
+                        }
+                    }
+                }
+            }
+            
+            for (int i = 0; i < enemies; i++)
+            {
+                Tile tile = tilePool.Random();
+                bool isNoConnectionTile = island.Connections
+                    .FirstOrDefault(pair => pair.start == tile || pair.end == tile) == default;
+                bool isStartTile = _gameAreaManager.Archipel.StartTile == tile;
+
+                if (isNoConnectionTile && !isStartTile)
+                {
+                    EnemyDefinition definition = _unitContainer.GetEnemyDefinition(UnitType.SpiderEnemy);
+                    _unitFactory.CreateEnemy(definition, tile);
+                    tilePool.Remove(tile);
+                }
+            }
+
+            Func<Island, bool> completeCondition = i => i.Units.Count(unit => unit is Enemy) == 0;
+            Action<Island> onComplete = i =>
+            {
+                List<Tile> orderedTiles = i.Tiles
+                    .OrderBy(tile => Vector3.Distance(tile.FlatPosition, tile.Island.Bounds.center))
+                    .ToList();
+
+                Tile chestTile = orderedTiles.FirstOrDefault(tile => !tile.HasUnit);
+
+                InteractableDefinition definition = _unitContainer.GetInteractableDefinition(UnitType.ChestInteractable);
+                Interactable chest = _unitFactory.CreateInteractable(definition, chestTile);
+
+            };
+            
+            island.AddCompletionLogic(completeCondition, onComplete);
+        }
+
         public Island CreateIsland(int level)
         {
             bool isBossLevel = level % 5 == 0 && level > 0;
@@ -46,6 +159,7 @@ namespace Factories
                 _segmentFactory.CreateSegmentView(island.Segments[i]);
             }
             
+            _islandViewFactory.ResetPooledTiles();
             _islandViewFactory.CreateIslandView(island);
             return island;
         }
@@ -59,10 +173,10 @@ namespace Factories
             (Dictionary<Vector2Int, Tile> tileDict, List<Tile> tiles, Vector2Int maxValue) = GetIslandTiles(baseGrid, polygon);
             List<Tile> islandTiles = LinkTiles(tileDict, maxValue);
             
-            var edgeTiles = SetEdgeTiles(tiles);
-            var startTile = edgeTiles.PickRandom();
+            List<Tile> edgeTiles = SetEdgeTiles(tiles);
+            Tile startTile = edgeTiles.Random();
             startTile.AddMoveToLogic(_tileActionContainer.IslandEndAction);
-            var endTile = tiles.GetTileFurthestAway(startTile);
+            Tile endTile = tiles.GetTileFurthestAway(startTile);
             
             Island island = _container.Instantiate<Island>(
                 new object[] {islandTiles, startTile, endTile, new List<Segment>(), 0});
@@ -72,6 +186,7 @@ namespace Factories
                 SetVisualAttributes(tile);
             }
             
+            _islandViewFactory.ResetPooledTiles();
             _islandViewFactory.CreateIslandView(island);
 
             return island;
@@ -82,6 +197,7 @@ namespace Factories
 
             Island i = CreateTestIslandModel(segmentToTest);
             _segmentFactory.CreateSegmentView(i.Segments[1], segmentToTest);
+            _islandViewFactory.ResetPooledTiles();
             _islandViewFactory.CreateIslandView(i);
             return i;
         }
@@ -96,22 +212,22 @@ namespace Factories
             
             List<Tile> islandTiles = LinkTiles(tileDict, maxValue);
             
-            var edgeTiles = SetEdgeTiles(tiles);
-            var startTile = edgeTiles.PickRandom();
+            List<Tile> edgeTiles = SetEdgeTiles(tiles);
+            Tile startTile = edgeTiles.Random();
             startTile.AddMoveToLogic(_tileActionContainer.IslandEndAction);
-            var endTile = tiles.GetTileFurthestAway(startTile);
+            Tile endTile = tiles.GetTileFurthestAway(startTile);
 
-            var segments = CreateTestSegments(islandTiles);
-            foreach (var segment in segments)
+            List<Segment> segments = CreateTestSegments(islandTiles);
+            foreach (Segment segment in segments)
             {
-                var segmentTiles = islandTiles.GetSegmentTiles(segment);                       
+                List<Tile> segmentTiles = islandTiles.GetSegmentTiles(segment);                       
                 segment.SetTiles(segmentTiles);
 
-                var outerTiles = segment.Tiles.GetTilesOutsideOfDistance(segment.CenterTile, segment.Size - 1);
+                List<Tile> outerTiles = segment.Tiles.GetTilesOutsideOfDistance(segment.CenterTile, segment.Size - 1);
                 
                 outerTiles.ForEach(t =>
                 {
-                    var pathNeighbours = t.Neighbours.Where(n => n.IsPathTile.Value);
+                    IEnumerable<Tile> pathNeighbours = t.Neighbours.Where(n => n.IsPathTile.Value);
                     if (!pathNeighbours.Any())
                     {
                         t.HeightLevel = -1;
@@ -123,7 +239,7 @@ namespace Factories
             tileDict = RemoveUnusedTiles(tileDict);
             islandTiles = LinkTiles(tileDict, maxValue);
 
-            var heartSegment = segments.FirstOrDefault(s => s.Type == SegmentType.MiniBoss);
+            Segment heartSegment = segments.FirstOrDefault(s => s.Type == SegmentType.MiniBoss);
             
             Island island = _container.Instantiate<Island>(
                 new object[] {islandTiles, startTile, endTile, segments, 0});
@@ -143,10 +259,10 @@ namespace Factories
                 testSegments.Add(startSegment);
 
                 float distance = startSegment.Radius.GetSegmentDistance(segmentToTestPrefab.Radius);
-                var checkDirection = endTile.FlatPosition - startSegment.CenterTile.FlatPosition;
+                Vector3 checkDirection = endTile.FlatPosition - startSegment.CenterTile.FlatPosition;
                 checkDirection.Normalize();
 
-                var centerTile = tiles.GetTileClosestToPosition(startSegment.CenterTile.FlatPosition + (checkDirection * distance));
+                Tile centerTile = tiles.GetTileClosestToPosition(startSegment.CenterTile.FlatPosition + (checkDirection * distance));
                 Segment segment = _segmentFactory.CreateSegment(segmentToTestPrefab, centerTile);
                 testSegments.Add(segment);
                 
@@ -166,22 +282,22 @@ namespace Factories
             
             List<Tile> islandTiles = LinkTiles(tileDict, maxValue);
             
-            var edgeTiles = SetEdgeTiles(tiles);
-            var startTile = edgeTiles.PickRandom();
+            List<Tile> edgeTiles = SetEdgeTiles(tiles);
+            Tile startTile = edgeTiles.Random();
             startTile.AddMoveToLogic(_tileActionContainer.IslandEndAction);
-            var endTile = tiles.GetTileFurthestAway(startTile);
+            Tile endTile = tiles.GetTileFurthestAway(startTile);
 
-            var segments = CreateSegments(startTile, endTile, tiles, polygon);
+            List<Segment> segments = CreateSegments(startTile, endTile, tiles, polygon);
             
-            foreach (var segment in segments)
+            foreach (Segment segment in segments)
             {
-                var segmentTiles = islandTiles.GetSegmentTiles(segment);                       
+                List<Tile> segmentTiles = islandTiles.GetSegmentTiles(segment);                       
                 segment.SetTiles(segmentTiles);
                 
-                var outerTiles = segment.Tiles.GetTilesOutsideOfDistance(segment.CenterTile, segment.Size - 1);
+                List<Tile> outerTiles = segment.Tiles.GetTilesOutsideOfDistance(segment.CenterTile, segment.Size - 1);
                 outerTiles.ForEach(t =>
                 {
-                    var pathNeighbours = t.Neighbours.Where(n => n.IsPathTile.Value);
+                    IEnumerable<Tile> pathNeighbours = t.Neighbours.Where(n => n.IsPathTile.Value);
                     if (!pathNeighbours.Any())
                     {
                         t.HeightLevel = -1;
@@ -192,7 +308,7 @@ namespace Factories
 
             islandTiles = LinkTiles(RemoveUnusedTiles(tileDict), maxValue);
 
-            var heartSegment = segments.First(s => s.Type == SegmentType.MiniBoss);
+            Segment heartSegment = segments.First(s => s.Type == SegmentType.MiniBoss);
             Island island = _container.Instantiate<Island>(
                 new object[] {islandTiles, startTile, heartSegment.CenterTile, segments, 0});
             
@@ -208,12 +324,14 @@ namespace Factories
         {
             Dictionary<Vector2Int, Tile> newTileDict = new();
 
-            foreach (var kvp in tileDict)
+            foreach (KeyValuePair<Vector2Int, Tile> kvp in tileDict)
             {
                 bool isPathTile = kvp.Value.IsPathTile.Value;
                 bool isSegmentTile = kvp.Value.IsSegmentTile;
                 if (isPathTile || isSegmentTile)
+                {
                     newTileDict[kvp.Key] = kvp.Value;
+                }
             }
             return newTileDict;
         }
@@ -222,10 +340,12 @@ namespace Factories
         {
             List<Tile> edgeTiles = new();
 
-            foreach (var tile in tiles)
+            foreach (Tile tile in tiles)
             {
                 if(tile.IsEdgeTile)
+                {
                     edgeTiles.Add(tile);
+                }
             }
 
             return edgeTiles;
@@ -241,17 +361,24 @@ namespace Factories
                 
                     Vector3 position = grid[x, y];
                     if (!position.IsInsidePolygon(polygon))
+                    {
                         continue;
-                    
+                    }
+
                     Tile tile = _container.Instantiate<Tile>(
                         new object[] {position});
                     tileDict[new(x, y)] = tile;
                     tiles.Add(tile);
 
                     if (x > maxValue.x)
+                    {
                         maxValue.x = x;
+                    }
+
                     if (y > maxValue.y)
+                    {
                         maxValue.y = y;
+                    }
                 }
             }
 
@@ -281,7 +408,7 @@ namespace Factories
                     previousSegment = currentSegments[i];
                     for (int j = 0; j < checkDirections.Length; j++)
                     {
-                        SegmentView prefab = _segmentContainer.SegmentPool.PickRandom();
+                        SegmentView prefab = _segmentContainer.SegmentPool.Random();
 
                         float distance = currentSegments[i].Radius.GetSegmentDistance(prefab.Radius);
                         Vector3 checkPosition = currentSegments[i].CenterTile.FlatPosition +
@@ -289,7 +416,9 @@ namespace Factories
                         Tile centerTile = tiles.GetTileClosestToPosition(checkPosition);
 
                         if (centerTile == null)
+                        {
                             continue;
+                        }
 
                         checkPosition = centerTile.FlatPosition;
                         //Segment segment = _segmentFactory.CreateSegment(prefab, centerTile);
@@ -316,11 +445,11 @@ namespace Factories
                 newSegments.Clear();
             }
 
-            var lastSegment = spacedSegments.GetClosestSegment(endTile);
-            var index = spacedSegments.IndexOf(lastSegment);
+            Segment lastSegment = spacedSegments.GetClosestSegment(endTile);
+            int index = spacedSegments.IndexOf(lastSegment);
 
-            var miniBossPrefab = _segmentContainer.BossSegments.PickRandom();
-            var miniBossSegment = _segmentFactory.CreateSegment(miniBossPrefab, lastSegment.CenterTile);
+            SegmentView miniBossPrefab = _segmentContainer.BossSegments.Random();
+            Segment miniBossSegment = _segmentFactory.CreateSegment(miniBossPrefab, lastSegment.CenterTile);
             
             spacedSegments.RemoveAt(index);
             spacedSegments.Insert(index, miniBossSegment);
@@ -345,7 +474,7 @@ namespace Factories
         
         void AssignPath(Segment startSegment, Segment endSegment)
         {
-            var path = AStar.FindPath(startSegment.CenterTile, endSegment.CenterTile, unit => true);
+            List<Tile> path = AStar.FindPath(startSegment.CenterTile, endSegment.CenterTile, unit => true);
             path = path.Where(tile => Vector3.Distance(startSegment.CenterTile.FlatPosition, tile.FlatPosition) >= startSegment.Radius &&
                                       Vector3.Distance(endSegment.CenterTile.FlatPosition, tile.FlatPosition) >= endSegment.Radius).ToList();
 
@@ -384,13 +513,18 @@ namespace Factories
             GrassType GetPathType(List<Tile> path, int index)
             {
                 if (index == 0 || index == path.Count - 1)
+                {
                     return GrassType.End;
-    
-                var nextDirection = (path[index + 1].FlatPosition - path[index].FlatPosition).normalized;
-                var previousDirection = (path[index - 1].FlatPosition - path[index].FlatPosition).normalized;
+                }
+
+                Vector3 nextDirection = (path[index + 1].FlatPosition - path[index].FlatPosition).normalized;
+                Vector3 previousDirection = (path[index - 1].FlatPosition - path[index].FlatPosition).normalized;
     
                 if (Vector3.Dot(nextDirection, previousDirection) < -.9)
+                {
                     return GrassType.Straight;
+                }
+
                 return GrassType.Bend60;
             }
     
@@ -403,10 +537,12 @@ namespace Factories
                     Vector3 direction = startDirection.RotateVector(Vector3.up, i * 60);
                     int indexToCheck = index == 0 ? 1 : path.Count - 2;
     
-                    var targetDirection = (path[indexToCheck].FlatPosition - path[index].FlatPosition).normalized;
+                    Vector3 targetDirection = (path[indexToCheck].FlatPosition - path[index].FlatPosition).normalized;
     
                     if (Vector3.Dot(direction, targetDirection) > .9f)
+                    {
                         return i * 60;
+                    }
                 }
     
                 throw new Exception("Cant Get Rotation (End Piece)");
@@ -417,25 +553,27 @@ namespace Factories
                 float rotationOffset = 180;
                 Vector3 startDirection = Vector3.right;
     
-                var targetDirectionIn = (path[index - 1].FlatPosition - path[index].FlatPosition).normalized;
-                var targetDirectionOut = (path[index + 1].FlatPosition - path[index].FlatPosition).normalized;
+                Vector3 targetDirectionIn = (path[index - 1].FlatPosition - path[index].FlatPosition).normalized;
+                Vector3 targetDirectionOut = (path[index + 1].FlatPosition - path[index].FlatPosition).normalized;
     
                 for (int i = 0; i < 6; i++)
                 {
                     Vector3 directionIn = startDirection.RotateVector(Vector3.up, i * 60);
                     Vector3 directionOut = directionIn.RotateVector(Vector3.up, rotationOffset);
     
-                    var inDot = Vector3.Dot(directionIn, targetDirectionIn);
-                    var outDot = Vector3.Dot(directionOut, targetDirectionOut);
+                    float inDot = Vector3.Dot(directionIn, targetDirectionIn);
+                    float outDot = Vector3.Dot(directionOut, targetDirectionOut);
     
-                    var altInDot = Vector3.Dot(directionIn, targetDirectionOut);
-                    var altOutDot = Vector3.Dot(directionOut, targetDirectionIn);
+                    float altInDot = Vector3.Dot(directionIn, targetDirectionOut);
+                    float altOutDot = Vector3.Dot(directionOut, targetDirectionIn);
     
                     bool validRotation = inDot > .9f && outDot > .9f;
                     bool altValidRotation = altInDot > .9f && altOutDot > .9f;
     
                     if (validRotation || altValidRotation)
+                    {
                         return i * 60;
+                    }
                 }
     
                 throw new Exception("Cant Get Rotation (Straight Piece)");
@@ -447,25 +585,27 @@ namespace Factories
                 float rotationOffset = 240;
                 Vector3 startDirection = Vector3.right;
     
-                var targetDirectionIn = (path[index - 1].FlatPosition - path[index].FlatPosition).normalized;
-                var targetDirectionOut = (path[index + 1].FlatPosition - path[index].FlatPosition).normalized;
+                Vector3 targetDirectionIn = (path[index - 1].FlatPosition - path[index].FlatPosition).normalized;
+                Vector3 targetDirectionOut = (path[index + 1].FlatPosition - path[index].FlatPosition).normalized;
     
                 for (int i = 0; i < 6; i++)
                 {
                     Vector3 directionIn = startDirection.RotateVector(Vector3.up, i * 60);
                     Vector3 directionOut = directionIn.RotateVector(Vector3.up, rotationOffset);
     
-                    var inDot = Vector3.Dot(directionIn, targetDirectionIn);
-                    var outDot = Vector3.Dot(directionOut, targetDirectionOut);
+                    float inDot = Vector3.Dot(directionIn, targetDirectionIn);
+                    float outDot = Vector3.Dot(directionOut, targetDirectionOut);
     
-                    var altInDot = Vector3.Dot(directionIn, targetDirectionOut);
-                    var altOutDot = Vector3.Dot(directionOut, targetDirectionIn);
+                    float altInDot = Vector3.Dot(directionIn, targetDirectionOut);
+                    float altOutDot = Vector3.Dot(directionOut, targetDirectionIn);
     
                     bool validRotation = inDot > .9f && outDot > .9f;
                     bool altValidRotation = altInDot > .9f && altOutDot > .9f;
     
                     if (validRotation || altValidRotation)
+                    {
                         return i * 60;
+                    }
                 }
     
                 throw new Exception("Cant Get Rotation (Bend Piece)");
@@ -475,7 +615,7 @@ namespace Factories
         private List<Tile> LinkTiles(Dictionary<Vector2Int, Tile> tiles, Vector2Int maxPosition)
         {
             List<Tile> linkedtiles = new();
-            foreach (var kvp in tiles)
+            foreach (KeyValuePair<Vector2Int, Tile> kvp in tiles)
             {
                 GoThroughPossibleNeighbours(kvp.Key);
             }
@@ -483,7 +623,10 @@ namespace Factories
             void GoThroughPossibleNeighbours(Vector2Int key)
             {
                 if(!tiles.ContainsKey(key))
+                {
                     return;
+                }
+
                 Tile tile = tiles[key];
                 linkedtiles.Add(tile);
 
@@ -493,22 +636,34 @@ namespace Factories
 
                 List<Tile> neighbours = new();
                 if(tiles.TryGetValue(new(offsetLeft, key.y - 1), out Tile bottomLeft))
+                {
                     neighbours.Add(bottomLeft);
-                    
+                }
+
                 if(tiles.TryGetValue(new(offsetRight, key.y - 1), out Tile bottomRight))
+                {
                     neighbours.Add(bottomRight);
-                    
+                }
+
                 if(tiles.TryGetValue(new(key.x - 1, key.y), out Tile left))
+                {
                     neighbours.Add(left);
-                    
+                }
+
                 if(tiles.TryGetValue(new(key.x + 1, key.y), out Tile right))
+                {
                     neighbours.Add(right);
-                    
+                }
+
                 if(tiles.TryGetValue(new(offsetLeft, key.y + 1), out Tile topLeft))
+                {
                     neighbours.Add(topLeft);
-                    
+                }
+
                 if(tiles.TryGetValue(new(offsetRight, key.y + 1), out Tile topRight))
+                {
                     neighbours.Add(topRight);
+                }
 
                 tile.Neighbours = new(neighbours);
             }
@@ -526,25 +681,40 @@ namespace Factories
             TerrainType GetTerrainType()
             {
                 if (tile.IsWeak)
+                {
                     return TerrainType.Weak;
+                }
+
                 if (tile.Neighbours.Any(n => n.IsWeak) || tile.IsPathTile.Value)
+                {
                     return TerrainType.Top;
+                }
+
                 return TerrainType.Surface;
             }
 
             GrassType GetGrassType()
             {
                 if (tile.IsPathTile.Value)
+                {
                     return tile.GrassType;
+                }
+
                 return tile.BoardType != BoardType.None ? GrassType.Board : GrassType.Base;
             }
 
             BoardType GetBoardType()
             {
                 if (tile.IsHeartTile)
+                {
                     return BoardType.Metal;
+                }
+
                 if (tile.IsSegmentTile || tile.IsPathTile.Value || tile.IsStartTile)
+                {
                     return BoardType.None;
+                }
+
                 return Random.value > .6f || tile.IsPathTile.Value ? BoardType.Stone : BoardType.None;
             }
         }
@@ -558,7 +728,7 @@ namespace Factories
             Segment startSegment = _segmentFactory.CreateSegment(segmentDefinition, centerTile);
         
             Tile tile = islandTiles.GetTileClosestToPosition(default);
-            SegmentView definition = _segmentContainer.BossSegments.PickRandom();
+            SegmentView definition = _segmentContainer.BossSegments.Random();
             Segment segment = _segmentFactory.CreateSegment(definition, tile);
         }
     }

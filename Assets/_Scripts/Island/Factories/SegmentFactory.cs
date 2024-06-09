@@ -18,6 +18,8 @@ namespace Factories
     {
         private const float EnemySpawnChance = .3f;
         private const float DestructibleSpawnChance = .4f;
+
+        [Inject(Id = IslandInstaller.IslandParent)] private Transform _islandParent;
         
         [Inject] private UnitFactory _unitFactory;
         [Inject] private UnitContainer _unitContainer;
@@ -46,6 +48,7 @@ namespace Factories
             if(prefab == null)
                 prefab = _segmentContainer.GetPrefab(segment.Type);
             SegmentView view = _container.InstantiatePrefab(prefab).GetComponent<SegmentView>();
+            view.transform.SetParent(_islandParent);
             view.Initialize(segment);
             
             for (int i = 0; i < view.SegmentUnitDefinitions.Length; i++)

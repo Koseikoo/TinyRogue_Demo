@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b97feac132a4398a57bcc2360c7166f, type: 3}
   m_Name: ModalInstaller
   m_EditorClassIdentifier: 
+  _weaponDataModalPrefab: {fileID: 2164783110618308947, guid: 1c44722a20f604ce6b3329412b640189,
+    type: 3}
+  _weaponSkillTreeModalPrefab: {fileID: 6209426255676181969, guid: 5d616ae4ea3c04a26a58e01f7ffca329,
+    type: 3}
   _enemyInfoModalPrefab: {fileID: 6482904678991986730, guid: b5a9a4265592249fdb4d26e3e0ca50bb,
     type: 3}
   _deathModalPrefab: {fileID: 7814208706168943023, guid: b4e00382ea9904169aaca796e8e370b3,
@@ -38,21 +42,5 @@ MonoBehaviour:
     Icon: {fileID: 21300000, guid: 898a891d03d184a568f9a7f5af83dd58, type: 3}
     Choice: 3
   - CardText: Range Up
-    Icon: {fileID: 21300000, guid: c37a0aa19715f4914b3d837c24a79237, type: 3}
-    Choice: 4
-  ToShipChoice:
-    CardText: Return to Ship
-    Icon: {fileID: 21300000, guid: 666eb5393fe20274fb4af49f04eab151, type: 3}
-    Choice: 1
-  IncreaseHealthChoice:
-    CardText: Health Up
-    Icon: {fileID: 21300000, guid: 574945229bfba460da3e6cfcb65abd26, type: 3}
-    Choice: 2
-  IncreaseDamageChoice:
-    CardText: Damage Up
-    Icon: {fileID: 21300000, guid: 898a891d03d184a568f9a7f5af83dd58, type: 3}
-    Choice: 3
-  IncreaseRangeChoice:
-    CardText: Range Up
     Icon: {fileID: 21300000, guid: c37a0aa19715f4914b3d837c24a79237, type: 3}
     Choice: 4

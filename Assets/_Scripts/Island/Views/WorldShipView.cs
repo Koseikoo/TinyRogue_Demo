@@ -35,11 +35,11 @@ namespace Views
             startSegment.CenterTile.Island.IsDestroyed.Where(b => b).Subscribe(_ => Destroy(gameObject)).AddTo(this);
             startSegment.CenterTile.Island.IslandShipPosition = ship.position;
 
-            _playerManager.Player.EnterIsland.Subscribe(_ => EnterEffect()).AddTo(this);
-            _playerManager.Player.ExitIsland.Subscribe(_ => ExitEffect()).AddTo(this);
+            _playerManager.Player.EnterIsland.Subscribe(_ => EnterIslandAnimation()).AddTo(this);
+            _playerManager.Player.ExitIsland.Subscribe(_ => ExitIslandAnimation()).AddTo(this);
         }
 
-        private void EnterEffect()
+        private void EnterIslandAnimation()
         {
             _currentSequence?.Kill();
             _currentSequence = DOTween.Sequence();
@@ -52,7 +52,7 @@ namespace Views
             }, 1f, scaleDuration));
         }
 
-        private void ExitEffect()
+        private void ExitIslandAnimation()
         {
             _currentSequence?.Kill();
             _currentSequence = DOTween.Sequence();

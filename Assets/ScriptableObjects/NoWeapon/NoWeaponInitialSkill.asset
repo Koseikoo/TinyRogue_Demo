@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de5e87ff12d7465ba8a0f9df8f1b6227, type: 3}
+  m_Name: NoWeaponInitialSkill
+  m_EditorClassIdentifier: 
+  Name: 0
+  Description: The Base Sword
+  ConnectedSkills:
+  - {fileID: 11400000, guid: 1e4a7a51f93054d3aab5ecc4f388cd96, type: 2}
+  Type: 1
+  Sprite: {fileID: 21300000, guid: f326eab97d8e8e742bad92712143032a, type: 3}
+  UnlockCost: 0

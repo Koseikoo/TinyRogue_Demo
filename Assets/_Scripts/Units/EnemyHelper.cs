@@ -20,7 +20,9 @@ public static class EnemyHelper
             {
                 enemy.AttackUnit(attackPath[i].Unit.Value);
                 if(!damageAllTiles)
+                {
                     break;
+                }
             }
                     
         }
@@ -32,7 +34,9 @@ public static class EnemyHelper
         for (int i = 0; i < path.Count; i++)
         {
             if (tileCondition(path[i]))
+            {
                 return true;
+            }
         }
 
         return false;
@@ -43,7 +47,9 @@ public static class EnemyHelper
         for (int i = 0; i < path.Count; i++)
         {
             if (path[i].Unit.Value == unit)
+            {
                 return true;
+            }
         }
 
         return false;
@@ -58,7 +64,7 @@ public static class EnemyHelper
         }
         else
         {
-            nextTile.MoveUnit(enemy);
+            nextTile.MoveUnitWithAction(enemy);
         }
     }
 }

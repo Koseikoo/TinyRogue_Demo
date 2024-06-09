@@ -4,6 +4,7 @@ using Installer;
 using UnityEngine;
 using Views;
 using Models;
+using TinyRogue;
 using Zenject;
 
 namespace Factories
@@ -31,14 +32,24 @@ namespace Factories
         {
             TilePool = new();
         }
+
+        public void CreateArchipelVisuals(Archipel archipel)
+        {
+            ResetPooledTiles();
+            foreach (Island island in archipel.Islands)
+            {
+                IslandView view = CreateIslandView(island);
+            }
+        }
         
         public IslandView CreateIslandView(Island island)
         {
             IslandView view = _container.InstantiatePrefab(_islandPrefab).GetComponent<IslandView>();
-            
-            ResetPooledTiles();
             foreach (Tile tile in island.Tiles)
             {
+                tile.TerrainType = tile.Neighbours.Count == 6 ? TerrainType.Surface : TerrainType.Top;
+                tile.GrassType = GrassType.Base;
+                
                 CreateTileView(tile, view.TileParent)
                     .WithTerrain()
                     .WithGrass()
@@ -48,7 +59,7 @@ namespace Factories
             return view;
         }
 
-        public IslandViewFactory CreateTileView(Tile tile, Transform parent)
+        private IslandViewFactory CreateTileView(Tile tile, Transform parent)
         {
             TileView view = GetPooledTile();
             view.Initialize(tile);
@@ -62,10 +73,12 @@ namespace Factories
         public IslandViewFactory WithGrass()
         {
             if (_currentTile.GrassType == GrassType.None)
+            {
                 return this;
-            
-            var pre = _grass.GetGrass(_currentTile.GrassType);
-            var grass = Object.Instantiate(pre,
+            }
+
+            GameObject pre = _grass.GetGrass(_currentTile.GrassType);
+            GameObject grass = Object.Instantiate(pre,
                 _currentTileView.Visual);
             _currentTileView.AddVisual(grass);
             grass.transform.Rotate(Vector3.up, _currentTile.GrassRotation);
@@ -76,7 +89,10 @@ namespace Factories
         public IslandViewFactory WithTerrain()
         {
             if (_currentTile.TerrainType == TerrainType.None)
+            {
                 return this;
+            }
+
             GameObject terrain = Object.Instantiate(_terrain.GetTerrain(_currentTile.TerrainType),
                 _currentTileView.Visual);
             _currentTileView.AddVisual(terrain);
@@ -116,9 +132,11 @@ namespace Factories
         public IslandViewFactory WithBoard()
         {
             if (_currentTile.BoardType == BoardType.None)
+            {
                 return this;
+            }
 
-            var board = Object.Instantiate(_board.GetBoard(_currentTile.BoardType),
+            GameObject board = Object.Instantiate(_board.GetBoard(_currentTile.BoardType),
                 _currentTileView.Visual);
             _currentTileView.AddVisual(board);
             board.transform.localPosition = Vector3.up * GrassOffset;
@@ -128,17 +146,21 @@ namespace Factories
         public IslandViewFactory AsBridge()
         {
             if (_currentTile.BridgeType == BridgeType.None)
+            {
                 return this;
-            
+            }
+
             return this;
         }
         
-        void ResetPooledTiles()
+        public void ResetPooledTiles()
         {
             for (int i = TilePool.Count - 1; i >= 0; i--)
             {
                 if(TilePool[i] == null)
+                {
                     TilePool.RemoveAt(i);
+                }
             }
             
             foreach (TileView tile in TilePool)
@@ -150,7 +172,7 @@ namespace Factories
         
         TileView GetPooledTile()
         {
-            var tile = TilePool.FirstOrDefault(t => !t.gameObject.activeSelf);
+            TileView tile = TilePool.FirstOrDefault(t => !t.gameObject.activeSelf);
             if (tile == null)
             {
                 tile = _container.InstantiatePrefab(_tilePrefab).GetComponent<TileView>();

@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Container;
 using Factories;
 using Models;
+using TinyRogue;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Views;
 using Zenject;
 
@@ -14,6 +13,9 @@ namespace Installer
     [CreateAssetMenu(fileName = "IslandInstaller", menuName = "Installer/IslandInstaller")]
     public class IslandInstaller : ScriptableObjectInstaller<IslandInstaller>
     {
+        public const string IslandParent = "IslandParent";
+
+        [SerializeField] private ArchipelConfig _archipelConfig;
         [SerializeField] private TileView _tilePrefab;
         [SerializeField] private IslandView _islandPrefab;
         
@@ -46,8 +48,8 @@ namespace Installer
         [SerializeField] private GameObject _topPrefab;
         [SerializeField] private GameObject _topSurfacePrefab;
         [SerializeField] private GameObject _topWeakPrefab;
-        
-        #if UNITY_EDITOR
+
+#if UNITY_EDITOR
         [Header("DEBUG")]
         [SerializeField] private GameObject DEBUG_SPHERE;
         #endif
@@ -64,7 +66,11 @@ namespace Installer
             Container.Bind<TileView>().FromInstance(_tilePrefab).AsSingle();
             Container.Bind<IslandView>().FromInstance(_islandPrefab).AsSingle();
             Container.Bind<PolygonConfig>().FromInstance(_polygonConfig).AsSingle();
+            Container.Bind<ArchipelConfig>().FromInstance(_archipelConfig).AsSingle();
             Container.Bind<WorldShipView>().FromInstance(_worldShipPrefab).AsSingle();
+
+            Transform islandParent = GameObject.Find(IslandParent).transform;
+            Container.Bind<Transform>().WithId(IslandParent).FromInstance(islandParent);
 
 #if UNITY_EDITOR
             Container.Bind<GameObject>().WithId("Sphere").FromInstance(DEBUG_SPHERE).AsSingle();
@@ -131,15 +137,21 @@ namespace Installer
         public SegmentView GetPrefab(SegmentType type)
         {
             if (type == SegmentType.Start)
+            {
                 return StartSegment;
-            
-            var prefabs = SegmentPool.Where(p => p.Type == type).ToList();
+            }
+
+            List<SegmentView> prefabs = SegmentPool.Where(p => p.Type == type).ToList();
             if (prefabs.Any())
-                return prefabs.PickRandom();
+            {
+                return prefabs.Random();
+            }
 
             prefabs = BossSegments.Where(p => p.Type == type).ToList();
             if (prefabs.Any())
-                return prefabs.PickRandom();
+            {
+                return prefabs.Random();
+            }
 
             throw new Exception($"No Segment Prefab of Type {type} in SegmentContainer");
         }

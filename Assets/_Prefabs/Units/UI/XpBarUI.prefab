@@ -192,9 +192,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3363321916773582216}
   - component: {fileID: 6546359614204556479}
-  - component: {fileID: 6421722430859455272}
   - component: {fileID: 7060254692603839856}
   - component: {fileID: 6703673199548205987}
+  - component: {fileID: 148100502505623432}
   m_Layer: 5
   m_Name: XpBarUI
   m_TagString: Untagged
@@ -231,22 +231,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6815871060755162061}
   m_CullTransparentMesh: 1
---- !u!114 &6421722430859455272
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6815871060755162061}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee2a262bc97847efad0a473b1811fdb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _barFill: {fileID: 5398172783787282058}
-  _bar: {fileID: 4083472198906958}
-  _barBackground: {fileID: 7060254692603839856}
-  _fadeDuration: 0.3
 --- !u!114 &7060254692603839856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,3 +276,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 10
+--- !u!114 &148100502505623432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6815871060755162061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5110b648c7c4d94a79393be86c7d72e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fillBar: {fileID: 5398172783787282058}
+  showDuration: 0.5
+  fadeDuration: 0.3
+  fadeElements:
+  - {fileID: 7060254692603839856}
+  - {fileID: 4083472198906958}
+  - {fileID: 5398172783787282058}

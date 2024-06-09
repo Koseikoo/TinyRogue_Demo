@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Installer;
+using Models;
 using UnityEngine;
 using Views;
 using Zenject;
@@ -19,7 +20,7 @@ namespace Factories
 
         public LootView CreateLootView(LootType type, Vector3 position)
         {
-            var view = GetLootView();
+            LootView view = GetLootView();
             view.transform.position = position;
             view.Initialize(type);
             return view;
@@ -39,11 +40,26 @@ namespace Factories
             foreach (GoldCoinView view in _goldCoinPool)
             {
                 if(!view.gameObject.activeSelf || !view.MerchantDrop)
+                {
                     continue;
+                }
+
                 droppedCoins.Add(view);
             }
 
             return droppedCoins;
+        }
+        
+        public List<LootView> GetXPViews(Tile start, int xp)
+        {
+            List<LootView> xpOrbs = new();
+            for (int i = 0; i < xp; i++)
+            {
+                LootView view = CreateLootView(LootType.Gold, start.WorldPosition);
+                xpOrbs.Add(view);
+            }
+
+            return xpOrbs;
         }
 
         private LootView GetLootView()
@@ -51,7 +67,10 @@ namespace Factories
             foreach (LootView view in _lootViewPool)
             {
                 if(view.gameObject.activeSelf)
+                {
                     continue;
+                }
+
                 return view;
             }
 
@@ -65,7 +84,10 @@ namespace Factories
             foreach (GoldCoinView view in _goldCoinPool)
             {
                 if(view.gameObject.activeSelf)
+                {
                     continue;
+                }
+
                 return view;
             }
 

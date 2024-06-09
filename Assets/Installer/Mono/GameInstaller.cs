@@ -10,7 +10,7 @@ public class GameInstaller : MonoInstaller<GameInstaller>
         Container.Bind<GameAreaManager>().AsSingle();
         Container.Bind<PlayerFeedbackManager>().AsSingle();
         Container.Bind<TurnManager>().AsSingle();
-        Container.Bind<IntuitiveInputManager>().AsSingle();
+        Container.Bind<InputManager>().AsSingle();
         Container.Bind<MoveInputTracker>().AsSingle();
         Container.Bind<PlayerManager>().AsSingle();
     }

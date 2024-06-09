@@ -29,7 +29,7 @@ namespace Views
         {
             CurrentTile = tile;
             positioner.SetPosition(tile.FlatPosition);
-            int damage = GameStateContainer.Player.Weapon.CalculateDamage(CurrentTile);
+            int damage = GameStateContainer.Player.Weapon.Value.Damage;
             bool unitIsInvincible = tile.HasUnit && tile.Unit.Value.IsInvincible.Value;
             
             damageText.color = GetTextColor(tile);
@@ -58,13 +58,19 @@ namespace Views
         {
             Unit unit = tile.Unit.Value;
             if (unit == null)
+            {
                 return default;
+            }
 
             if (unit.IsInvincible.Value)
+            {
                 return invincibleColor;
+            }
 
             if (tile.AttackBouncesFromTile)
+            {
                 return bounceOffColor;
+            }
 
             return killColor;
         }

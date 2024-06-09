@@ -12,7 +12,6 @@ namespace Game
     public class IntuitiveInputManager
     {
         public const float MoveModeTimer = .2f;
-        public bool InWeaponMode { get; private set; }
         public bool InMoveMode { get; private set; }
         
         [Inject] private PlayerManager _playerManager;
@@ -29,41 +28,39 @@ namespace Game
             InputHelper.ProcessSwipeInput();
             
             if (InputHelper.StartedOverUI || GameStateContainer.GameState.Value == GameState.Dead)
+            {
                 return;
-            
-            var swipeVector = UIHelper.Camera
-                .GetWorldSwipeVector(InputHelper.StartPosition, InputHelper.GetTouchPosition())
-                .ShortenToTileRange(_playerManager.Weapon.Range);
+            }
+
+            Vector3 swipeVector = UIHelper.Camera
+                .GetWorldSwipeVector();
 
             if (InputHelper.IsSwiping())
             {
                 TryEnableMoveMode(swipeVector);
                 if(InMoveMode && GameStateContainer.TurnState.Value == TurnState.PlayerTurnStart)
+                {
                     HandleMoveMode(swipeVector);
+                }
             }
             else if (InputHelper.SwipeEnded())
             {
                 if(GameStateContainer.TurnState.Value == TurnState.PlayerTurnStart)
+                {
                     HandleInput(swipeVector);
+                }
+
                 InMoveMode = false;
                 MoveModeTracker = 0;
             }
             else if (InputHelper.TouchEnded() && GameStateContainer.TurnState.Value == TurnState.PlayerTurnStart)
             {
-                if (InWeaponMode)
-                {
-                    _playerManager.Weapon.ReturnToHolster();
-                    InWeaponMode = false;
-                    return;
-                }
-                
                 GameStateContainer.TurnState.Value = TurnState.PlayerTurnEnd;
                 bool hadOpenElements = CloseOpenUIElements();
 
                 if (!hadOpenElements)
                 {
                     _playerManager.Player.SkippedTurns.Value++;
-                    _playerManager.Player.Weapon.RecoverAttackCharge();
                 }
             }
         }
@@ -72,12 +69,14 @@ namespace Game
         {
             if (GameStateContainer.GameState.Value == GameState.Island)
             {
-                if (InWeaponMode && _playerManager.Weapon.HasAttackCharge)
-                    HandleWeaponAction(swipeVector);
-                else if (InMoveMode)
+                if (InMoveMode)
+                {
                     HandleMoveMode(swipeVector);
+                }
                 else
+                {
                     HandleDefaultMode(swipeVector);
+                }
             }
             else if (GameStateContainer.GameState.Value == GameState.Ship)
             {
@@ -85,43 +84,15 @@ namespace Game
             }
         }
 
-        private void HandleWeaponAction(Vector3 swipeVector)
-        {
-            if(_playerManager.Weapon.HasAttackCharge)
-            {
-                var tilesFromWeapon = GetSwipedTiles(_playerManager.Weapon.Tile.Value,
-                    _gameAreaManager.TileCollection.GetClosestTileFromPosition(_playerManager.Weapon.Tile.Value.FlatPosition + swipeVector));
-
-                var matching =
-                    tilesFromWeapon.GetMatchingTiles(tile => tile.Unit.Value != GameStateContainer.Player);
-
-                if (_playerManager.Player.SelectedTiles.Count > 0)
-                {
-                    Debug.Log("Attack");
-                    AttackTiles(swipeVector);
-                }
-                else
-                {
-                    if(swipeVector.magnitude > Island.TileDistance)
-                        MovePlayer(swipeVector);
-                    
-                    Debug.Log("Move");
-                }
-            }
-            else
-            {
-                _playerManager.Weapon.ReturnToHolster();
-                InWeaponMode = false;
-            }
-        }
-
         private void HandleMoveMode(Vector3 swipeVector)
         {
-            var tilesFromPlayer = GetSwipedTiles(_playerManager.Player.Tile.Value,
+            List<Tile> tilesFromPlayer = GetSwipedTiles(_playerManager.Player.Tile.Value,
                 _playerManager.Player.Tile.Value.TileCollection.GetClosestTileFromPosition(_playerManager.Player.Tile.Value.FlatPosition + swipeVector));
 
             if(tilesFromPlayer.Count < 2)
+            {
                 return;
+            }
 
             tilesFromPlayer.RemoveAt(0);
             if (tilesFromPlayer[0].HasUnit)
@@ -131,18 +102,12 @@ namespace Game
             else
             {
                 MovePlayer(swipeVector);
-
-                if (InWeaponMode)
-                {
-                    _playerManager.Weapon.ReturnToHolster();
-                    InWeaponMode = false;
-                }
             }
         }
 
         private void HandleDefaultMode(Vector3 swipeVector)
         {
-            var tilesFromPlayer = GetSwipedTiles(_playerManager.Player.Tile.Value,
+            List<Tile> tilesFromPlayer = GetSwipedTiles(_playerManager.Player.Tile.Value,
                 _playerManager.Player.Tile.Value.TileCollection.GetClosestTileFromPosition(_playerManager.Player.Tile.Value.FlatPosition + swipeVector));
 
             if (_playerManager.Player.SelectedTiles.Count > 0)
@@ -152,7 +117,6 @@ namespace Game
             else
             {
                 MovePlayer(swipeVector);
-                InWeaponMode = false;
             }
         }
 
@@ -160,14 +124,16 @@ namespace Game
         {
             bool hadOpenElements = CloseOpenUIElements();
             if (GameStateContainer.GameState.Value == GameState.Ship || hadOpenElements)
+            {
                 return;
-            
-            Tile startTile = _playerManager.Weapon.Tile.Value;
+            }
+
+            Tile startTile = _playerManager.Player.Tile.Value;
             Tile endTile = _gameAreaManager.TileCollection.GetClosestTileFromPosition(startTile.FlatPosition + swipeVector);
             List<Tile> tiles = GetSwipedTiles(startTile, endTile);
             List<Tile> attackTiles = new();
-            
-            int attackDamage = _playerManager.Weapon.GetAttackDamage();
+
+            int attackDamage = _playerManager.Player.Weapon.Value.Damage;
 
             bool bounceBack = false;
 
@@ -177,8 +143,10 @@ namespace Game
                 Unit unit = tiles[i].Unit.Value;
                 
                 if(unit is Player)
+                {
                     continue;
-                
+                }
+
                 if (unit != null && (unit.Health.Value > attackDamage || unit.IsInvincible.Value))
                 {
                     endTile = tiles[i];
@@ -194,11 +162,7 @@ namespace Game
                 return;
             }
 
-            InWeaponMode = !bounceBack;
-
-            _playerManager.Weapon.AttackDirection.Value = swipeVector.normalized;
-            _playerManager.Weapon.AttackTiles(attackTiles);
-            _playerManager.Weapon.UseAttackCharge();
+            _playerManager.Player.AttackTiles(attackTiles.ToArray());
             GameStateContainer.TurnState.Value = TurnState.PlayerTurnEnd;
         }
         
@@ -208,35 +172,40 @@ namespace Game
             Tile tile = _gameAreaManager.TileCollection.GetClosestTileFromPosition(
                 _playerManager.Player.Tile.Value.FlatPosition + swipeVector);
             if(tile == _playerManager.Player.Tile.Value)
+            {
                 return;
-            
+            }
+
             bool hadOpenElements = CloseOpenUIElements();
             EndActiveTrade();
             
             if(hadOpenElements)
+            {
                 return;
-            
+            }
+
             bool movedPlayer = _playerManager.Player.TryMoveInDirection(InputHelper.SwipeVector);
             if (movedPlayer)
             {
                 GameStateContainer.TurnState.Value = TurnState.PlayerTurnEnd;
-                _playerManager.Weapon.ReturnToHolster();
-                InWeaponMode = false;
-                
-                _moveInputTracker.AddMovement(swipeVector.normalized);
+                //_moveInputTracker.AddMovement(swipeVector.normalized);
             }
         }
 
         private void TryEnableMoveMode(Vector3 swipeVector)
         {
-            if(InMoveMode || InWeaponMode)
+            if(InMoveMode)
+            {
                 return;
+            }
 
-            var worldPosition = _playerManager.Player.Tile.Value.FlatPosition + swipeVector;
+            Vector3 worldPosition = _playerManager.Player.Tile.Value.FlatPosition + swipeVector;
             Tile worldTile = _gameAreaManager.TileCollection.GetTileClosestToPosition(worldPosition);
             
             if(worldTile == null)
+            {
                 return;
+            }
 
             bool canUpdateMoveMode = InputHelper.IsSwipeStationary() && !worldTile.HasUnit &&
                                      swipeVector.magnitude <= Island.TileDistance;
@@ -245,10 +214,13 @@ namespace Game
                 if (_playerManager.Player.SelectedTiles.Count == 0 && InputHelper.IsSwipe)
                 {
                     if (_moveModeDelay < MoveModeTimer)
+                    {
                         _moveModeDelay += Time.deltaTime;
+                    }
                     else
+                    {
                         MoveModeTracker += Time.deltaTime;
-                    
+                    }
                 }
                 else
                 {
@@ -275,8 +247,6 @@ namespace Game
             List<Tile> tiles = startTile.TileCollection
                 .GetSwipedTiles(startTile, endTile);
             
-            tiles = tiles.GetTilesInWeaponRange(_playerManager.Weapon);
-                
             return tiles;
 
         }
@@ -285,7 +255,9 @@ namespace Game
         {
             bool hasOpenUI = GameStateContainer.OpenUI;
             if (hasOpenUI && !InputHelper.StartedOverUI)
+            {
                 GameStateContainer.CloseOpenUIElements.Execute();
+            }
 
             return hasOpenUI;
         }
@@ -295,9 +267,14 @@ namespace Game
             if (_gameAreaManager.Ship != null)
             {
                 if(_gameAreaManager.Ship.Merchant.InTrade.Value)
+                {
                     _gameAreaManager.Ship.Merchant.EndTrade();
+                }
+
                 if(_gameAreaManager.Ship.BlackSmith.InTrade.Value)
+                {
                     _gameAreaManager.Ship.BlackSmith.EndTrade();
+                }
             }
         }
     }

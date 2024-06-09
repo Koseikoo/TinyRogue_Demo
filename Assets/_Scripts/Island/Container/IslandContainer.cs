@@ -122,7 +122,7 @@ public class BoardContainer
     {
         return type switch
         {
-            BoardType.Stone => _stoneVariants.PickRandom(),
+            BoardType.Stone => _stoneVariants.Random(),
             BoardType.Chiseled => _stoneChiseled,
             BoardType.Metal => _metalBorder,
             _ => null

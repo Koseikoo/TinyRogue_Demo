@@ -11,6 +11,8 @@ namespace Installer
     [CreateAssetMenu(fileName = "UnitInstaller", menuName = "Installer/UnitInstaller")]
     public class UnitInstaller : ScriptableObjectInstaller<UnitInstaller>
     {
+        public const string UnitParent = "UnitParent";
+        
         [Header("World")]
         [SerializeField] private PlayerView _playerPrefab;
 
@@ -20,8 +22,8 @@ namespace Installer
         [SerializeField] private EnemyTurnDelayUIView enemyTurnDelayUIPrefab;
         [SerializeField] private EnemyTurnClockUIView enemyTurnClockUIPrefab;
         [SerializeField] private EnemyStateUIView _enemyStateUIPrefab;
+        [SerializeField] private XpUIView _xpUIPrefab;
         [SerializeField] private InteractableUIView _interactableUIPrefab;
-        [SerializeField] private XpBarUIView _xpBarUIPrefab;
         
         [SerializeField] private PlayerUIView _playerUIPrefab;
         [Header("Sprites")]
@@ -33,18 +35,25 @@ namespace Installer
         public EnemyDefinition[] Enemies;
         public InteractableDefinition[] Interactables;
         public UnitDefinition[] Units;
+        
+        
+        private Transform _unitParent;
 
         public override void InstallBindings()
         {
+            _unitParent = GameObject.Find(UnitParent).transform;
+            
             Container.Bind<PlayerView>().FromInstance(_playerPrefab).AsSingle();
             Container.Bind<UnitUIView>().FromInstance(_unitUIPrefab).AsSingle();
             Container.Bind<UnitHealthUIView>().FromInstance(_unitHealthUIPrefab).AsSingle();
             Container.Bind<EnemyTurnDelayUIView>().FromInstance(enemyTurnDelayUIPrefab).AsSingle();
             Container.Bind<EnemyTurnClockUIView>().FromInstance(enemyTurnClockUIPrefab).AsSingle();
+            Container.Bind<XpUIView>().FromInstance(_xpUIPrefab).AsSingle();
             Container.Bind<EnemyStateUIView>().FromInstance(_enemyStateUIPrefab).AsSingle();
             Container.Bind<PlayerUIView>().FromInstance(_playerUIPrefab).AsSingle();
             Container.Bind<InteractableUIView>().FromInstance(_interactableUIPrefab).AsSingle();
-            Container.Bind<XpBarUIView>().FromInstance(_xpBarUIPrefab).AsSingle();
+
+            Container.Bind<Transform>().WithId(UnitParent).FromInstance(_unitParent).AsSingle();
             
             Container.Bind<EnemyStateIconContainer>().FromInstance(new(_idleSprite, _targetFoundSprite, _aimAtTargetSprite)).AsSingle();
             Container.Bind<UnitContainer>().FromInstance(new(Enemies, Interactables, Units)).AsSingle();
@@ -54,6 +63,7 @@ namespace Installer
             Container.Bind<UnitFactory>().AsSingle();
             Container.Bind<UnitViewFactory>().AsSingle();
             Container.Bind<UnitUIFactory>().AsSingle();
+            
         }
     }
 }
