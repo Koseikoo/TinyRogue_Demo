@@ -29,7 +29,7 @@ namespace Factories
         [Inject] private WorldShipView _shipView;
 
         [Inject] private SegmentContainer _segmentContainer;
-        [Inject] private GameAreaManager _gameAreaManager;
+        //[Inject] private GameAreaManager _gameAreaManager;
         [Inject] private DiContainer _container;
 
         private Dictionary<SegmentType, Action<Segment>> _segmentSpawnActions = new();
@@ -46,7 +46,9 @@ namespace Factories
         public SegmentView CreateSegmentView(Segment segment, SegmentView prefab = null)
         {
             if(prefab == null)
+            {
                 prefab = _segmentContainer.GetPrefab(segment.Type);
+            }
             SegmentView view = _container.InstantiatePrefab(prefab).GetComponent<SegmentView>();
             view.transform.SetParent(_islandParent);
             view.Initialize(segment);
@@ -78,9 +80,11 @@ namespace Factories
                 segment.AddUnit(unit);
             }
                                                                           
-            if(_segmentSpawnActions.TryGetValue(prefab.Type, out var action))         
-                action(segment);                                                      
-            
+            if(_segmentSpawnActions.TryGetValue(prefab.Type, out Action<Segment> action))
+            {
+                action(segment);
+            }
+
             return view;
         }
         
@@ -103,14 +107,14 @@ namespace Factories
 
         private void CreateWolfCamp(Segment segment)
         {
-            var cave = segment.Units.First(unit => unit.Type == UnitType.Cave);
+            Unit cave = segment.Units.First(unit => unit.Type == UnitType.Cave);
             
             Action<Tile> caveDestroyAction = tile =>
             {
-                var wolfDefinition = _unitContainer.GetEnemyDefinition(UnitType.BigWolfEnemy);
-                var wolf = _unitFactory.CreateEnemy(wolfDefinition, tile);
+                EnemyDefinition wolfDefinition = _unitContainer.GetEnemyDefinition(UnitType.BigWolfEnemy);
+                Enemy wolf = _unitFactory.CreateEnemy(wolfDefinition, tile);
 
-                var deathSub = wolf.IsDead.Where(b => b).Subscribe(_ =>
+                IDisposable deathSub = wolf.IsDead.Where(b => b).Subscribe(_ =>
                 {
                     segment.IsCompleted.Value = true;
                 });
@@ -119,10 +123,10 @@ namespace Factories
 
             Action<Segment> allWolfsDefeatedCheck = s =>
             {
-                var aliveWolfs = s.Units.Where(unit => unit.Type == UnitType.WolfEnemy && !unit.IsDead.Value);
+                IEnumerable<Unit> aliveWolfs = s.Units.Where(unit => unit.Type == UnitType.WolfEnemy && !unit.IsDead.Value);
                 if (!aliveWolfs.Any())
                 {
-                    var caveTile = cave.Tile.Value;
+                    Tile caveTile = cave.Tile.Value;
                     cave.Damage(cave.Health.Value, null, true);
                     caveDestroyAction(caveTile);
                 }
@@ -141,10 +145,10 @@ namespace Factories
             
             Action<Tile> caveDestroyAction = tile =>
             {
-                var wolfDefinition = _unitContainer.GetEnemyDefinition(UnitType.BigWolfEnemy);
-                var wolf = _unitFactory.CreateEnemy(wolfDefinition, tile);
+                EnemyDefinition wolfDefinition = _unitContainer.GetEnemyDefinition(UnitType.BigWolfEnemy);
+                Enemy wolf = _unitFactory.CreateEnemy(wolfDefinition, tile);
 
-                var deathSub = wolf.IsDead.Where(b => b).Subscribe(_ =>
+                IDisposable deathSub = wolf.IsDead.Where(b => b).Subscribe(_ =>
                 {
                     segment.IsCompleted.Value = true;
                 });
@@ -155,7 +159,7 @@ namespace Factories
             {
                 wolf.DeathActions.Add(t =>
                 {
-                    var wolfs = segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy && !unit.IsDead.Value);
+                    IEnumerable<Unit> wolfs = segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy && !unit.IsDead.Value);
                     if (!wolfs.Any())
                     {
                         cave.Damage(cave.Health.Value, null, true);
@@ -170,7 +174,9 @@ namespace Factories
             Unit miniBoss = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.FishermanMiniBoss);
             Unit heart = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.IslandHeart);
             if(miniBoss == null)
+            {
                 throw new Exception("No Mini Boss in End Segment");
+            }
             miniBoss.DeathActions.Add(tile =>
             {
                 heart.IsInvincible.Value = false;
@@ -186,14 +192,14 @@ namespace Factories
                 Sequence sequence = DOTween.Sequence();
                 sequence.InsertCallback(.7f, () =>
                 {
-                    _gameAreaManager.Island.DissolveIslandCommand.Execute();
+                    //_gameAreaManager.Island.DissolveIslandCommand.Execute();
                 });
             });
         }
 
         private void CreateStartSegment(Segment segment)
         {
-            var worldShip = _container.InstantiatePrefab(_shipView).GetComponent<WorldShipView>();
+            WorldShipView worldShip = _container.InstantiatePrefab(_shipView).GetComponent<WorldShipView>();
             worldShip.Initialize(segment);
         }
 
@@ -201,14 +207,15 @@ namespace Factories
         {
             foreach (Unit enemy in segment.Units.Where(unit => unit is Enemy))
             {
-                var sub = enemy.IsDead
+                IDisposable sub = enemy.IsDead
                     .Where(b => b)
                     .Subscribe(_ =>
                     {
-                        var livingEnemies = segment.Units.Where(unit => unit is Enemy && !unit.IsDead.Value);
+                        IEnumerable<Unit> livingEnemies = segment.Units.Where(unit => unit is Enemy && !unit.IsDead.Value);
                         if (!livingEnemies.Any())
+                        {
                             segment.IsCompleted.Value = true;
-
+                        }
                     });
             }
         }

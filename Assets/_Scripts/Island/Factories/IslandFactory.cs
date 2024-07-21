@@ -28,7 +28,7 @@ namespace Factories
         
         [Inject] private UnitFactory _unitFactory;
         [Inject] private UnitContainer _unitContainer;
-        [Inject] private GameAreaManager _gameAreaManager;
+        //[Inject] private GameAreaManager _gameAreaManager;
 
         [Inject] private DiContainer _container;
 
@@ -41,6 +41,18 @@ namespace Factories
         #endif
 
 
+        public Island CreateEndlessIsland()
+        {
+            if (_dungeonGenerator == null)
+            {
+                _dungeonGenerator = new(_archipelConfig);
+            }
+            
+            Island island = _dungeonGenerator.GenerateEndlessIsland();
+            IslandView view = _islandViewFactory.CreateIslandView(island);
+            return island;
+        }
+        
         public Archipel CreateArchipel()
         {
             if (_dungeonGenerator == null)
@@ -49,12 +61,12 @@ namespace Factories
             }
 
             Archipel archipel = _dungeonGenerator.GenerateDungeon();
-            _gameAreaManager.Archipel = archipel;
+            //_gameAreaManager.Archipel = archipel;
             archipel.EndTile.AddMoveToLogic(unit =>
             {
                 if (unit is Player && archipel.EndIsland.EnemiesOnIsland == 0)
                 {
-                    _gameAreaManager.SpawnNewArchipel();
+                    //_gameAreaManager.SpawnNewArchipel();
                 }
             });
 
@@ -92,37 +104,37 @@ namespace Factories
                 
                 foreach (Tile sectionTile in sectionTiles)
                 {
-                    bool spawnUnit = sectionTile == tile || _rand.Next(0, 100) > 50;
-                    bool isNoConnectionTile = island.Connections
-                        .FirstOrDefault(pair => pair.start == sectionTile || pair.end == sectionTile) == default;
-                    bool isStartTile = _gameAreaManager.Archipel.StartTile == sectionTile;
-                    
-                    if (!sectionTile.HasUnit && isNoConnectionTile && !isStartTile && spawnUnit)
-                    {
-                        _unitFactory.CreateUnit(definition, sectionTile);
-
-                        tilePool.Remove(sectionTile);
-                        if (edgeTiles.Contains(sectionTile))
-                        {
-                            edgeTiles.Remove(sectionTile);
-                        }
-                    }
+                    //bool spawnUnit = sectionTile == tile || _rand.Next(0, 100) > 50;
+                    //bool isNoConnectionTile = island.Connections
+                    //    .FirstOrDefault(pair => pair.start == sectionTile || pair.end == sectionTile) == default;
+                    //bool isStartTile = _gameAreaManager.Archipel.StartTile == sectionTile;
+                    //
+                    //if (!sectionTile.HasUnit && isNoConnectionTile && !isStartTile && spawnUnit)
+                    //{
+                    //    _unitFactory.CreateUnit(definition, sectionTile);
+//
+                    //    tilePool.Remove(sectionTile);
+                    //    if (edgeTiles.Contains(sectionTile))
+                    //    {
+                    //        edgeTiles.Remove(sectionTile);
+                    //    }
+                    //}
                 }
             }
             
             for (int i = 0; i < enemies; i++)
             {
                 Tile tile = tilePool.Random();
-                bool isNoConnectionTile = island.Connections
-                    .FirstOrDefault(pair => pair.start == tile || pair.end == tile) == default;
-                bool isStartTile = _gameAreaManager.Archipel.StartTile == tile;
-
-                if (isNoConnectionTile && !isStartTile)
-                {
-                    EnemyDefinition definition = _unitContainer.GetEnemyDefinition(UnitType.SpiderEnemy);
-                    _unitFactory.CreateEnemy(definition, tile);
-                    tilePool.Remove(tile);
-                }
+                //bool isNoConnectionTile = island.Connections
+                //    .FirstOrDefault(pair => pair.start == tile || pair.end == tile) == default;
+                //bool isStartTile = _gameAreaManager.Archipel.StartTile == tile;
+//
+                //if (isNoConnectionTile && !isStartTile)
+                //{
+                //    EnemyDefinition definition = _unitContainer.GetEnemyDefinition(UnitType.SpiderEnemy);
+                //    _unitFactory.CreateEnemy(definition, tile);
+                //    tilePool.Remove(tile);
+                //}
             }
 
             Func<Island, bool> completeCondition = i => i.Units.Count(unit => unit is Enemy) == 0;

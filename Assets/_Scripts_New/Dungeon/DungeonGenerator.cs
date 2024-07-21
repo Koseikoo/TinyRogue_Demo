@@ -64,6 +64,18 @@ namespace TinyRogue
 
             return archipel;
         }
+
+        public Island GenerateEndlessIsland()
+        {
+            float islandSize = Mathf.Lerp(_config.SizeRange.x, _config.SizeRange.y, (float)_random.NextDouble());
+            List<Vector3> islandOutline = GetIslandOutline(islandSize);
+            Bounds islandBounds = GetIslandBound(islandOutline);
+
+            Island island = new(islandSize, islandBounds, islandOutline);
+            CreateTiles(island);
+
+            return island;
+        }
         
         public List<IslandConnection> KruskalsMST(List<Island> islandList)
         {
@@ -108,6 +120,13 @@ namespace TinyRogue
             ConnectIslands(archipel.Connections);
             SetStartTiles(archipel.Islands);
         }
+        
+        private void CreateTiles(Island island)
+        {
+            Vector3[,] grid = CreateGrid(island.Bounds);
+            Dictionary<Vector2Int, Tile> tileDict = GetIslandTiles(grid, island);
+            LinkTiles(tileDict);
+        }
 
         private void SetStartTiles(List<Island> islandList)
         {
@@ -120,7 +139,7 @@ namespace TinyRogue
         private void LinkTiles(Dictionary<Vector2Int, Tile> tiles)
         {
             List<Tile> linkedtiles = new();
-            foreach (var kvp in tiles)
+            foreach (KeyValuePair<Vector2Int, Tile> kvp in tiles)
             {
                 GoThroughPossibleNeighbours(kvp.Key);
             }
@@ -128,7 +147,9 @@ namespace TinyRogue
             void GoThroughPossibleNeighbours(Vector2Int key)
             {
                 if(!tiles.ContainsKey(key))
+                {
                     return;
+                }
                 Tile tile = tiles[key];
                 linkedtiles.Add(tile);
 
@@ -138,22 +159,34 @@ namespace TinyRogue
 
                 List<Tile> neighbours = new();
                 if(tiles.TryGetValue(new(offsetLeft, key.y - 1), out Tile bottomLeft))
+                {
                     neighbours.Add(bottomLeft);
-                    
+                }
+
                 if(tiles.TryGetValue(new(offsetRight, key.y - 1), out Tile bottomRight))
+                {
                     neighbours.Add(bottomRight);
-                    
+                }
+
                 if(tiles.TryGetValue(new(key.x - 1, key.y), out Tile left))
+                {
                     neighbours.Add(left);
-                    
+                }
+
                 if(tiles.TryGetValue(new(key.x + 1, key.y), out Tile right))
+                {
                     neighbours.Add(right);
-                    
+                }
+
                 if(tiles.TryGetValue(new(offsetLeft, key.y + 1), out Tile topLeft))
+                {
                     neighbours.Add(topLeft);
-                    
+                }
+
                 if(tiles.TryGetValue(new(offsetRight, key.y + 1), out Tile topRight))
+                {
                     neighbours.Add(topRight);
+                }
 
                 tile.Neighbours = new(neighbours);
             }
@@ -179,6 +212,32 @@ namespace TinyRogue
                     Island island = GetIslandToPosition(position, islandList);
                     
                     if (island != null)
+                    {
+                        float tileToCenter = Vector3.Distance(island.Bounds.center, position);
+                        float t = 1 - Mathf.Clamp01(tileToCenter / (island.Size * _config.HillSizeMult));
+                        int height = Mathf.RoundToInt(t * _config.HeightLevels);
+                        
+                        Tile tile = new(position, island, height);
+                        island.Tiles.Add(tile);
+                        tileDict[new(x, y)] = tile;
+                    }
+                }
+            }
+
+            return tileDict;
+        }
+        
+        private Dictionary<Vector2Int, Tile> GetIslandTiles(Vector3[,] grid, Island island)
+        {
+            Dictionary<Vector2Int, Tile> tileDict = new();
+            for (int x = 0; x < grid.GetLength(0); x++)
+            {
+                for (int y = 0; y < grid.GetLength(1); y++)
+                {
+                    Vector3 position = grid[x, y];
+                    bool inIsland = position.IsInsidePolygon(island.Outline.ToArray());
+                    
+                    if (inIsland)
                     {
                         float tileToCenter = Vector3.Distance(island.Bounds.center, position);
                         float t = 1 - Mathf.Clamp01(tileToCenter / (island.Size * _config.HillSizeMult));
@@ -219,7 +278,9 @@ namespace TinyRogue
             foreach (Island island in islands.OrderBy(i => Vector3.Distance(i.Bounds.center, position)))
             {
                 if (position.IsInsidePolygon(island.Outline.ToArray()))
+                {
                     return island;
+                }
             }
 
             return null;
@@ -237,8 +298,10 @@ namespace TinyRogue
                     .Aggregate(Vector3.zero, (cur, vector) => cur + vector);
 
                 if (overlappingIslands.Count > 0)
+                {
                     anyOverlaps = true;
-                    
+                }
+
                 MoveIslandInDirection(islands[i], -averageDirection);
             }
 
@@ -272,7 +335,9 @@ namespace TinyRogue
                         connections.FirstOrDefault(conn => conn.Source == edge.Destination && conn.Destination == edge.Source);
                     
                     if(reversedConnection == null)
+                    {
                         connections.Add(edge);
+                    }
                 }
             }
 
@@ -307,7 +372,9 @@ namespace TinyRogue
                     Vector3 position = bounds.min + new Vector3(Island.XDistance * x, 0f, Island.ZDistance * z);
                     Vector3 xOffset = default;
                     if (z % 2 == 0)
+                    {
                         xOffset = Vector3.right * (Island.XDistance * .5f);
+                    }
 
                     position += xOffset;
 
@@ -328,14 +395,22 @@ namespace TinyRogue
             foreach (Vector3 position in islandOutline)
             {
                 if (position.x > maxX)
+                {
                     maxX = position.x;
+                }
                 if (position.x < minX)
+                {
                     minX = position.x;
-                
+                }
+
                 if (position.z > maxZ)
+                {
                     maxZ = position.z;
+                }
                 if (position.z < minZ)
+                {
                     minZ = position.z;
+                }
             }
 
             float centerX = Mathf.Lerp(minX, maxX, .5f);
@@ -358,14 +433,22 @@ namespace TinyRogue
             for (int i = 0; i < islands.Count; i++)
             {
                 if (islands[i].Bounds.max.x > maxX)
+                {
                     maxX = islands[i].Bounds.max.x;
+                }
                 if (islands[i].Bounds.min.x < minX)
+                {
                     minX = islands[i].Bounds.min.x;
-                
+                }
+
                 if (islands[i].Bounds.max.z > maxZ)
+                {
                     maxZ = islands[i].Bounds.max.z;
+                }
                 if (islands[i].Bounds.min.z < minZ)
+                {
                     minZ = islands[i].Bounds.min.z;
+                }
             }
             
             float centerX = Mathf.Lerp(minX, maxX, .5f);

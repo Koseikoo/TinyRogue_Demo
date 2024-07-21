@@ -10,7 +10,7 @@ namespace Game
 {
     public class InputManager
     {
-        [Inject] private PlayerFeedbackManager _playerFeedbackManager;
+        //[Inject] private PlayerFeedbackManager _playerFeedbackManager;
         [Inject] private PlayerManager _playerManager;
 
         private const float MinInputDistance = 1;
@@ -18,8 +18,7 @@ namespace Game
         public void ProcessInput()
         {
             InputHelper.ProcessSwipeInput();
-            
-            if (InputHelper.StartedOverUI || GameStateContainer.GameState.Value == GameState.Dead)
+            if (UIHelper.Camera == null || InputHelper.StartedOverUI || GameStateContainer.GameState.Value == GameState.Dead)
             {
                 return;
             }
@@ -72,6 +71,7 @@ namespace Game
                 // Attack
                 //_playerManager.Player.AttackTiles(aimedTiles.ToArray());
                 _playerManager.Player.StartAttack(aimedTiles.ToArray());
+                //_playerFeedbackManager.RenderAttackLine(aimedTiles);
             }
             else
             {

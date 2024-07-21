@@ -8,6 +8,7 @@ public class GameInstaller : MonoInstaller<GameInstaller>
     {
         Container.Bind<GameSetup>().AsSingle();
         Container.Bind<GameAreaManager>().AsSingle();
+        Container.Bind<EndlessIslandManager>().AsSingle();
         Container.Bind<PlayerFeedbackManager>().AsSingle();
         Container.Bind<TurnManager>().AsSingle();
         Container.Bind<InputManager>().AsSingle();

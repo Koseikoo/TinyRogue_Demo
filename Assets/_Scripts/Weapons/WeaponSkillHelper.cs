@@ -75,9 +75,12 @@ public class WeaponSkillHelper
         Vector3 leftDirection = direction.RotateVector(Vector3.up, -60);
         Vector3 rightDirection = direction.RotateVector(Vector3.up, 60);
             
-        List<Tile> pattern = direction.GetTilesInDirection(1);
-        pattern.AddRange(leftDirection.GetTilesInDirection(1));
-        pattern.AddRange(rightDirection.GetTilesInDirection(1));
+        List<Tile> pattern = new()
+        {
+            leftDirection.GetTileIndirection(),
+            direction.GetTileIndirection(),
+            rightDirection.GetTileIndirection()
+        };
         return pattern;
     }
 }

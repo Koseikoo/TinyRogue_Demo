@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _weaponBoundFeedbackPrefab: {fileID: 997577479664796380, guid: 3385946c6634d465aa03debd3fcffb03,
     type: 3}
+  _attackFeedbackPrefab: {fileID: 2970539436045542613, guid: 5860cc3e023ff40bd816c9df4d07b8f4,
+    type: 3}

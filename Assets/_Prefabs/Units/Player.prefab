@@ -806,9 +806,10 @@ MonoBehaviour:
   noWeaponController: {fileID: 9100000, guid: f6124f53914bf4828b2824f755d01405, type: 2}
   singleSwordController: {fileID: 22100000, guid: 6e09813d22de34e1a840e673d395df69,
     type: 2}
-  singleSwordPiercingController: {fileID: 22100000, guid: 455ee3eead56645d492e1892603b9370,
+  singleSwordLongController: {fileID: 22100000, guid: 455ee3eead56645d492e1892603b9370,
     type: 2}
   baseSword: {fileID: 6517796088241599041}
+  longSword: {fileID: 0}
   baseBow: {fileID: 0}
   baseHammer: {fileID: 0}
   baseShield: {fileID: 0}

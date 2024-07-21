@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Models;
 using UniRx;
 using UnityEngine;
@@ -28,7 +29,7 @@ namespace TinyRogue
         [Space]
         [SerializeField] RuntimeAnimatorController noWeaponController;
         [SerializeField] RuntimeAnimatorController singleSwordController;
-        [SerializeField] RuntimeAnimatorController singleSwordPiercingController;
+        [SerializeField] RuntimeAnimatorController singleSwordLongController;
 
         [Header("Weapons")]
         [SerializeField] private GameObject baseSword;
@@ -84,8 +85,11 @@ namespace TinyRogue
                     break;
                 
                 case WeaponType.SingleSword:
-                    animator.runtimeAnimatorController = weapon.Piercing
-                        ? singleSwordPiercingController
+                    WeaponSkill longSwordSkill = weapon.UnlockedSkills
+                        .FirstOrDefault(skill => skill.Name == SkillName.LongSword);
+                    
+                    animator.runtimeAnimatorController = longSwordSkill != null
+                        ? singleSwordLongController
                         : singleSwordController;
                     break;
                 

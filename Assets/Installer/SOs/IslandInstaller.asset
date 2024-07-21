@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: IslandInstaller
   m_EditorClassIdentifier: 
   _archipelConfig:
-    Islands: 2
+    Islands: 1
     IslandBoundsMargin: 4
     separationAmount: 0.5
     extraConnections: 2

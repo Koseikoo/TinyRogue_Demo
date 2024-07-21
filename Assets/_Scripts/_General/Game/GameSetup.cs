@@ -18,6 +18,7 @@ namespace Game
         [Inject] private UnitActionContainer _unitActionContainer;
         [Inject] private ChoiceContainer _choiceContainer;
         [Inject] private UnitRecipeDropContainer _unitRecipeDropContainer;
+        [Inject] private EndlessIslandManager _endlessIslandManager;
 
         [Inject] private GameAreaManager _gameAreaManager;
         [Inject] private PlayerManager _playerManager;
@@ -50,7 +51,7 @@ namespace Game
                             _playerManager.Player.ExitIsland.Execute(() =>
                             {
                                 //_gameAreaManager.SpawnNewIsland();
-                                _gameAreaManager.SpawnNewArchipel();
+                                //_gameAreaManager.SpawnNewArchipel();
                             });
 
                         }),

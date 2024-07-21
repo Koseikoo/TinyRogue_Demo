@@ -34,6 +34,12 @@ public static class IslandHelper
     {
         return baseSegmentRadius + segmentRadius + (Island.TileDistance * 2);
     }
+
+    public static Tile GetTileIndirection(this Vector3 direction)
+    {
+        List<Tile> tilesInDirection = direction.GetTilesInDirection(1);
+        return tilesInDirection[0];
+    }
     
     public static List<Tile> GetTilesInDirection(this Vector3 direction, int range)
     {

@@ -68,7 +68,7 @@ namespace Views
             _tile.Selections.ObserveRemove().Subscribe(_ => UpdateSelection()).AddTo(this);
             _tile.Selections.ObserveReset().Subscribe(_ => ResetSelection()).AddTo(this);
 
-            _tile.WeaponOnTile.Where(_ => GameStateContainer.Player.Tile.Value != _tile).Subscribe(UpdateWeaponOnTileVisual).AddTo(this);
+            //_tile.WeaponOnTile.Where(_ => GameStateContainer.Player.Tile.Value != _tile).Subscribe(UpdateWeaponOnTileVisual).AddTo(this);
 
             // DEBUG
             _tile.DebugElevate.Where(b => b).Subscribe(_ => DebugElevate()).AddTo(this);

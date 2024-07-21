@@ -4,6 +4,7 @@ using Container;
 using Factories;
 using Factory;
 using Models;
+using TinyRogue;
 using UnityEngine;
 using Views;
 using Zenject;
@@ -27,6 +28,11 @@ namespace Game
         private Tile _lastAimTile;
 
         private List<Tile> lastHighlightedTiles = new();
+
+        public void RenderAttackLine(List<Tile> aimedTiles)
+        {
+            AttackFeedbackView view = _feedbackFactory.CreateAttackFeedback(aimedTiles);
+        }
 
         public void HighlightTiles()
         {
