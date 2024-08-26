@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Models;
-using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
-using Unit = Models.Unit;
 
 namespace Game
 {
@@ -41,7 +39,7 @@ namespace Game
                 if (InputHelper.IsSwiping() && hasAimedTiles && isSwipeOverThreshold)
                 {
                     _playerManager.Player.LookDirection.Value = swipeVector.normalized;
-                    PlayerAction(aimedTiles, aimedUnitTiles);
+                    PlayerAction(swipeVector, aimedTiles, aimedUnitTiles);
                     GameStateContainer.TurnState.Value = TurnState.PlayerTurnEnd;
                 }
                 else if (InputHelper.TouchEnded())
@@ -63,21 +61,50 @@ namespace Game
             return hasOpenUI;
         }
 
-        public void PlayerAction(List<Tile> aimedTiles, List<Tile> aimedUnitTiles)
+        public void PlayerAction(Vector3 swipeVector, List<Tile> aimedTiles, List<Tile> aimedUnitTiles)
         {
             bool unitInAimedTiles = aimedUnitTiles.Count > 0;
-            if (unitInAimedTiles)
+            Tile dashHitTarget = GetDashHitTarget(swipeVector);
+            bool canDashHit = _playerManager.Player.Weapon.Value.CanDashHit && dashHitTarget != null;
+            
+            if (unitInAimedTiles || canDashHit)
             {
-                // Attack
-                //_playerManager.Player.AttackTiles(aimedTiles.ToArray());
-                _playerManager.Player.StartAttack(aimedTiles.ToArray());
-                //_playerFeedbackManager.RenderAttackLine(aimedTiles);
+                if(canDashHit)
+                {
+                    DashHit(swipeVector, dashHitTarget);
+                }
+                else
+                {
+                    _playerManager.Player.StartAttack(aimedTiles.ToArray());
+                }
             }
             else
             {
-                // Move
                 aimedTiles[0].MoveUnitWithAction(_playerManager.Player);
             }
+        }
+
+        private Tile GetDashHitTarget(Vector3 direction)
+        {
+            List<Tile> tiles = direction.GetTilesInDirection(3);
+            Tile attackTile = null;
+
+            foreach (Tile tile in tiles)
+            {
+                if (tile.HasUnit)
+                {
+                    attackTile = tile;
+                    break;
+                }
+            }
+            return attackTile;
+        }
+
+        private void DashHit(Vector3 direction, Tile dashTarget)
+        {
+            Tile moveTile = (-direction).GetTileInDirection(dashTarget);
+            moveTile.MoveUnit(_playerManager.Player);
+            _playerManager.Player.StartAttack(new Tile[] {dashTarget});
         }
     }
 }

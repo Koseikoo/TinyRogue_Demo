@@ -35,15 +35,18 @@ public static class IslandHelper
         return baseSegmentRadius + segmentRadius + (Island.TileDistance * 2);
     }
 
-    public static Tile GetTileIndirection(this Vector3 direction)
+    public static Tile GetTileInDirection(this Vector3 direction, Tile startTile = null)
     {
-        List<Tile> tilesInDirection = direction.GetTilesInDirection(1);
+        List<Tile> tilesInDirection = direction.GetTilesInDirection(1, startTile);
         return tilesInDirection[0];
     }
     
-    public static List<Tile> GetTilesInDirection(this Vector3 direction, int range)
+    /// <summary>
+    /// Does not Include start Tile
+    /// </summary>
+    public static List<Tile> GetTilesInDirection(this Vector3 direction, int range, Tile startTile = null)
     {
-        Tile startTile = GameStateContainer.Player.Tile.Value;
+        startTile ??= GameStateContainer.Player.Tile.Value;
         Tile currentTile = startTile;
         direction.Normalize();
 

@@ -10,13 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de5e87ff12d7465ba8a0f9df8f1b6227, type: 3}
-  m_Name: NoWeaponInitialSkill
+  m_Name: NoWeaponDashHit
   m_EditorClassIdentifier: 
-  Name: 0
-  Description: The Base Sword
-  ConnectedSkills:
-  - {fileID: 11400000, guid: 1e4a7a51f93054d3aab5ecc4f388cd96, type: 2}
-  - {fileID: 11400000, guid: 02e71e1bc6f0e459189f3260efbe845b, type: 2}
+  Name: 2
+  Description: Dash Hit
+  ConnectedSkills: []
   Type: 1
-  Sprite: {fileID: 21300000, guid: f326eab97d8e8e742bad92712143032a, type: 3}
-  UnlockCost: 0
+  Sprite: {fileID: 21300000, guid: 10585b6dc7d4543d792e3dddc36bf352, type: 3}
+  UnlockCost: 1

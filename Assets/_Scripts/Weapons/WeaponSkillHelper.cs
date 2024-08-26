@@ -14,9 +14,15 @@ public class WeaponSkillHelper
         {SkillName.PiercingDamage, OnPiercingDamage},
         {SkillName.Bleeding, OnBleeding},
         {SkillName.KnockBack, OnKnockBack},
-        {SkillName.Concussion, OnConcussion}
+        {SkillName.Concussion, OnConcussion},
+        {SkillName.DashHit, OnDashHit}
     };
-    
+
+    private static void OnDashHit(WeaponData data)
+    {
+        
+    }
+
     public static Action<WeaponData> GetUnlockAction(WeaponSkill skill)
     {
         Action<WeaponData> action = skillDict[skill.Name];
@@ -77,9 +83,9 @@ public class WeaponSkillHelper
             
         List<Tile> pattern = new()
         {
-            leftDirection.GetTileIndirection(),
-            direction.GetTileIndirection(),
-            rightDirection.GetTileIndirection()
+            leftDirection.GetTileInDirection(),
+            direction.GetTileInDirection(),
+            rightDirection.GetTileInDirection()
         };
         return pattern;
     }

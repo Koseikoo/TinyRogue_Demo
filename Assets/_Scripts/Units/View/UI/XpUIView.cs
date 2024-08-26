@@ -37,8 +37,9 @@ namespace Views
         private void UpdateXpBar(int newXp)
         {
             int level = WeaponHelper.GetLevel(_player.Xp.Value);
+            int previousLevelXp = WeaponHelper.GetLevelXp(level - 1);
             int levelUpXp = WeaponHelper.GetLevelXp(level);
-            float fillAmount = (float)newXp / levelUpXp;
+            float fillAmount = Mathf.InverseLerp(previousLevelXp, levelUpXp, newXp);
             fillBar.fillAmount = fillAmount;
             ShowXpBar();
         }

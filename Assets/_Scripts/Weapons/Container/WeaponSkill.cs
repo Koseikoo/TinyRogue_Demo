@@ -13,6 +13,7 @@ public enum SkillName
 {
     None,
     DamageUp,
+    DashHit,
     
     LongSword,
     PiercingDamage,

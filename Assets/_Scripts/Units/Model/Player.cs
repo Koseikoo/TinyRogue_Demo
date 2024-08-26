@@ -121,7 +121,6 @@ namespace Models
         {
             Xp.Value += amount;
             Level.Value = WeaponHelper.GetLevel(Xp.Value);
-            Debug.Log($"{Level.Value}: {Xp.Value} / {WeaponHelper.GetLevelXp(Level.Value)}");
         }
         
         public bool TryMoveInDirection(Vector2 swipeDirection)

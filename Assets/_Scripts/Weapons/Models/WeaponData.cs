@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TinyRogue;
 using UniRx;
 using UnityEngine;
@@ -25,6 +26,8 @@ namespace Models
         private bool PlayerHasSword => Name.ToString().ToLower().Contains("sword");
         private bool PlayerHasBow => Name.ToString().ToLower().Contains("bow");
         private bool PlayerHasHammer => Name.ToString().ToLower().Contains("hammer");
+        
+        public bool CanDashHit => UnlockedSkills.Any(skill => skill.Name == SkillName.DashHit);
 
         public WeaponData(WeaponName name, Func<Vector3, List<Tile>> attackPattern, int damage)
         {
@@ -50,6 +53,9 @@ namespace Models
         {
             return AttackPattern(direction);
         }
+
+        
+        
         
         public WeaponType GetWeaponType()
         {
