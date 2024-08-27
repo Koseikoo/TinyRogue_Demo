@@ -50,6 +50,7 @@ namespace Models
             {
                 ModSlots.Add(new());
             }
+            CurrentTurnDelay.Value = TurnDelay;
             
             AttackTarget = GameStateContainer.Player;
             IDisposable turnSubscription = GameStateContainer.TurnState
@@ -84,7 +85,6 @@ namespace Models
             {
                 State.Value = ScanSurroundingTiles();
                 RemoveLastSelection();
-                CurrentTurnDelay.Value = 0;
                 return;
             }
 
@@ -94,7 +94,6 @@ namespace Models
             }
             
             ProgressTurnDelay();
-            
             RemoveLastSelection();
             RenderAttackPath();
         }

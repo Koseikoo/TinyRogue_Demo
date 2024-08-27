@@ -56,7 +56,7 @@ public class WeaponSkillHelper
 
     private static void OnKnockBack(WeaponData data)
     {
-        
+        data.KnockBack = true;
     }
 
     private static void OnConcussion(WeaponData data)

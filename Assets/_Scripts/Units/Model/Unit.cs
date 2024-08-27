@@ -26,6 +26,8 @@ namespace Models
         public BoolReactiveProperty IsDamaged = new();
         public ReactiveCollection<StatusEffect> ActiveStatusEffects = new();
         public BoolReactiveProperty IsInvincible = new();
+        public ReactiveCommand<Vector3> OnKnockback = new();
+        public ReactiveCommand<Vector3> OnFall = new();
 
         public List<IDisposable> UnitSubscriptions = new();
 

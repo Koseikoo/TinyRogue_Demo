@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.IO.IsolatedStorage;
 using System.Linq;
-using System.Threading.Tasks;
 using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace Models
 {
@@ -41,6 +40,8 @@ namespace Models
         
         public IntReactiveProperty Xp = new();
         public IntReactiveProperty Level = new();
+        
+        [Inject] private CameraModel _cameraModel;
 
         public bool InMovementFlow;
         public bool InAction;
@@ -88,14 +89,16 @@ namespace Models
 
         public void Attack()
         {
-            IEnumerable<Tile> tilesToAttack = LastAimedTiles.Value
+            List<Tile> tilesToAttack = LastAimedTiles.Value
                 .Where(tile => tile.HasUnit)
-                .OrderBy(tile => Vector3.Distance(tile.FlatPosition, Tile.Value.FlatPosition));
+                .OrderBy(tile => Vector3.Distance(tile.FlatPosition, Tile.Value.FlatPosition))
+                .ToList();
+
+            _cameraModel.ForwardShakeCommand.Execute();
 
             List<Tile> attackedTiles = new();
             foreach (Tile tile in tilesToAttack)
             {
-                //LastAimedTiles.Value = LastAimedTiles.Value;
                 bool isBehindAttackedTile = attackedTiles.Count(t => tile.IsBehind(t)) > 0;
                 if (isBehindAttackedTile && Weapon.Value.Piercing)
                 {
@@ -104,12 +107,40 @@ namespace Models
                 }
                 else if(!isBehindAttackedTile)
                 {
+                    
                     tile.Unit.Value.Damage(Weapon.Value.Damage);
                     attackedTiles.Add(tile);
                 }
             }
-
+            KnockBackEnemies(tilesToAttack, LookDirection.Value);
             InAction = false;
+        }
+
+        private void KnockBackEnemies(List<Tile> tilesToAttack, Vector3 knockBackDirection)
+        {
+            for (int tileIndex = tilesToAttack.Count - 1; tileIndex >= 0; tileIndex--)
+            {
+                Tile tile = tilesToAttack[tileIndex];
+                Tile nextTile = knockBackDirection.GetTileInDirection(tile);
+
+                if (tile.HasUnit)
+                {
+                    if (nextTile == null)
+                    {
+                        Debug.Log("Fall Down");
+                    }
+                    else if (nextTile.HasUnit)
+                    {
+                        nextTile.Unit.Value.Damage(1);
+                        tile.Unit.Value.OnKnockback.Execute(knockBackDirection);
+                    }
+                    else
+                    {
+                        nextTile.MoveUnit(tile.Unit.Value);
+                        
+                    }
+                }
+            }
         }
         
         public void DropXP(Tile dropTile, int amount)

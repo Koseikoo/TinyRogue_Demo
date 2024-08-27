@@ -38,7 +38,7 @@ public static class IslandHelper
     public static Tile GetTileInDirection(this Vector3 direction, Tile startTile = null)
     {
         List<Tile> tilesInDirection = direction.GetTilesInDirection(1, startTile);
-        return tilesInDirection[0];
+        return tilesInDirection.Count > 0 ? tilesInDirection[0] : null;
     }
     
     /// <summary>

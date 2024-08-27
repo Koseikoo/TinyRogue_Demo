@@ -145,9 +145,8 @@ namespace Views
                 type = _tile.Selections[^1].Type;
             }
             
-            _attackSelection.SetActive(type == TileSelectionType.Attack);
+            _attackSelection.SetActive(type is TileSelectionType.Attack or TileSelectionType.Move);
             _aimSelection.SetActive(type == TileSelectionType.Aim);
-            _moveSelection.SetActive(type == TileSelectionType.Move);
             _blockedSelection.SetActive(type == TileSelectionType.Blocked);
         }
 

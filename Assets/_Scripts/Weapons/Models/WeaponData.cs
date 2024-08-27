@@ -20,6 +20,7 @@ namespace Models
         public WeaponName Name;
         public int Damage;
         public bool Piercing;
+        public bool KnockBack;
         public ReactiveCollection<WeaponSkill> UnlockedSkills = new();
         public Func<Vector3, List<Tile>> AttackPattern { get; private set; }
         

@@ -88,6 +88,32 @@ MonoBehaviour:
   selectedPulseIntensity: 0.1
   deathFX: {fileID: 4362465965296930748}
   hitFX: {fileID: 6704920461156919850}
+  knockbackIntensity: 1
+  knockbackDuration: 0.3
+  knockbackCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.8980536
+      outSlope: 3.8980536
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.05046786
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -4.1299725
+      outSlope: -4.1299725
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.03861761
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &278507706752874092
 PrefabInstance:
   m_ObjectHideFlags: 0
