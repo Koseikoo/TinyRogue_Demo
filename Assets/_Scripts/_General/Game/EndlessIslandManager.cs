@@ -25,6 +25,16 @@ namespace Game
 
         private List<Enemy> currentEnemies = new();
 
+        private UnitType[] spawnableUnits = new[]
+        {
+            UnitType.SpecterEnemy,
+            UnitType.MushroomEnemy,
+            UnitType.RatEnemy,
+            UnitType.OrcEnemy,
+            UnitType.WolfEnemy,
+            UnitType.SpecterEnemy
+        };
+
         public void SpawnIsland(PlayerDefinition playerDefinition)
         {
             _playerManager.SpawnPlayerWithWeapon(null, playerDefinition);
@@ -36,10 +46,10 @@ namespace Game
         
         public void SpawnEnemyWave()
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 3; i++)
             {
                 Tile tile = _island.Tiles.Where(tile => !tile.HasUnit).ToList().Random();
-                EnemyDefinition enemyDefinition = _unitContainer.GetEnemyDefinition(UnitType.SpiderEnemy);
+                EnemyDefinition enemyDefinition = _unitContainer.GetEnemyDefinition(spawnableUnits.Random());
                 Enemy enemy = _unitFactory.CreateEnemy(enemyDefinition, tile);
                 currentEnemies.Add(enemy);
 

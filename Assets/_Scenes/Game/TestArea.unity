@@ -474,7 +474,7 @@ MonoBehaviour:
       MaxHealth: 3
       Invincible: 0
       DropXp: 0
-  noWeaponInitSkill: {fileID: 11400000, guid: 02e71e1bc6f0e459189f3260efbe845b, type: 2}
+  noWeaponInitSkill: {fileID: 11400000, guid: 7a55f4790fb194403bcdf7b2c6a62885, type: 2}
   swordInitSkill: {fileID: 11400000, guid: 804704a054a7b4f1a866433bae6a0ef3, type: 2}
 --- !u!1 &682528979
 GameObject:

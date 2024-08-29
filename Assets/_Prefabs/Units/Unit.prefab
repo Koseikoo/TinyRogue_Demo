@@ -114,6 +114,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  knockOffDistance: 1.4
+  fallDistance: 2.4
 --- !u!1001 &278507706752874092
 PrefabInstance:
   m_ObjectHideFlags: 0

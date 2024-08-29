@@ -81,21 +81,24 @@ namespace Models
 
         private void OnEnemyTurn()
         {
-            if (State.Value == EnemyState.Idle)
+            if (Tile.Value != null)
             {
-                State.Value = ScanSurroundingTiles();
-                RemoveLastSelection();
-                return;
-            }
+                if (State.Value == EnemyState.Idle)
+                {
+                    State.Value = ScanSurroundingTiles();
+                    RemoveLastSelection();
+                    return;
+                }
 
-            if (!SkipTurn)
-            {
-                EnemyAction();
-            }
+                if (!SkipTurn)
+                {
+                    EnemyAction();
+                }
             
-            ProgressTurnDelay();
-            RemoveLastSelection();
-            RenderAttackPath();
+                ProgressTurnDelay();
+                RemoveLastSelection();
+                RenderAttackPath();
+            }
         }
         
         protected virtual void EnemyAction()

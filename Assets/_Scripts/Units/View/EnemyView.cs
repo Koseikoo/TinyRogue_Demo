@@ -47,15 +47,17 @@ namespace Views
                 })
                 .AddTo(this);
 
-            _enemy.Tile.SkipLatestValueOnSubscribe().Subscribe(tile =>
-            {
-                _move.ToTile(tile);
-                
-                if(_enemy.AimAtTarget.Value)
+            _enemy.Tile.SkipLatestValueOnSubscribe()
+                .Where(tile => tile != null)
+                .Subscribe(tile =>
                 {
-                    AimEvent();
-                }
-            }).AddTo(this);
+                    _move.ToTile(tile);
+                    
+                    if(_enemy.AimAtTarget.Value)
+                    {
+                        AimEvent();
+                    }
+                }).AddTo(this);
 
             _enemy.AttackDirection
                 .SkipLatestValueOnSubscribe()
@@ -73,6 +75,7 @@ namespace Views
 
             _enemy.AimAtTarget
                 .SkipLatestValueOnSubscribe()
+                .Where(_ => _enemy.Tile.Value != null)
                 .Subscribe(b =>
                 {
                     if(b)

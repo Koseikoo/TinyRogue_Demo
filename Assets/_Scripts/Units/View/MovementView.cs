@@ -40,6 +40,12 @@ namespace Views
             _sequence
                 .Insert(0f, DOTween.To(() => 0f, t =>
                     {
+                        if (visual == null)
+                        {
+                            _sequence.Kill();
+                            return;
+                        }
+                        
                         float adjustedT = movementCurve.Evaluate(t);
                         Vector3 position = Vector3.Lerp(startPosition, endPosition, adjustedT);
                         float yOffset = GetYOffset(startPosition, tile, adjustedT);

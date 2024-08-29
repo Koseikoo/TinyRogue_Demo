@@ -28,6 +28,10 @@ namespace Views
         [SerializeField] private float knockbackIntensity;
         [SerializeField] private float knockbackDuration;
         [SerializeField] private AnimationCurve knockbackCurve;
+        
+        [Header("KnockOff")]
+        [SerializeField] private float knockOffDistance;
+        [SerializeField] private float fallDistance;
 
         private Tween _knockBackTween;
         
@@ -56,6 +60,10 @@ namespace Views
 
             unit.OnKnockback
                 .Subscribe(OnKnockback)
+                .AddTo(this);
+            
+            unit.OnKnockDown
+                .Subscribe(OnKnockDown)
                 .AddTo(this);
 
             unit.IsInvincible
@@ -110,13 +118,22 @@ namespace Views
         private void DeathEvent()
         {
             Sequence sequence = DOTween.Sequence();
-            _unit.Death();
-            deathFX.Play();
-            hitFX.Play();
-            
-            Destroy(visual.gameObject);
-            sequence.AppendInterval(1f);
+            float delay = 0;
 
+            if (_knockBackTween != null)
+            {
+                delay = knockbackDuration;
+            }
+
+            sequence.InsertCallback(delay, () =>
+            {
+                _unit.Death();
+                deathFX.Play();
+                hitFX.Play();
+                Destroy(visual.gameObject);
+            });
+            
+            sequence.AppendInterval(1f);
             sequence.OnComplete(() =>
             {
                 Destroy(gameObject);
@@ -132,10 +149,28 @@ namespace Views
             {
                 _knockBackTween.Kill();
             }
-            
+
             _knockBackTween = DOTween.To(() => 0f, t =>
             {
                 visual.position = Vector3.Lerp(visualStartPosition, maxPosition, knockbackCurve.Evaluate(t));
+            }, 1, knockbackDuration);
+        }
+
+        private void OnKnockDown(Vector3 direction)
+        {
+            Vector3 visualStartPosition = visual.position;
+            Vector3 midPosition = visualStartPosition + (direction * knockOffDistance);
+            Vector3 endPosition = midPosition + (fallDistance * Vector3.down);
+
+            if (_knockBackTween != null)
+            {
+                _knockBackTween.Kill();
+            }
+
+            _knockBackTween = DOTween.To(() => 0f, t =>
+            {
+                Vector3 lerpPoint = MathHelper.BezierLerp(visualStartPosition, midPosition, endPosition, t);
+                transform.position = lerpPoint;
             }, 1, knockbackDuration);
         }
 

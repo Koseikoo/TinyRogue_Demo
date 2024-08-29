@@ -125,9 +125,12 @@ namespace Models
 
                 if (tile.HasUnit)
                 {
+                    Unit tileUnit = tile.Unit.Value;
                     if (nextTile == null)
                     {
                         Debug.Log("Fall Down");
+                        tileUnit.OnKnockDown.Execute(knockBackDirection);
+                        tileUnit.Damage(tileUnit.Health.Value);
                     }
                     else if (nextTile.HasUnit)
                     {
