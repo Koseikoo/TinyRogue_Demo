@@ -22,6 +22,7 @@ public enum UnitType
     
     Rock = 5,
     Tree = 6,
+    CenterTree = 27,
     Grave = 19,
     Pillar = 21,
     Wheat = 20,

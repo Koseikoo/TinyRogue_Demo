@@ -123,7 +123,7 @@ namespace Models
                 Tile tile = tilesToAttack[tileIndex];
                 Tile nextTile = knockBackDirection.GetTileInDirection(tile);
 
-                if (tile.HasUnit)
+                if (tile.HasUnit && tile.Unit.Value is Enemy)
                 {
                     Unit tileUnit = tile.Unit.Value;
                     if (nextTile == null)
@@ -140,7 +140,6 @@ namespace Models
                     else
                     {
                         nextTile.MoveUnit(tile.Unit.Value);
-                        
                     }
                 }
             }

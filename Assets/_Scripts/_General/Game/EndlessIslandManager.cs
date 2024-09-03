@@ -1,17 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Container;
 using Factories;
 using Models;
 using UniRx;
-using UnityEngine;
-using Views;
 using Zenject;
 
 namespace Game
 {
     public class EndlessIslandManager
     {
+        private static System.Random _random = new();
+        
         [Inject] private IslandFactory _islandFactory;
         [Inject] private UnitFactory _unitFactory;
         [Inject] private CameraFactory _cameraFactory;
@@ -41,7 +42,34 @@ namespace Game
             _island = _islandFactory.CreateEndlessIsland();
             _playerManager.Player.Tile.Value = _island.Tiles.Random();
             
+            SpawnForrest();
             SpawnEnemyWave();
+        }
+
+        private void SpawnForrest()
+        {
+            Tile centerTile = _island.Tiles.Where(t => !t.HasUnit).ToList().Random();
+            UnitDefinition treeDefinition = _unitContainer.GetUnitDefinition(UnitType.CenterTree);
+            Models.Unit centerTree = _unitFactory.CreateUnit(treeDefinition, centerTile);
+
+            List<Tile> tileNeighbours = centerTile.Neighbours;
+            tileNeighbours = tileNeighbours.PickRandomUniqueCollection(_random.Next(2, tileNeighbours.Count))
+                .Where(t => !t.HasUnit).ToList();
+
+            foreach (Tile neighbourTile in tileNeighbours)
+            {
+                treeDefinition = _unitContainer.GetUnitDefinition(UnitType.Tree);
+                Models.Unit tree = _unitFactory.CreateUnit(treeDefinition, neighbourTile);
+            }
+
+            tileNeighbours = tileNeighbours.Where(t => !t.HasUnit).ToList();
+
+            if (tileNeighbours.Count > 0)
+            {
+                Tile extraTile = tileNeighbours.Random();
+                treeDefinition = _unitContainer.GetUnitDefinition(UnitType.Tree);
+                Models.Unit extraTree = _unitFactory.CreateUnit(treeDefinition, extraTile);
+            }
         }
         
         public void SpawnEnemyWave()

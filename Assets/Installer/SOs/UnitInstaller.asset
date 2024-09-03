@@ -223,9 +223,16 @@ MonoBehaviour:
   Units:
   - name: Tree
     Type: 6
-    Prefab: {fileID: 6056633611536564334, guid: ba789b675fe3942b59487fa4d671c397,
+    Prefab: {fileID: 1742055626059724796, guid: a29cc8fadcdbc4a77a27cd84ce3571b4,
       type: 3}
     MaxHealth: 1
+    Invincible: 0
+    DropXp: 0
+  - name: CenterTree
+    Type: 27
+    Prefab: {fileID: 6009175901297272922, guid: 16e4af2a0f7c1492199df4ac132e666d,
+      type: 3}
+    MaxHealth: 2
     Invincible: 0
     DropXp: 0
   - name: Pillar
