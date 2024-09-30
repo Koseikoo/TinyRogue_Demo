@@ -13,6 +13,7 @@ namespace Game
     {
         [Inject] private UnitFactory _unitFactory;
         [Inject] private CameraFactory _cameraFactory;
+        [Inject] private SkillContainer _skillContainer;
 
         [Inject] private CameraModel _cameraModel;
         
@@ -31,6 +32,8 @@ namespace Game
             _player.Bag.AddResource(new Resource(ItemType.WoodResource, 10, ResourceType.Monster));
             _player.Bag.AddResource(new Resource(ItemType.StoneResource, 10, ResourceType.Monster));
             _player.Bag.AddResource(new Resource(ItemType.PlantResource, 10, ResourceType.Monster));
+            
+            _player.AddSkill(_skillContainer.GetRandom());
             
             return _player;
         }

@@ -65,7 +65,7 @@ namespace Game
         {
             bool unitInAimedTiles = aimedUnitTiles.Count > 0;
             Tile dashHitTarget = GetDashHitTarget(swipeVector);
-            bool canDashHit = _playerManager.Player.Weapon.Value.CanDashHit && dashHitTarget != null;
+            bool canDashHit = _playerManager.Player.CanDashHit && dashHitTarget != null;
             
             if (unitInAimedTiles || canDashHit)
             {

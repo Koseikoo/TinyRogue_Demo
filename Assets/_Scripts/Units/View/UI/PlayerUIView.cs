@@ -17,6 +17,7 @@ namespace Views
         [SerializeField] private BagUIView _bagUIView;
         [SerializeField] private PlayerCompassUIView _compassUIView;
         [SerializeField] private LootHistoryView _lootHistoryView;
+        [SerializeField] private SkillUIView _skillUIView;
         
         [SerializeField] private RectTransform navBar;
 
@@ -36,6 +37,7 @@ namespace Views
             _healthUIView?.Initialize(player);
             _bagUIView?.Initialize(player.Bag);
             _compassUIView?.Initialize(player);
+            _skillUIView?.Initialize(player);
             //_lootHistoryView.Initialize(player);
 
             player.IsDestroyed
@@ -44,11 +46,6 @@ namespace Views
                 .AddTo(this);
 
             GameStateContainer.CloseOpenUIElements.Subscribe(_ => HideNavButton()).AddTo(this);
-        }
-
-        public void OnSkillTreeButton()
-        {
-            _modalFactory.CreateWeaponSkillTreeModal(_player.Weapon.Value);
         }
 
         public void OnNavButtonPressed()

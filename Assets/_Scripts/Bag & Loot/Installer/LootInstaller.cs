@@ -1,7 +1,6 @@
 using System;
 using Factories;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Views;
 using Zenject;
 

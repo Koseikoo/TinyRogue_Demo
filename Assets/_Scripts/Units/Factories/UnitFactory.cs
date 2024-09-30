@@ -121,7 +121,7 @@ namespace Factories
             
             interactable.DeathActions.Add(tile =>
             {
-                WeaponData weapon = new(WeaponName.BaseSword, WeaponSkillHelper.BasePattern, 2);
+                WeaponData weapon = new(WeaponName.BaseSword, WeaponHelper.BasePattern, 2);
                 _weaponFactory.CreateWeaponView(weapon, tile);
             });
         }

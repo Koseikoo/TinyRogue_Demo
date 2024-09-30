@@ -22,8 +22,8 @@ public class GameInitializer : MonoBehaviour
     [SerializeField] private PlayerDefinition _playerDefinition;
     [SerializeField] private WeaponDefinition _weaponDefinition;
     
-    [SerializeField] private WeaponSkill noWeaponInitSkill;
-    [SerializeField] private WeaponSkill swordInitSkill;
+    [SerializeField] private PlayerSkill noPlayerInitSkill;
+    [SerializeField] private PlayerSkill swordInitSkill;
 
     private IDisposable _cameraFollowSubscription;
     private IDisposable _cameraShakeSubscription;
@@ -39,7 +39,7 @@ public class GameInitializer : MonoBehaviour
         GameStateContainer.TurnState.Value = TurnState.Disabled;
         GameStateContainer.InitialSkillDict = new()
         {
-            { WeaponType.None, noWeaponInitSkill },
+            { WeaponType.None, noPlayerInitSkill },
             { WeaponType.SingleSword, swordInitSkill }
         };
         _turnManager.StartTurn(this);

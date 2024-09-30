@@ -16,8 +16,8 @@ namespace Game
         [Inject] private EndlessIslandManager _endlessIslandManager;
         
         [SerializeField] private PlayerDefinition playerDefinition;
-        [SerializeField] private WeaponSkill noWeaponInitSkill;
-        [SerializeField] private WeaponSkill swordInitSkill;
+        [SerializeField] private PlayerSkill noWeaponInitSkill;
+        [SerializeField] private PlayerSkill swordInitSkill;
         
         [Inject]
         private void PostInject()

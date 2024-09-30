@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Models;
 using UnityEngine;
 
 public enum WeaponSkillType
@@ -25,11 +23,11 @@ public enum SkillName
 }
 
 [CreateAssetMenu(fileName = "WeaponSkill")]
-public class WeaponSkill : ScriptableObject
+public class PlayerSkill : ScriptableObject
 {
     public SkillName Name;
     [TextArea] public string Description;
-    public List<WeaponSkill> ConnectedSkills;
+    public List<PlayerSkill> ConnectedSkills;
     public WeaponSkillType Type;
     public Sprite Sprite;
     public int UnlockCost;

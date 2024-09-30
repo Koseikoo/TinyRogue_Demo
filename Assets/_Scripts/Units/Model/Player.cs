@@ -22,6 +22,7 @@ namespace Models
     public class Player : Unit
     {
         public ReactiveProperty<WeaponData> Weapon = new();
+        public ReactiveCollection<PlayerSkill> UnlockedSkills = new();
         public Bag Bag { get; private set; }
 
         public List<Tile> AimedTiles = new();
@@ -41,6 +42,10 @@ namespace Models
         public IntReactiveProperty Xp = new();
         public IntReactiveProperty Level = new();
         
+        public bool CanDashHit => UnlockedSkills.Any(skill => skill.Name == SkillName.DashHit);
+        public bool CanKnockBack => UnlockedSkills.Any(skill => skill.Name == SkillName.KnockBack);
+        public bool CanPierce => UnlockedSkills.Any(skill => skill.Name == SkillName.PiercingDamage);
+        
         [Inject] private CameraModel _cameraModel;
 
         public bool InMovementFlow;
@@ -52,7 +57,7 @@ namespace Models
         {
             get
             {
-                int spentPoints = Weapon.Value.UnlockedSkills.Sum(skill => skill.UnlockCost);
+                int spentPoints = UnlockedSkills.Sum(skill => skill.UnlockCost);
                 return (Level.Value - 1) - spentPoints;
             }
         }
@@ -60,8 +65,16 @@ namespace Models
         public Player()
         {
             Bag = new Bag(this);
-            AssignWeapon(WeaponName.None, WeaponSkillHelper.BasePattern, 1);
+            AssignWeapon(WeaponName.None, WeaponHelper.BasePattern, 1);
             GameStateContainer.Player = this;
+        }
+
+        public void AddSkill(PlayerSkill skill)
+        {
+            if (UnlockedSkills.All(s => s.Type != skill.Type))
+            {
+                UnlockedSkills.Add(skill);
+            }
         }
 
 
@@ -100,7 +113,7 @@ namespace Models
             foreach (Tile tile in tilesToAttack)
             {
                 bool isBehindAttackedTile = attackedTiles.Count(t => tile.IsBehind(t)) > 0;
-                if (isBehindAttackedTile && Weapon.Value.Piercing)
+                if (isBehindAttackedTile && CanPierce)
                 {
                     tile.Unit.Value.Damage(Weapon.Value.Damage);
                     attackedTiles.Add(tile);
@@ -112,7 +125,11 @@ namespace Models
                     attackedTiles.Add(tile);
                 }
             }
-            KnockBackEnemies(tilesToAttack, LookDirection.Value);
+
+            if (CanKnockBack)
+            {
+                KnockBackEnemies(tilesToAttack, LookDirection.Value);
+            }
             InAction = false;
         }
 

@@ -50,14 +50,6 @@ namespace TinyRogue
         public void Initialize(Player model)
         {
             _model = model;
-            model.Weapon
-                .Where(data => data != null)
-                .Subscribe(data =>
-                    {
-                        UpdateSubscription(data);
-                        UpdatePrefab(data);
-                    })
-                .AddTo(this);
         }
 
         private void UpdatePrefab(WeaponData data)
@@ -65,14 +57,6 @@ namespace TinyRogue
             UpdateAnimationController();
             DisableAllWeapons();
             EnableWeapon(data);
-        }
-
-        private void UpdateSubscription(WeaponData data)
-        {
-            _weaponUnlockSubscription?.Dispose();
-            _weaponUnlockSubscription = data.UnlockedSkills
-                .ObserveAdd()
-                .Subscribe(_ => UpdatePrefab(_model.Weapon.Value));
         }
 
         private void UpdateAnimationController()
@@ -85,12 +69,6 @@ namespace TinyRogue
                     break;
                 
                 case WeaponType.SingleSword:
-                    WeaponSkill longSwordSkill = weapon.UnlockedSkills
-                        .FirstOrDefault(skill => skill.Name == SkillName.LongSword);
-                    
-                    animator.runtimeAnimatorController = longSwordSkill != null
-                        ? singleSwordLongController
-                        : singleSwordController;
                     break;
                 
                 case WeaponType.SwordAndShield:

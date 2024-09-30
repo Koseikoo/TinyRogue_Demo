@@ -10,14 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de5e87ff12d7465ba8a0f9df8f1b6227, type: 3}
-  m_Name: LongSwordSkill
+  m_Name: DashHit
   m_EditorClassIdentifier: 
   Name: 2
-  Description: 'Long Sword.
-
-    Increase Attack Range'
+  Description: Dash Hit
   ConnectedSkills:
-  - {fileID: 11400000, guid: d691e8e52b91b4ba28da11126e859bea, type: 2}
-  Type: 0
-  Sprite: {fileID: 21300000, guid: 404e4050bc849fc478c7d8bf5436b628, type: 3}
+  - {fileID: 11400000, guid: 7a55f4790fb194403bcdf7b2c6a62885, type: 2}
+  Type: 1
+  Sprite: {fileID: 21300000, guid: 10585b6dc7d4543d792e3dddc36bf352, type: 3}
   UnlockCost: 1

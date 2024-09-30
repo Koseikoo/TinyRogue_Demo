@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Models;
 using UnityEngine;
 
@@ -38,5 +39,11 @@ public static class WeaponHelper
         }
 
         return xp;
+    }
+    
+    public static List<Tile> BasePattern(Vector3 direction)
+    {
+        List<Tile> pattern = direction.GetTilesInDirection(1);
+        return pattern;
     }
 }

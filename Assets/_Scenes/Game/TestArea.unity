@@ -474,7 +474,7 @@ MonoBehaviour:
       MaxHealth: 3
       Invincible: 0
       DropXp: 0
-  noWeaponInitSkill: {fileID: 11400000, guid: 7a55f4790fb194403bcdf7b2c6a62885, type: 2}
+  noWeaponInitSkill: {fileID: 11400000, guid: 31d8300b8873349a7b199e3c004d21a9, type: 2}
   swordInitSkill: {fileID: 11400000, guid: 804704a054a7b4f1a866433bae6a0ef3, type: 2}
 --- !u!1 &682528979
 GameObject:
@@ -986,6 +986,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 37ac73933500d4781a169180d261f7c4, type: 2}
   - {fileID: 11400000, guid: 80dbe731a9db4454fba351edc5493ad0, type: 2}
   - {fileID: 11400000, guid: 4e7858092aeb1449a8a4ad3d805ae12b, type: 2}
+  - {fileID: 11400000, guid: c275eba3f020f43a48c2cf74ce280ae9, type: 2}
   _monoInstallers:
   - {fileID: 1370903606}
   _installerPrefabs: []

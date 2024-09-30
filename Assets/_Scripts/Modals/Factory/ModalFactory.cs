@@ -9,7 +9,6 @@ namespace Factory
     public class ModalFactory
     {
         [Inject] private WeaponDataModalView _weaponDataModalPrefab;
-        [Inject] private WeaponSkillTreeModalView _weaponSkillTreeModalPrefab;
         [Inject] private EnemyInfoModalView _enemyInfoModalPrefab;
         [Inject] private DeathModalView _deathModalPrefab;
         [Inject] private CharacterCreationModalView _characterCreationModalPrefab;
@@ -40,14 +39,6 @@ namespace Factory
                 .GetComponent<WeaponDataModalView>();
             view.Initialize(data);
             view.SetPosition(tile);
-            return view;
-        }
-        
-        public WeaponSkillTreeModalView CreateWeaponSkillTreeModal(WeaponData data)
-        {
-            WeaponSkillTreeModalView view = _container.InstantiatePrefab(_weaponSkillTreeModalPrefab, _modalUICanvas)
-                .GetComponent<WeaponSkillTreeModalView>();
-            view.Initialize(data);
             return view;
         }
 
