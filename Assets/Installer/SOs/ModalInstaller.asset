@@ -14,8 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _weaponDataModalPrefab: {fileID: 2164783110618308947, guid: 1c44722a20f604ce6b3329412b640189,
     type: 3}
-  _weaponSkillTreeModalPrefab: {fileID: 6209426255676181969, guid: 5d616ae4ea3c04a26a58e01f7ffca329,
-    type: 3}
   _enemyInfoModalPrefab: {fileID: 6482904678991986730, guid: b5a9a4265592249fdb4d26e3e0ca50bb,
     type: 3}
   _deathModalPrefab: {fileID: 7814208706168943023, guid: b4e00382ea9904169aaca796e8e370b3,
@@ -27,6 +25,8 @@ MonoBehaviour:
   craftModalUIPrefab: {fileID: 1806556492834795386, guid: 9892045303eaa4c4195a89eb1b702844,
     type: 3}
   _unlockRecipeUIPrefab: {fileID: 9117847949292215577, guid: 538de92d867924f63ab488bbe64930d2,
+    type: 3}
+  _skillCraftingModalPrefab: {fileID: 562246997188259304, guid: 13d7f107c6b2647e8ba1a6aeede54304,
     type: 3}
   choiceDefinitions:
   - CardText: Next Island

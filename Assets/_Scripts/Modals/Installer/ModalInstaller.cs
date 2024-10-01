@@ -1,5 +1,6 @@
 using Container;
 using Factory;
+using TinyRogue;
 using UnityEngine;
 using Views;
 using Zenject;
@@ -16,6 +17,7 @@ namespace Modals.Installer
         [SerializeField] private ChoiceModalView _choiceModalPrefab;
         [SerializeField] private CraftModalUIView craftModalUIPrefab;
         [SerializeField] private UnlockRecipeUIModal _unlockRecipeUIPrefab;
+        [SerializeField] private SkillCraftingModalView _skillCraftingModalPrefab;
 
         [Header("Choice Modal")]
         [SerializeField] private ChoiceDefinition[] choiceDefinitions;
@@ -28,6 +30,7 @@ namespace Modals.Installer
             Container.Bind<ChoiceModalView>().FromInstance(_choiceModalPrefab).AsSingle();
             Container.Bind<CraftModalUIView>().FromInstance(craftModalUIPrefab).AsSingle();
             Container.Bind<UnlockRecipeUIModal>().FromInstance(_unlockRecipeUIPrefab).AsSingle();
+            Container.Bind<SkillCraftingModalView>().FromInstance(_skillCraftingModalPrefab).AsSingle();
 
             Container.Bind<ChoiceContainer>().FromInstance(new(choiceDefinitions)).AsSingle();
 

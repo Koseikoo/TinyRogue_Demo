@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Models;
+using TinyRogue;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using Views;
 using Zenject;
 
@@ -10,6 +12,7 @@ namespace Factory
     {
         [Inject] private WeaponDataModalView _weaponDataModalPrefab;
         [Inject] private EnemyInfoModalView _enemyInfoModalPrefab;
+        [Inject] private SkillCraftingModalView _skillCraftingModalView;
         [Inject] private DeathModalView _deathModalPrefab;
         [Inject] private CharacterCreationModalView _characterCreationModalPrefab;
         [Inject] private ChoiceModalView _choiceModalPrefab;
@@ -25,6 +28,15 @@ namespace Factory
             _modalUICanvas = GameObject.Find("ModalUICanvas").transform;
         }
 
+        public SkillCraftingModalView CreateSkillCraftingModal(List<PlayerSkill> skills)
+        {
+            SkillCraftingModalView view = _container.InstantiatePrefab(_skillCraftingModalView, _modalUICanvas)
+                .GetComponent<SkillCraftingModalView>();
+            view.Initialize(skills);
+            return view;
+        }
+        
+
         public EnemyInfoModalView CreateUnitInfoModal(Unit unit)
         {
             EnemyInfoModalView view = _container.InstantiatePrefab(_enemyInfoModalPrefab, _modalUICanvas)
@@ -32,6 +44,8 @@ namespace Factory
             view.Initialize(unit);
             return view;
         }
+        
+        
         
         public WeaponDataModalView CreateWeaponDataModal(WeaponData data, Tile tile)
         {

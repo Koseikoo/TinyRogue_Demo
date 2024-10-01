@@ -13,6 +13,7 @@ namespace Installer
         public override void InstallBindings()
         {
             Container.Bind<SkillContainer>().FromInstance(new(skills)).AsSingle();
+            Container.Bind<SkillCraftingManager>().AsSingle();
         }
     }
 }

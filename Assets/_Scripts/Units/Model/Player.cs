@@ -53,14 +53,6 @@ namespace Models
 
         public Transform HolsterTransform;
         public Vector3 FacingDirection { get; private set; }
-        public int AvailableUnlockPoints
-        {
-            get
-            {
-                int spentPoints = UnlockedSkills.Sum(skill => skill.UnlockCost);
-                return (Level.Value - 1) - spentPoints;
-            }
-        }
 
         public Player()
         {
@@ -71,7 +63,7 @@ namespace Models
 
         public void AddSkill(PlayerSkill skill)
         {
-            if (UnlockedSkills.All(s => s.Type != skill.Type))
+            if (UnlockedSkills.All(s => s.Name != skill.Name))
             {
                 UnlockedSkills.Add(skill);
             }

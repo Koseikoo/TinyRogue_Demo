@@ -14,10 +14,9 @@ namespace Game
         [Inject] private PlayerManager _playerManager;
         [Inject] private PlayerFeedbackManager _playerFeedbackManager;
         [Inject] private EndlessIslandManager _endlessIslandManager;
+        [Inject] private SkillCraftingManager _skillCraftingManager;
         
         [SerializeField] private PlayerDefinition playerDefinition;
-        [SerializeField] private PlayerSkill noWeaponInitSkill;
-        [SerializeField] private PlayerSkill swordInitSkill;
         
         [Inject]
         private void PostInject()
@@ -25,14 +24,7 @@ namespace Game
             GameStateContainer.GameState.Value = GameState.Island;
             GameStateContainer.TurnState.Value = TurnState.PlayerTurnStart;
             
-            GameStateContainer.InitialSkillDict = new()
-            {
-                { WeaponType.None, noWeaponInitSkill },
-                { WeaponType.SingleSword, swordInitSkill }
-            };
             _turnManager.StartTurn(this);
-            
-            
             _endlessIslandManager.SpawnIsland(playerDefinition);
         }
 
@@ -42,7 +34,9 @@ namespace Game
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                _endlessIslandManager.SpawnEnemyWave();
+                //_endlessIslandManager.SpawnEnemyWave();
+                _skillCraftingManager.OpenCraftingModal();
+                
             }
         }
 

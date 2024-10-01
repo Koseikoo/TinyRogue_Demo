@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Models;
 using UnityEngine;
 
 public enum WeaponSkillType
@@ -22,14 +23,13 @@ public enum SkillName
     Concussion
 }
 
-[CreateAssetMenu(fileName = "WeaponSkill")]
+[CreateAssetMenu(menuName = "Skills/WeaponSkill", fileName = "WeaponSkill")]
 public class PlayerSkill : ScriptableObject
 {
     public SkillName Name;
     [TextArea] public string Description;
-    public List<PlayerSkill> ConnectedSkills;
     public WeaponSkillType Type;
     public Sprite Sprite;
-    public int UnlockCost;
+    public int Cost;
 }
 

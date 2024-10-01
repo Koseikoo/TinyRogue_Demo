@@ -33,8 +33,6 @@ namespace Game
             _player.Bag.AddResource(new Resource(ItemType.StoneResource, 10, ResourceType.Monster));
             _player.Bag.AddResource(new Resource(ItemType.PlantResource, 10, ResourceType.Monster));
             
-            _player.AddSkill(_skillContainer.GetRandom());
-            
             return _player;
         }
     
