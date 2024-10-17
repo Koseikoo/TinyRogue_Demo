@@ -13,7 +13,7 @@ namespace Models
 
         private IDisposable _effectSubscription;
         
-        public PoisonEffect(Unit target, Unit caster, int power) : base(target, caster)
+        public PoisonEffect(GameUnit target, GameUnit caster, int power) : base(target, caster)
         {
             _maxDuration = power;
             Duration.Value = _maxDuration;
@@ -35,10 +35,14 @@ namespace Models
         public override void ProgressLogic()
         {
             if(_target == null)
+            {
                 return;
-            
+            }
+
             if (Duration.Value <= 1 || _target.Health.Value - Damage <= 0)
+            {
                 EndLogic();
+            }
 
             _target.Damage(Damage, _caster);
             Duration.Value -= 1;

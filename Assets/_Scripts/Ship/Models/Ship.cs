@@ -11,7 +11,7 @@ namespace Models
         public Tile MerchantTile;
         public Tile ModSmithTile;
 
-        public List<Unit> Units = new();
+        public List<GameUnit> Units = new();
 
         public Merchant Merchant;
         public BlackSmith BlackSmith;
@@ -19,7 +19,7 @@ namespace Models
         public BoolReactiveProperty IsDestroyed = new();
         public void LinkTiles()
         {
-            foreach (var tile in Tiles)
+            foreach (Tile tile in Tiles)
                 tile.SetShip(this);
         }
     }

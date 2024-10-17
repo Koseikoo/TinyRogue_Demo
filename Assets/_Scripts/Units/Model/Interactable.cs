@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using Container;
 using UniRx;
 using UnityEngine;
 
 namespace Models
 {
-    public class Interactable : Unit
+    public class Interactable : GameUnit
     {
         public BoolReactiveProperty InInteractionRange = new();
         public Action<Interactable> InteractionLogic;
@@ -27,8 +28,8 @@ namespace Models
 
         private void UpdateInteractable()
         {
-            var neighbourTiles = Tile.Value.Neighbours;
-            foreach (var neigbour in neighbourTiles)
+            List<Tile> neighbourTiles = Tile.Value.Neighbours;
+            foreach (Tile neigbour in neighbourTiles)
             {
                 if (neigbour.Unit.Value == _player)
                 {

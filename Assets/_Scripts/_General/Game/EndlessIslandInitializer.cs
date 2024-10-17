@@ -15,7 +15,8 @@ namespace Game
         [Inject] private PlayerFeedbackManager _playerFeedbackManager;
         [Inject] private EndlessIslandManager _endlessIslandManager;
         [Inject] private SkillCraftingManager _skillCraftingManager;
-        
+
+        [SerializeField] private int wavesPerIsland;
         [SerializeField] private PlayerDefinition playerDefinition;
         
         [Inject]
@@ -25,7 +26,8 @@ namespace Game
             GameStateContainer.TurnState.Value = TurnState.PlayerTurnStart;
             
             _turnManager.StartTurn(this);
-            _endlessIslandManager.SpawnIsland(playerDefinition);
+            _playerManager.SpawnPlayerWithWeapon(null, playerDefinition);
+            _endlessIslandManager.SpawnIsland(wavesPerIsland);
         }
 
         private void Update()
@@ -39,7 +41,5 @@ namespace Game
                 
             }
         }
-
-        
     }
 }

@@ -1,7 +1,6 @@
 using Models;
 using UniRx;
 using UnityEngine;
-using Unit = Models.Unit;
 
 namespace Views
 {
@@ -30,10 +29,10 @@ namespace Views
             visual.localPosition = offset;
         }
 
-        private void OnTrapTrigger(Unit unit)
+        private void OnTrapTrigger(GameUnit gameUnit)
         {
-            unit.Attack(_trap.ModSlots.GetMods(), Vector3.up);
-            Debug.Log($"Damage {unit.Type}");
+            gameUnit.Attack(_trap.ModSlots.GetMods(), Vector3.up);
+            Debug.Log($"Damage {gameUnit.Type}");
         }
 
         private void OnIslandDestroyed()

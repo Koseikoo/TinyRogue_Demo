@@ -73,9 +73,9 @@ namespace TinyRogue
             return endTile;
         }
 
-        private void Pickup(Unit unit)
+        private void Pickup(GameUnit gameUnit)
         {
-            if (unit is Player)
+            if (gameUnit is Player)
             {
                 GameStateContainer.Player.Weapon.Value = _model;
                 Destroy(gameObject);

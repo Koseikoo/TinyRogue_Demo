@@ -19,7 +19,7 @@ namespace Models
         Idle
     }
     
-    public class Player : Unit
+    public class Player : GameUnit
     {
         public ReactiveProperty<WeaponData> Weapon = new();
         public ReactiveCollection<PlayerSkill> UnlockedSkills = new();
@@ -134,12 +134,12 @@ namespace Models
 
                 if (tile.HasUnit && tile.Unit.Value is Enemy)
                 {
-                    Unit tileUnit = tile.Unit.Value;
+                    GameUnit tileGameUnit = tile.Unit.Value;
                     if (nextTile == null)
                     {
                         Debug.Log("Fall Down");
-                        tileUnit.OnKnockDown.Execute(knockBackDirection);
-                        tileUnit.Damage(tileUnit.Health.Value);
+                        tileGameUnit.OnKnockDown.Execute(knockBackDirection);
+                        tileGameUnit.Damage(tileGameUnit.Health.Value);
                     }
                     else if (nextTile.HasUnit)
                     {

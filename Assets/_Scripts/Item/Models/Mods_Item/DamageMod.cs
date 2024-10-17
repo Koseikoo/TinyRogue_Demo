@@ -4,9 +4,9 @@ namespace Models
     {
         public DamageMod(ItemType type, int stack, int power) : base(type, stack, power) {}
         
-        public override void ApplyToUnit(Unit unit, Unit attacker)
+        public override void ApplyToUnit(GameUnit gameUnit, GameUnit attacker)
         {
-            unit.Damage(Power.Value, attacker);
+            gameUnit.Damage(Power.Value, attacker);
         }
     }
 }

@@ -39,8 +39,8 @@ public enum TerrainType
 
 public class TileActionContainer
 {
-    public Action<Unit> NextIslandAction;
-    public Action<Unit> IslandEndAction;
+    public Action<GameUnit> NextIslandAction;
+    public Action<GameUnit> IslandEndAction;
 }
 
 public class UnitActionContainer

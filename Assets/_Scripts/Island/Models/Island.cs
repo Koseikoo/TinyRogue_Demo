@@ -32,8 +32,9 @@ namespace Models
         public List<Segment> Segments = new();
 
         public Tile StartTile;
+        public Tile EndTile;
         public Tile HeartTile;
-        public ReactiveCollection<Unit> Units { get; private set; } = new();
+        public ReactiveCollection<GameUnit> Units { get; private set; } = new();
         public BoolReactiveProperty IsDestroyed = new();
         public BoolReactiveProperty IsHeartDestroyed = new();
 
@@ -75,14 +76,14 @@ namespace Models
                 });
         }
 
-        public void AddUnit(Unit unit)
+        public void AddUnit(GameUnit gameUnit)
         {
-            Units.Add(unit);
+            Units.Add(gameUnit);
         }
 
-        public void RemoveUnit(Unit unit)
+        public void RemoveUnit(GameUnit gameUnit)
         {
-            Units.Remove(unit);
+            Units.Remove(gameUnit);
         }
 
         public void DestroyTile(Tile tile)

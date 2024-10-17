@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DG.Tweening;
 using Factories;
 using Game;
@@ -8,7 +9,6 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Views;
 using Zenject;
-using Unit = Models.Unit;
 
 namespace _Testing
 {
@@ -87,8 +87,10 @@ namespace _Testing
             }
             
             if(_playerManager.Player == null)
+            {
                 return;
-        
+            }
+
             _inputManager.ProcessInput();
         
         }
@@ -136,7 +138,7 @@ namespace _Testing
         {
             if (_currentSegment != null)
             {
-                foreach (Unit unit in _currentSegment.Units)
+                foreach (GameUnit unit in _currentSegment.Units)
                 {
                     unit.Death();
                 }
@@ -150,7 +152,7 @@ namespace _Testing
             Segment segment = _segmentFactory.CreateSegment(prefab, centerTile);
             segment.CenterTile = centerTile;
             
-            var tiles = _gameAreaManager.Island.Tiles.GetSegmentTiles(segment);
+            List<Tile> tiles = _gameAreaManager.Island.Tiles.GetSegmentTiles(segment);
             segment.SetTiles(tiles);
             _segmentFactory.CreateSegmentView(segment);
             return segment;

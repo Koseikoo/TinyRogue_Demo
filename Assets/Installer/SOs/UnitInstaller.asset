@@ -41,14 +41,20 @@ MonoBehaviour:
     MaxHealth: 2
     Invincible: 0
     DropXp: 10
+    ItemsToDrop:
+    - Type: 2
+      Amount: 1
+      DropChance: 80
+    - Type: 3
+      Amount: 1
+      DropChance: 50
     AttackRange: 1
     ScanRange: 3
     TurnDelay: 1
     Mods:
     - ItemDefinition:
         Type: 0
-        Stack: 0
-        DroppedFrom: 
+        Amount: 0
         DropChance: 0
       Power: 1
   - name: Mushroom
@@ -58,14 +64,17 @@ MonoBehaviour:
     MaxHealth: 2
     Invincible: 0
     DropXp: 2
+    ItemsToDrop:
+    - Type: 2
+      Amount: 1
+      DropChance: 80
     AttackRange: 1
     ScanRange: 5
     TurnDelay: 1
     Mods:
     - ItemDefinition:
         Type: 0
-        Stack: 0
-        DroppedFrom: 
+        Amount: 0
         DropChance: 0
       Power: 1
   - name: Rat
@@ -75,14 +84,17 @@ MonoBehaviour:
     MaxHealth: 3
     Invincible: 0
     DropXp: 4
+    ItemsToDrop:
+    - Type: 2
+      Amount: 2
+      DropChance: 80
     AttackRange: 1
     ScanRange: 3
     TurnDelay: 1
     Mods:
     - ItemDefinition:
         Type: 0
-        Stack: 0
-        DroppedFrom: 
+        Amount: 0
         DropChance: 0
       Power: 1
   - name: Orc
@@ -92,14 +104,20 @@ MonoBehaviour:
     MaxHealth: 3
     Invincible: 0
     DropXp: 4
+    ItemsToDrop:
+    - Type: 2
+      Amount: 1
+      DropChance: 80
+    - Type: 5
+      Amount: 1
+      DropChance: 50
     AttackRange: 1
     ScanRange: 3
     TurnDelay: 1
     Mods:
     - ItemDefinition:
         Type: 0
-        Stack: 0
-        DroppedFrom: 
+        Amount: 0
         DropChance: 0
       Power: 1
   - name: Wolf
@@ -109,14 +127,17 @@ MonoBehaviour:
     MaxHealth: 1
     Invincible: 0
     DropXp: 2
+    ItemsToDrop:
+    - Type: 2
+      Amount: 1
+      DropChance: 80
     AttackRange: 3
     ScanRange: 5
     TurnDelay: 0
     Mods:
     - ItemDefinition:
         Type: 0
-        Stack: 1
-        DroppedFrom: 
+        Amount: 0
         DropChance: 0
       Power: 1
   - name: BigWolf
@@ -125,14 +146,17 @@ MonoBehaviour:
     MaxHealth: 3
     Invincible: 0
     DropXp: 8
+    ItemsToDrop:
+    - Type: 2
+      Amount: 5
+      DropChance: 80
     AttackRange: 3
     ScanRange: 10
     TurnDelay: 0
     Mods:
     - ItemDefinition:
         Type: 0
-        Stack: 0
-        DroppedFrom: 
+        Amount: 0
         DropChance: 0
       Power: 1
   - name: Golem
@@ -142,14 +166,17 @@ MonoBehaviour:
     MaxHealth: 3
     Invincible: 1
     DropXp: 6
+    ItemsToDrop:
+    - Type: 4
+      Amount: 2
+      DropChance: 80
     AttackRange: 1
     ScanRange: 3
     TurnDelay: 1
     Mods:
     - ItemDefinition:
         Type: 0
-        Stack: 0
-        DroppedFrom: 
+        Amount: 0
         DropChance: 0
       Power: 1
   - name: Specter
@@ -159,14 +186,17 @@ MonoBehaviour:
     MaxHealth: 1
     Invincible: 0
     DropXp: 2
+    ItemsToDrop:
+    - Type: 3
+      Amount: 1
+      DropChance: 80
     AttackRange: 1
     ScanRange: 8
     TurnDelay: 0
     Mods:
     - ItemDefinition:
         Type: 0
-        Stack: 0
-        DroppedFrom: 
+        Amount: 0
         DropChance: 0
       Power: 1
   - name: Fisherman MiniBoss
@@ -176,14 +206,14 @@ MonoBehaviour:
     MaxHealth: 4
     Invincible: 0
     DropXp: 10
+    ItemsToDrop: []
     AttackRange: 2
     ScanRange: 4
     TurnDelay: 0
     Mods:
     - ItemDefinition:
         Type: 0
-        Stack: 0
-        DroppedFrom: 
+        Amount: 0
         DropChance: 0
       Power: 1
   - name: Werewolf Boss
@@ -193,14 +223,14 @@ MonoBehaviour:
     MaxHealth: 5
     Invincible: 0
     DropXp: 16
+    ItemsToDrop: []
     AttackRange: 2
     ScanRange: 10
     TurnDelay: 0
     Mods:
     - ItemDefinition:
         Type: 0
-        Stack: 0
-        DroppedFrom: 
+        Amount: 0
         DropChance: 0
       Power: 1
   Interactables:
@@ -211,6 +241,7 @@ MonoBehaviour:
     MaxHealth: 1
     Invincible: 1
     DropXp: 0
+    ItemsToDrop: []
     InteractButtonText: Set Sail
   - name: Chest
     Type: 8
@@ -219,6 +250,7 @@ MonoBehaviour:
     MaxHealth: 1
     Invincible: 0
     DropXp: 15
+    ItemsToDrop: []
     InteractButtonText: Open
   Units:
   - name: Tree
@@ -228,6 +260,10 @@ MonoBehaviour:
     MaxHealth: 1
     Invincible: 0
     DropXp: 0
+    ItemsToDrop:
+    - Type: 5
+      Amount: 2
+      DropChance: 100
   - name: CenterTree
     Type: 27
     Prefab: {fileID: 6009175901297272922, guid: 16e4af2a0f7c1492199df4ac132e666d,
@@ -235,12 +271,17 @@ MonoBehaviour:
     MaxHealth: 2
     Invincible: 0
     DropXp: 0
+    ItemsToDrop:
+    - Type: 5
+      Amount: 3
+      DropChance: 100
   - name: Pillar
     Type: 21
     Prefab: {fileID: 945623378594413564, guid: e87fcb60dd62342c99e7b6ab31559c5b, type: 3}
     MaxHealth: 1
     Invincible: 0
     DropXp: 0
+    ItemsToDrop: []
   - name: Camp Wall
     Type: 22
     Prefab: {fileID: 6407425324155075007, guid: ad240e9a84f4248619e995ac3dd76b77,
@@ -248,12 +289,14 @@ MonoBehaviour:
     MaxHealth: 2
     Invincible: 0
     DropXp: 0
+    ItemsToDrop: []
   - name: Camp Fire
     Type: 23
     Prefab: {fileID: 234729541041868673, guid: a7b9ba8dc34d9460ca74718770e4b5a8, type: 3}
     MaxHealth: 1
     Invincible: 0
     DropXp: 0
+    ItemsToDrop: []
   - name: WolfCave
     Type: 24
     Prefab: {fileID: 6169580348439121258, guid: 3b925cc1c13d748f6978befa66cf59df,
@@ -261,6 +304,7 @@ MonoBehaviour:
     MaxHealth: 1
     Invincible: 1
     DropXp: 0
+    ItemsToDrop: []
   - name: Rock
     Type: 5
     Prefab: {fileID: 1861494755789565353, guid: bbf06e6d3231c4c3c8b8e34eb42cc094,
@@ -268,6 +312,7 @@ MonoBehaviour:
     MaxHealth: 1
     Invincible: 0
     DropXp: 0
+    ItemsToDrop: []
   - name: IslandHeart
     Type: 26
     Prefab: {fileID: 7211317495799681698, guid: 702ff51311f664505bb2b5aa8c65a454,
@@ -275,3 +320,4 @@ MonoBehaviour:
     MaxHealth: 3
     Invincible: 1
     DropXp: 1
+    ItemsToDrop: []

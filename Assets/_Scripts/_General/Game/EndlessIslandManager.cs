@@ -5,6 +5,8 @@ using Container;
 using Factories;
 using Models;
 using UniRx;
+using UnityEngine;
+using Views;
 using Zenject;
 
 namespace Game
@@ -14,6 +16,7 @@ namespace Game
         private static System.Random _random = new();
         
         [Inject] private IslandFactory _islandFactory;
+        [Inject] private IslandViewFactory _islandViewFactory;
         [Inject] private UnitFactory _unitFactory;
         [Inject] private CameraFactory _cameraFactory;
         
@@ -21,9 +24,10 @@ namespace Game
         
         [Inject] private PlayerManager _playerManager;
         //[Inject] private PlayerFeedbackManager _playerFeedbackManager;
-        
-        private Island _island;
 
+        private int currentWave;
+        private int maxWaves;
+        private Island _island;
         private List<Enemy> currentEnemies = new();
 
         private UnitType[] spawnableUnits = new[]
@@ -36,21 +40,43 @@ namespace Game
             UnitType.SpecterEnemy
         };
 
-        public void SpawnIsland(PlayerDefinition playerDefinition)
+        public void SpawnIsland(int waves)
         {
-            _playerManager.SpawnPlayerWithWeapon(null, playerDefinition);
-            _island = _islandFactory.CreateEndlessIsland();
+            _island = _islandFactory.GetIsland();
             _playerManager.Player.Tile.Value = _island.Tiles.Random();
+            _island.StartTile.AddMoveToLogic(unit =>
+            {
+                if (!currentEnemies.Any())
+                {
+                    DestroyIsland();
+                    SpawnIsland(maxWaves);
+                }
+            });
+
+            currentWave = 0;
+            maxWaves = waves;
             
             SpawnForrest();
             SpawnEnemyWave();
+            IslandView view = _islandViewFactory.CreateIslandView(_island);
         }
 
+        public void DestroyIsland()
+        {
+            foreach (GameUnit unit in _island.Units)
+            {
+                unit.IsDestroyed.Value = true;
+            }
+            
+            _island.IsDestroyed.Value = true;
+            _islandViewFactory.ResetPooledTiles();
+        }
+        
         private void SpawnForrest()
         {
             Tile centerTile = _island.Tiles.Where(t => !t.HasUnit).ToList().Random();
             UnitDefinition treeDefinition = _unitContainer.GetUnitDefinition(UnitType.CenterTree);
-            Models.Unit centerTree = _unitFactory.CreateUnit(treeDefinition, centerTile);
+            Models.GameUnit centerTree = _unitFactory.CreateUnit(treeDefinition, centerTile);
 
             List<Tile> tileNeighbours = centerTile.Neighbours;
             tileNeighbours = tileNeighbours.PickRandomUniqueCollection(_random.Next(2, tileNeighbours.Count))
@@ -59,7 +85,7 @@ namespace Game
             foreach (Tile neighbourTile in tileNeighbours)
             {
                 treeDefinition = _unitContainer.GetUnitDefinition(UnitType.Tree);
-                Models.Unit tree = _unitFactory.CreateUnit(treeDefinition, neighbourTile);
+                Models.GameUnit tree = _unitFactory.CreateUnit(treeDefinition, neighbourTile);
             }
 
             tileNeighbours = tileNeighbours.Where(t => !t.HasUnit).ToList();
@@ -68,12 +94,15 @@ namespace Game
             {
                 Tile extraTile = tileNeighbours.Random();
                 treeDefinition = _unitContainer.GetUnitDefinition(UnitType.Tree);
-                Models.Unit extraTree = _unitFactory.CreateUnit(treeDefinition, extraTile);
+                Models.GameUnit extraTree = _unitFactory.CreateUnit(treeDefinition, extraTile);
             }
         }
         
-        public void SpawnEnemyWave()
+        private void SpawnEnemyWave()
         {
+            currentWave++;
+            Debug.Log($"Current Wave: {currentWave} / {maxWaves}");
+            
             for (int i = 0; i < 3; i++)
             {
                 Tile tile = _island.Tiles.Where(tile => !tile.HasUnit).ToList().Random();
@@ -87,13 +116,12 @@ namespace Game
                     {
                         currentEnemies.Remove(enemy);
 
-                        if (currentEnemies.Count == 0)
+                        if (currentEnemies.Count == 0 && currentWave < maxWaves)
                         {
                             SpawnEnemyWave();
                         }
                     });
             }
-            
         }
     }
 }

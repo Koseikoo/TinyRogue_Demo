@@ -7,15 +7,13 @@ using UnityEngine;
 public class ItemDefinition
 {
     public ItemType Type;
-    public int Stack;
-    public List<UnitType> DroppedFrom;
+    public int Amount;
     public float DropChance;
 
     public ItemDefinition(ItemDefinition definition)
     {
         Type = definition.Type;
-        Stack = definition.Stack;
-        DroppedFrom = definition.DroppedFrom == null ? new() : new (definition.DroppedFrom);
+        Amount = definition.Amount;
         DropChance = definition.DropChance;
     }
 }

@@ -14,7 +14,7 @@ public enum EnemyState
 
 namespace Models
 {
-    public class Enemy : Unit, IAttacker
+    public class Enemy : GameUnit, IAttacker
     {
         private const int EnemyMods = 3;
 
@@ -31,7 +31,7 @@ namespace Models
         public ReactiveCommand<AnimationState> AnimationCommand = new();
         public BoolReactiveProperty IsEnraged = new();
         public Tile NextMoveTile;
-        public Unit AttackTarget;
+        public GameUnit AttackTarget;
 
         private List<Tile> _lastSelectedTiles = new();
         private IDisposable _turnSubscription;

@@ -41,7 +41,7 @@ namespace Factories
         #endif
 
 
-        public Island CreateEndlessIsland()
+        public Island GetIsland()
         {
             if (_dungeonGenerator == null)
             {
@@ -49,7 +49,6 @@ namespace Factories
             }
             
             Island island = _dungeonGenerator.GenerateEndlessIsland();
-            IslandView view = _islandViewFactory.CreateIslandView(island);
             return island;
         }
         

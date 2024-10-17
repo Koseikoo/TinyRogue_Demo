@@ -27,13 +27,13 @@ namespace Views
         private void UpdateNeedle(float yRotation)
         {
             return;
-            var needleDirection = _player.Tile.Value.Island.HeartTile.FlatPosition -
-                                  _player.Tile.Value.FlatPosition;
+            Vector3 needleDirection = _player.Tile.Value.Island.HeartTile.FlatPosition -
+                                      _player.Tile.Value.FlatPosition;
             needleDirection.Normalize();
-            var lookDirection = MathHelper.RotateVector(Vector3.forward, Vector3.up, yRotation);
+            Vector3 lookDirection = MathHelper.RotateVector(Vector3.forward, Vector3.up, yRotation);
 
             Quaternion rot = Quaternion.FromToRotation(needleDirection, lookDirection);
-            var euler = rot.eulerAngles;
+            Vector3 euler = rot.eulerAngles;
 
             compassNeedle.rotation = Quaternion.AngleAxis(euler.y, Vector3.forward);
             compassNeedle.Rotate(Vector3.forward, zRotationOffset);

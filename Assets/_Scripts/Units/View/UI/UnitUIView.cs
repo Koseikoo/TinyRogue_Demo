@@ -2,7 +2,6 @@ using System;
 using Models;
 using UnityEngine;
 using UniRx;
-using Unit = Models.Unit;
 
 namespace Views
 {
@@ -10,12 +9,12 @@ namespace Views
     {
         private Transform _followTarget;
         
-        public void Initialize(Unit unit, Transform unitVisual)
+        public void Initialize(GameUnit gameUnit, Transform unitVisual)
         {
             _followTarget = unitVisual;
-            unit.IsDead.Where(b => b && unit is not Player).Subscribe(_ => Destroy(gameObject)).AddTo(this);
+            gameUnit.IsDead.Where(b => b && gameUnit is not Player).Subscribe(_ => Destroy(gameObject)).AddTo(this);
             
-            unit.IsDestroyed
+            gameUnit.IsDestroyed
                 .Where(d => d)
                 .Subscribe(_ =>
                 {
@@ -27,8 +26,10 @@ namespace Views
         private void LateUpdate()
         {
             if(UIHelper.Camera == null)
+            {
                 return;
-            
+            }
+
             if (_followTarget == null)
             {
                 Destroy(gameObject);

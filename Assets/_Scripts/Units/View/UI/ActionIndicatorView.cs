@@ -4,7 +4,6 @@ using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
-using Unit = Models.Unit;
 
 namespace Views
 {
@@ -56,13 +55,13 @@ namespace Views
 
         private Color GetTextColor(Tile tile)
         {
-            Unit unit = tile.Unit.Value;
-            if (unit == null)
+            GameUnit gameUnit = tile.Unit.Value;
+            if (gameUnit == null)
             {
                 return default;
             }
 
-            if (unit.IsInvincible.Value)
+            if (gameUnit.IsInvincible.Value)
             {
                 return invincibleColor;
             }

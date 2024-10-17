@@ -30,17 +30,17 @@ namespace Factories
             return view;
         }
 
-        public UnitView CreateUnitView(Unit unit, UnitDefinition definition)
+        public UnitView CreateUnitView(GameUnit gameUnit, UnitDefinition definition)
         {
-            var view = _container.InstantiatePrefab(definition.Prefab).GetComponent<UnitView>();
+            UnitView view = _container.InstantiatePrefab(definition.Prefab).GetComponent<UnitView>();
             view.transform.SetParent(_unitParent);
-            view.Initialize(unit);
+            view.Initialize(gameUnit);
             return view;
         }
 
         public InteractableView CreateInteractableView(Interactable interactable, UnitDefinition definition)
         {
-            var view = _container.InstantiatePrefab(definition.Prefab).GetComponent<InteractableView>();
+            InteractableView view = _container.InstantiatePrefab(definition.Prefab).GetComponent<InteractableView>();
             view.transform.SetParent(_unitParent);
             view.Initialize(interactable);
             return view;

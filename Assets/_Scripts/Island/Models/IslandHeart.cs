@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Models
 {
-    public class IslandHeart : Unit
+    public class IslandHeart : GameUnit
     {
         public override void Death()
         {

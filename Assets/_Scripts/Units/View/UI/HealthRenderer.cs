@@ -30,18 +30,18 @@ namespace Views
             _cellWidth = GetComponent<RectTransform>().sizeDelta.x;
         }
 
-        public void Render(Unit unit)
+        public void Render(GameUnit gameUnit)
         {
             for (int i = 0; i < healthViews.Length; i++)
             {
                 //SetRectSize(healthImages[i], unit.MaxHealth);
                 //healthImages[i].color = activeColor;
 
-                bool disableCell = i >= unit.MaxHealth && healthViews[i].gameObject.activeSelf;
-                bool showCell = i < unit.MaxHealth && !healthViews[i].gameObject.activeSelf;
-                bool dropCellAnimation = i >= unit.Health.Value && healthViews[i].gameObject.activeSelf && unit.Health.Value > 1;
+                bool disableCell = i >= gameUnit.MaxHealth && healthViews[i].gameObject.activeSelf;
+                bool showCell = i < gameUnit.MaxHealth && !healthViews[i].gameObject.activeSelf;
+                bool dropCellAnimation = i >= gameUnit.Health.Value && healthViews[i].gameObject.activeSelf && gameUnit.Health.Value > 1;
                 
-                healthViews[i].Health.gameObject.SetActive(unit.Health.Value > i);
+                healthViews[i].Health.gameObject.SetActive(gameUnit.Health.Value > i);
 
                 if (disableCell)
                 {
@@ -57,7 +57,7 @@ namespace Views
                 }
             }
             
-            RenderPoison(unit);
+            RenderPoison(gameUnit);
         }
 
         private void DropCellAnimation(Image image)
@@ -68,8 +68,10 @@ namespace Views
             
             Transform imageTransform = image.transform;
             if(imageTransform == null || image == null)
+            {
                 return;
-            
+            }
+
             Vector3 startLocalPosition = imageTransform.localPosition;
             
             sequence.Insert(0f, DOTween.To(() => 0f, t =>
@@ -88,20 +90,22 @@ namespace Views
                 }));
         }
 
-        private void RenderPoison(Unit unit)
+        private void RenderPoison(GameUnit gameUnit)
         {
-            var poisonEffect = unit.ActiveStatusEffects.FirstOrDefault(e => e is PoisonEffect);
+            StatusEffect poisonEffect = gameUnit.ActiveStatusEffects.FirstOrDefault(e => e is PoisonEffect);
             if (poisonEffect != null && poisonEffect is PoisonEffect poison)
             {
                 int duration = poison.Duration.Value;
                 for (int i = healthViews.Length - 1; i >= 0; i--)
                 {
-                    if(i >= unit.Health.Value)
+                    if(i >= gameUnit.Health.Value)
+                    {
                         continue;
+                    }
 
                     if (duration > 0)
                     {
-                        healthViews[i].PoisonOverlay.SetActive(unit.Health.Value > i);
+                        healthViews[i].PoisonOverlay.SetActive(gameUnit.Health.Value > i);
                         duration--;
                     }
                 }

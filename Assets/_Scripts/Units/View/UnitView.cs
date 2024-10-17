@@ -8,7 +8,6 @@ using UniRx;
 using Unity.VisualScripting;
 using AnimationState = Models.AnimationState;
 using Sequence = DG.Tweening.Sequence;
-using Unit = Models.Unit;
 
 namespace Views
 {
@@ -35,47 +34,47 @@ namespace Views
 
         private Tween _knockBackTween;
         
-        private Unit _unit;
+        private GameUnit _gameUnit;
         private bool _pulseActive;
         
-        public void Initialize(Unit unit)
+        public void Initialize(GameUnit gameUnit)
         {
-            _unit = unit;
-            InitializeAttachedUnitViews(unit);
+            _gameUnit = gameUnit;
+            InitializeAttachedUnitViews(gameUnit);
 
             Vector3 offset = Vector3.zero;
             
-            if(unit.Tile.Value.GrassType != GrassType.None)
+            if(gameUnit.Tile.Value.GrassType != GrassType.None)
             {
                 offset += Vector3.up * Tile.GrassOffset;
             }
 
-            if (unit.Tile.Value.BoardType != BoardType.None &&
-                unit.Tile.Value.BoardType != BoardType.Metal)
+            if (gameUnit.Tile.Value.BoardType != BoardType.None &&
+                gameUnit.Tile.Value.BoardType != BoardType.Metal)
             {
                 offset += Vector3.up * Tile.BoardOffset;
             }
             
-            transform.position = unit.Tile.Value.WorldPosition + offset;
+            transform.position = gameUnit.Tile.Value.WorldPosition + offset;
 
-            unit.OnKnockback
+            gameUnit.OnKnockback
                 .Subscribe(OnKnockback)
                 .AddTo(this);
             
-            unit.OnKnockDown
+            gameUnit.OnKnockDown
                 .Subscribe(OnKnockDown)
                 .AddTo(this);
 
-            unit.IsInvincible
+            gameUnit.IsInvincible
                 .Subscribe(isInvincible => invincibilityVisual.SetActive(isInvincible))
                 .AddTo(this);
 
-            unit.IsDead
+            gameUnit.IsDead
                 .Where(b => b)
                 .Subscribe(_ => DeathEvent())
                 .AddTo(this);
 
-            unit.IsDestroyed
+            gameUnit.IsDestroyed
                 .Where(destroy => destroy)
                 .Subscribe(_ =>
                 {
@@ -88,12 +87,12 @@ namespace Views
 
         private void Update()
         {
-            if(GameStateContainer.Player == null || _unit == null || visual == null)
+            if(GameStateContainer.Player == null || _gameUnit == null || visual == null)
             {
                 return;
             }
 
-            if (GameStateContainer.Player.SelectedTiles.Contains(_unit.Tile.Value) && !_unit.IsInvincible.Value)
+            if (GameStateContainer.Player.SelectedTiles.Contains(_gameUnit.Tile.Value) && !_gameUnit.IsInvincible.Value)
             {
                 float sin = (Mathf.Sin(Time.time * selectedPulseSpeed) + 1) * 0.5f;
                 float max = 1 + selectedPulseIntensity;
@@ -106,12 +105,12 @@ namespace Views
             }
         }
 
-        private void InitializeAttachedUnitViews(Unit unit)
+        private void InitializeAttachedUnitViews(GameUnit gameUnit)
         {
             Component[] components = gameObject.GetComponents<Component>();
 
             foreach (IUnitViewInitialize i in components.OfType<IUnitViewInitialize>())
-                i.Initialize(unit);
+                i.Initialize(gameUnit);
 
         }
 
@@ -127,7 +126,7 @@ namespace Views
 
             sequence.InsertCallback(delay, () =>
             {
-                _unit.Death();
+                _gameUnit.Death();
                 deathFX.Play();
                 hitFX.Play();
                 Destroy(visual.gameObject);

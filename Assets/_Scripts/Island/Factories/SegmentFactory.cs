@@ -10,7 +10,6 @@ using Views;
 using Zenject;
 using UniRx;
 using UnityEngine;
-using Unit = Models.Unit;
 
 namespace Factories
 {
@@ -58,26 +57,26 @@ namespace Factories
                 SegmentUnitDefinition definition = view.SegmentUnitDefinitions[i];
                 Tile tile = segment.Tiles.GetClosestTileFromPosition(definition.Point.position);
 
-                Unit unit = null;
+                GameUnit gameUnit = null;
 
                 if (definition.Type.ToString().ToLower().Contains("enemy") ||
                     definition.Type.ToString().ToLower().Contains("boss"))
                 {
-                    unit =
+                    gameUnit =
                         _unitFactory.CreateEnemy(_unitContainer.GetEnemyDefinition(definition.Type), tile);
                 }
                 else if (definition.Type.ToString().ToLower().Contains("interact"))
                 {
-                    unit = _unitFactory.CreateUnit(
+                    gameUnit = _unitFactory.CreateUnit(
                         _unitContainer.GetInteractableDefinition(definition.Type), tile);
                 }
                 else
                 {
-                    unit = _unitFactory.CreateUnit(
+                    gameUnit = _unitFactory.CreateUnit(
                         _unitContainer.GetUnitDefinition(definition.Type), tile);
                 }
                 
-                segment.AddUnit(unit);
+                segment.AddUnit(gameUnit);
             }
                                                                           
             if(_segmentSpawnActions.TryGetValue(prefab.Type, out Action<Segment> action))
@@ -107,7 +106,7 @@ namespace Factories
 
         private void CreateWolfCamp(Segment segment)
         {
-            Unit cave = segment.Units.First(unit => unit.Type == UnitType.Cave);
+            GameUnit cave = segment.Units.First(unit => unit.Type == UnitType.Cave);
             
             Action<Tile> caveDestroyAction = tile =>
             {
@@ -123,7 +122,7 @@ namespace Factories
 
             Action<Segment> allWolfsDefeatedCheck = s =>
             {
-                IEnumerable<Unit> aliveWolfs = s.Units.Where(unit => unit.Type == UnitType.WolfEnemy && !unit.IsDead.Value);
+                IEnumerable<GameUnit> aliveWolfs = s.Units.Where(unit => unit.Type == UnitType.WolfEnemy && !unit.IsDead.Value);
                 if (!aliveWolfs.Any())
                 {
                     Tile caveTile = cave.Tile.Value;
@@ -132,7 +131,7 @@ namespace Factories
                 }
             };
             
-            foreach (Unit wolf in segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy))
+            foreach (GameUnit wolf in segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy))
             {
                 IDisposable wolfSub = wolf.IsDead.Where(b => b).Subscribe(_ => allWolfsDefeatedCheck(segment));
                 wolf.UnitSubscriptions.Insert(0, wolfSub);
@@ -141,7 +140,7 @@ namespace Factories
 
         private void CreateRuinSegment(Segment segment)
         {
-            Unit cave = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.Cave);
+            GameUnit cave = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.Cave);
             
             Action<Tile> caveDestroyAction = tile =>
             {
@@ -155,11 +154,11 @@ namespace Factories
                 wolf.UnitSubscriptions.Insert(0, deathSub);
             };
 
-            foreach (Unit wolf in segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy))
+            foreach (GameUnit wolf in segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy))
             {
                 wolf.DeathActions.Add(t =>
                 {
-                    IEnumerable<Unit> wolfs = segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy && !unit.IsDead.Value);
+                    IEnumerable<GameUnit> wolfs = segment.Units.Where(unit => unit.Type == UnitType.WolfEnemy && !unit.IsDead.Value);
                     if (!wolfs.Any())
                     {
                         cave.Damage(cave.Health.Value, null, true);
@@ -171,8 +170,8 @@ namespace Factories
 
         private void CreateMiniBossSegment(Segment segment)
         {
-            Unit miniBoss = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.FishermanMiniBoss);
-            Unit heart = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.IslandHeart);
+            GameUnit miniBoss = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.FishermanMiniBoss);
+            GameUnit heart = segment.Units.FirstOrDefault(unit => unit.Type == UnitType.IslandHeart);
             if(miniBoss == null)
             {
                 throw new Exception("No Mini Boss in End Segment");
@@ -184,7 +183,7 @@ namespace Factories
             
             heart.DeathActions.Add(tile =>
             {
-                Loot loot = _itemContainer.GetRandomUnitLoot(heart, 15);
+                Loot loot = _unitContainer.GetRandomUnitLoot(heart, 15);
                 loot.RewardTo(GameStateContainer.Player, tile.WorldPosition);
                 WorldLootContainer.AddToLootDrops(loot);
                 WorldLootContainer.DropLoot.Execute();
@@ -205,13 +204,13 @@ namespace Factories
 
         private void CreateSimpleEnemySegment(Segment segment)
         {
-            foreach (Unit enemy in segment.Units.Where(unit => unit is Enemy))
+            foreach (GameUnit enemy in segment.Units.Where(unit => unit is Enemy))
             {
                 IDisposable sub = enemy.IsDead
                     .Where(b => b)
                     .Subscribe(_ =>
                     {
-                        IEnumerable<Unit> livingEnemies = segment.Units.Where(unit => unit is Enemy && !unit.IsDead.Value);
+                        IEnumerable<GameUnit> livingEnemies = segment.Units.Where(unit => unit is Enemy && !unit.IsDead.Value);
                         if (!livingEnemies.Any())
                         {
                             segment.IsCompleted.Value = true;

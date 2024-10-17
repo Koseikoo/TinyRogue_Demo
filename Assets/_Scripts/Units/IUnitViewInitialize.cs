@@ -4,6 +4,6 @@ namespace Views
 {
     public interface IUnitViewInitialize
     {
-        public void Initialize(Unit unit);
+        public void Initialize(GameUnit gameUnit);
     }
 }

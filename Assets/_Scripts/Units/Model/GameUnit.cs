@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Models
 {
-    public class Unit : IDisposable
+    public class GameUnit : IDisposable
     {
         public int Level;
         public int MaxHealth;
@@ -35,15 +35,15 @@ namespace Models
         
         public ReactiveProperty<Vector3> AttackDirection = new();
         public List<Action<Tile>> DeathActions = new();
-        private Unit _lastAttacker;
+        private GameUnit _lastAttacker;
 
-        protected Unit()
+        protected GameUnit()
         {
             IDisposable destroySubscription = IsDestroyed.Where(b => b).Subscribe(_ => Dispose());
             UnitSubscriptions.Add(destroySubscription);
         }
 
-        public virtual void Attack(IEnumerable<Mod> mods, Vector3 attackVector, Unit attacker = null)
+        public virtual void Attack(IEnumerable<Mod> mods, Vector3 attackVector, GameUnit attacker = null)
         {
             if(IsInvincible.Value)
             {
@@ -76,7 +76,7 @@ namespace Models
             }
         }
 
-        public virtual void Damage(int damage, Unit attacker = null, bool pierceInvincibility = false)
+        public virtual void Damage(int damage, GameUnit attacker = null, bool pierceInvincibility = false)
         {
             if(IsInvincible.Value && !pierceInvincibility)
             {
@@ -100,7 +100,7 @@ namespace Models
 
         public virtual void Death()
         {
-            Unit lootReceiver = _lastAttacker ?? GameStateContainer.Player;
+            GameUnit lootReceiver = _lastAttacker ?? GameStateContainer.Player;
             Loot?.RewardTo(lootReceiver, Tile.Value.FlatPosition);
             WorldLootContainer.DropLoot.Execute();
 

@@ -31,7 +31,7 @@ namespace Models
         public List<Tile> Tiles;
         public List<Tile> EntryTiles = new();
         public List<Tile> ExitTiles = new();
-        public List<Unit> Units = new();
+        public List<GameUnit> Units = new();
 
 
         public Segment(SegmentView definition, Tile centerTile)
@@ -46,16 +46,16 @@ namespace Models
             
         }
 
-        public void AddUnit(Unit unit)
+        public void AddUnit(GameUnit gameUnit)
         {
-            Units.Add(unit);
+            Units.Add(gameUnit);
         }
 
         public void SetTiles(List<Tile> tiles)
         {
             Tiles = tiles;
 
-            foreach (var tile in Tiles)
+            foreach (Tile tile in Tiles)
             {
                 tile.IsSegmentTile = true;
             }

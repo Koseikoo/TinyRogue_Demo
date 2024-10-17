@@ -6,13 +6,13 @@ namespace Models
     {
         public PoisonMod(ItemType type, int stack, int power) : base(type, stack, power) {}
         
-        public override void ApplyToUnit(Unit unit, Unit attacker)
+        public override void ApplyToUnit(GameUnit gameUnit, GameUnit attacker)
         {
-            var poisonEffect = unit.ActiveStatusEffects.FirstOrDefault(effect => effect is PoisonEffect);
+            StatusEffect poisonEffect = gameUnit.ActiveStatusEffects.FirstOrDefault(effect => effect is PoisonEffect);
             if (poisonEffect == null)
             {
-                PoisonEffect effect = new PoisonEffect(unit, attacker, Power.Value);
-                unit.ActiveStatusEffects.Add(effect);
+                PoisonEffect effect = new PoisonEffect(gameUnit, attacker, Power.Value);
+                gameUnit.ActiveStatusEffects.Add(effect);
             }
             else
             {

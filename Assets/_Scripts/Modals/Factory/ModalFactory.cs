@@ -37,11 +37,11 @@ namespace Factory
         }
         
 
-        public EnemyInfoModalView CreateUnitInfoModal(Unit unit)
+        public EnemyInfoModalView CreateUnitInfoModal(GameUnit gameUnit)
         {
             EnemyInfoModalView view = _container.InstantiatePrefab(_enemyInfoModalPrefab, _modalUICanvas)
                 .GetComponent<EnemyInfoModalView>();
-            view.Initialize(unit);
+            view.Initialize(gameUnit);
             return view;
         }
         

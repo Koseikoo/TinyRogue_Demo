@@ -12,7 +12,7 @@ namespace Models
         public List<Equipment> Equipment;
         public List<Resource> Resources;
         public Vector3 DropPosition;
-        public Unit RewardedTo;
+        public GameUnit RewardedTo;
 
         public Loot(int gold, List<Mod> mods = null, List<Item> items = null, List<Resource> resources = null, List<Equipment> equipments = null)
         {
@@ -23,7 +23,7 @@ namespace Models
             Equipment = equipments ?? new();
         }
 
-        public void RewardTo(Unit rewardTo, Vector3 dropPosition)
+        public void RewardTo(GameUnit rewardTo, Vector3 dropPosition)
         {
             DropPosition = dropPosition;
             RewardedTo = rewardTo;

@@ -6,7 +6,6 @@ using UniRx;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using Unit = Models.Unit;
 
 namespace Views
 {
@@ -16,31 +15,35 @@ namespace Views
 
         [SerializeField] private HealthRenderer renderer;
 
-        private Unit _unit;
+        private GameUnit _gameUnit;
 
         private Dictionary<StatusEffect, IDisposable> _effectSubscriptions = new();
         
-        public void Initialize(Unit unit)
+        public void Initialize(GameUnit gameUnit)
         {
-            _unit = unit;
-            unit.Health.Subscribe(UpdateHealthBar).AddTo(this);
+            _gameUnit = gameUnit;
+            gameUnit.Health.Subscribe(UpdateHealthBar).AddTo(this);
 
-            unit.ActiveStatusEffects.ObserveAdd().Subscribe(next => AddEffectSubscription(next.Value)).AddTo(this);
-            unit.ActiveStatusEffects.ObserveRemove().Pairwise().Subscribe(next => RemoveEffectSubscription(next.Previous.Value)).AddTo(this);
+            gameUnit.ActiveStatusEffects.ObserveAdd().Subscribe(next => AddEffectSubscription(next.Value)).AddTo(this);
+            gameUnit.ActiveStatusEffects.ObserveRemove().Pairwise().Subscribe(next => RemoveEffectSubscription(next.Previous.Value)).AddTo(this);
 
-            if(unit is not Player)
-                unit.IsDamaged.Subscribe(ShowHealthBar).AddTo(this);
+            if(gameUnit is not Player)
+            {
+                gameUnit.IsDamaged.Subscribe(ShowHealthBar).AddTo(this);
+            }
         }
 
         private void UpdateHealthBar(int newHealth)
         {
-            renderer.Render(_unit);
+            renderer.Render(_gameUnit);
         }
 
         private void ShowHealthBar(bool isDamaged)
         {
             if(visual == null)
+            {
                 return;
+            }
             visual.SetActive(isDamaged);
         }
 
@@ -48,7 +51,7 @@ namespace Views
         {
             if (effect is PoisonEffect poison)
             {
-                _effectSubscriptions[poison] = poison.Duration.Subscribe(_ => UpdateHealthBar(_unit.Health.Value)).AddTo(this);
+                _effectSubscriptions[poison] = poison.Duration.Subscribe(_ => UpdateHealthBar(_gameUnit.Health.Value)).AddTo(this);
             }
         }
 

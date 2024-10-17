@@ -1,8 +1,8 @@
 using System;
 using DG.Tweening;
+using Models;
 using UniRx;
 using UnityEngine;
-using Unit = Models.Unit;
 
 namespace Views
 {
@@ -11,21 +11,23 @@ namespace Views
         [SerializeField] private float maxScale;
         [SerializeField] private float scaleDuration;
         [SerializeField] private AnimationCurve scaleCurve;
-        private Unit _unit;
+        private GameUnit _gameUnit;
 
-        public void Initialize(Unit unit)
+        public void Initialize(GameUnit gameUnit)
         {
-            _unit = unit;
+            _gameUnit = gameUnit;
 
-            _unit.Health.Subscribe(_ => UpdateScale()).AddTo(this);
+            _gameUnit.Health.Subscribe(_ => UpdateScale()).AddTo(this);
         }
 
         private void UpdateScale()
         {
-            if (_unit.Health.Value <= 0)
+            if (_gameUnit.Health.Value <= 0)
+            {
                 return;
+            }
 
-            float scale = Mathf.Lerp(maxScale, 1f, (float)_unit.Health.Value / _unit.MaxHealth);
+            float scale = Mathf.Lerp(maxScale, 1f, (float)_gameUnit.Health.Value / _gameUnit.MaxHealth);
 
             transform.DOScale(Vector3.one * scale, scaleDuration)
                 .SetEase(scaleCurve);

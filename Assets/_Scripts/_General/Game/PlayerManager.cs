@@ -28,10 +28,10 @@ namespace Game
             
             _cameraFactory.CreateCamera(_player);
             
-            _player.Bag.AddResource(new Resource(ItemType.MonsterResource, 10, ResourceType.Monster));
-            _player.Bag.AddResource(new Resource(ItemType.WoodResource, 10, ResourceType.Monster));
-            _player.Bag.AddResource(new Resource(ItemType.StoneResource, 10, ResourceType.Monster));
-            _player.Bag.AddResource(new Resource(ItemType.PlantResource, 10, ResourceType.Monster));
+            //_player.Bag.AddResource(new Resource(ItemType.MonsterResource, 10, ResourceType.Monster));
+            //_player.Bag.AddResource(new Resource(ItemType.WoodResource, 10, ResourceType.Monster));
+            //_player.Bag.AddResource(new Resource(ItemType.StoneResource, 10, ResourceType.Monster));
+            //_player.Bag.AddResource(new Resource(ItemType.PlantResource, 10, ResourceType.Monster));
             
             return _player;
         }

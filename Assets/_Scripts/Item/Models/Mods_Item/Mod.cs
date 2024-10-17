@@ -10,7 +10,7 @@ namespace Models
         {
             Power.Value = power;
         }
-        public virtual void ApplyToUnit(Unit unit, Unit attacker) {}
+        public virtual void ApplyToUnit(GameUnit gameUnit, GameUnit attacker) {}
 
         public virtual int GetModDamage()
         {

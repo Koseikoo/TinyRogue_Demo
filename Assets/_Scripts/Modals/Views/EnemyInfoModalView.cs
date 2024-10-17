@@ -8,23 +8,25 @@ namespace Views
 {
     public class EnemyInfoModalView : MonoBehaviour
     {
-        private Unit _unit;
+        private GameUnit _gameUnit;
 
         [SerializeField] private TextMeshProUGUI enemyName;
         [SerializeField] private SlotUIRenderer[] modRenderer;
         
         [Inject] private ItemIconContainer _itemIconContainer;
 
-        public Unit Unit => _unit;
+        public GameUnit GameUnit => _gameUnit;
         
-        public void Initialize(Unit unit)
+        public void Initialize(GameUnit gameUnit)
         {
-            _unit = unit;
+            _gameUnit = gameUnit;
             RenderPortrait();
             
             DisableSlots();
-            if(unit is Enemy enemy)
+            if(gameUnit is Enemy enemy)
+            {
                 RenderMods(enemy);
+            }
         }
 
         public void DestroyModal()
@@ -34,13 +36,13 @@ namespace Views
 
         private void RenderPortrait()
         {
-            enemyName.text = _unit.Type.ToString();
+            enemyName.text = _gameUnit.Type.ToString();
             // TODO Get Portrait
         }
 
         private void DisableSlots()
         {
-            foreach (var renderer in modRenderer)
+            foreach (SlotUIRenderer renderer in modRenderer)
             {
                 renderer.DisableSlot();
             }

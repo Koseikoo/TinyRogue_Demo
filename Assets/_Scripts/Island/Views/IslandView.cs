@@ -28,7 +28,9 @@ namespace Views
                 .Subscribe(_ =>
                 {
                     if(_dissolveRoutine != null)
+                    {
                         StopCoroutine(_dissolveRoutine);
+                    }
                     Destroy(gameObject);
                 })
                 .AddTo(this);
@@ -36,7 +38,9 @@ namespace Views
             _island.DissolveIslandCommand.Subscribe(_ =>
             {
                 if (_dissolveRoutine == null)
+                {
                     _dissolveRoutine = StartCoroutine(DissolveRoutine());
+                }
             }).AddTo(this);
         }
 
@@ -57,7 +61,7 @@ namespace Views
                 {
                     int max = tile.Neighbours.Count;
                     int min = Mathf.Max(1, max - 3);
-                    var next = tile.Neighbours
+                    List<Tile> next = tile.Neighbours
                         .Where(t => !usedPool.Contains(t) && t != _island.StartTile)
                         .OrderBy(t => rand.Next())
                         .Take(Random.Range(min, max))
@@ -79,7 +83,9 @@ namespace Views
         private void OnDrawGizmos()
         {
             if(dissolvedPoints == null)
+            {
                 return;
+            }
 
             Gizmos.color = new(1, 0, 0, .2f);
             foreach (Vector3 point in dissolvedPoints)

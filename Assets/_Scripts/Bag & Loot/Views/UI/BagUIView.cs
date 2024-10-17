@@ -50,13 +50,16 @@ namespace Views
             _bag.ShowUI.Subscribe(b =>
             {
                 if(b)
+                {
                     ShowBagUI();
+                }
                 else
+                {
                     HideBagUI();
-                
+                }
             }).AddTo(this);
 
-            _bag.Gold.Subscribe(gold => goldText.text = gold.ToString());
+            _bag.OnBagItemsChanged.Subscribe(_ => UpdateGold()).AddTo(this);
             GameStateContainer.CloseOpenUIElements.Subscribe(_ => HideBagUI()).AddTo(this);
         }
 
@@ -104,6 +107,7 @@ namespace Views
                 return;
             }
             
+            UpdateGold();
             bagUI.SetActive(true);
             GameStateContainer.OpenUIElements.Add(gameObject);
             ShowItems();
@@ -121,10 +125,17 @@ namespace Views
             }
         }
 
+        private void UpdateGold()
+        {
+            goldText.text = _bag.GetSummedItemValue().ToString("N0");
+        }
+
         private void ResetSelectedSlot()
         {
             if(GameStateContainer.SelectedSlot == null)
+            {
                 return;
+            }
 
             GameStateContainer.SelectedSlot.IsSelected.Value = false;
             GameStateContainer.SelectedSlot = null;

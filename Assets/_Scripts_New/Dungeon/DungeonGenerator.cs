@@ -73,6 +73,10 @@ namespace TinyRogue
 
             Island island = new(islandSize, islandBounds, islandOutline);
             CreateTiles(island);
+            island.EdgeTiles = island.Tiles.Where(tile => tile.Neighbours.Count < 6).ToList();
+            island.StartTile = island.EdgeTiles.Random();
+            island.EndTile = island.EdgeTiles
+                .OrderBy(tile => Vector3.Distance(tile.FlatPosition, island.StartTile.FlatPosition)).Last();
 
             return island;
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UniRx;
 using UnityEngine;
 
@@ -8,9 +9,9 @@ namespace Models
     public class Bag
     {
         private const int CategorySlots = 20;
-        public Unit Owner { get; private set; }
+        public GameUnit Owner { get; private set; }
         public IntReactiveProperty Gold = new();
-        public ReactiveCommand OnLootAdded = new();
+        public ReactiveCommand OnBagItemsChanged = new();
 
 
         public List<Slot> Mods = new();
@@ -26,7 +27,7 @@ namespace Models
 
         public bool HasGold(int gold) => Gold.Value >= gold;
         
-        public Bag(Unit owner)
+        public Bag(GameUnit owner)
         {
             Owner = owner;
 
@@ -56,51 +57,65 @@ namespace Models
 
         public void AddMod(Mod mod)
         {
-            var slot = Mods.FirstFreeSlot();
+            Slot slot = Mods.FirstFreeSlot();
             if (slot == null)
+            {
                 throw new Exception("Mods are Full");
-                
+            }
+
             slot.SetItem(mod);
-            OnLootAdded.Execute();
+            OnBagItemsChanged.Execute();
         }
 
         public void AddItem(Item item)
         {
-            var slot = Items.FirstWithType(item.Type);
+            Slot slot = Items.FirstWithType(item.Type);
             if (slot == null)
+            {
                 slot = Items.FirstFreeSlot();
-                
+            }
+
             if(slot == null)
+            {
                 throw new Exception("Items are Full");
-                
+            }
+
             slot.SetItem(item);
-            OnLootAdded.Execute();
+            OnBagItemsChanged.Execute();
         }
 
         public void AddResource(Resource resource)
         {
-            var slot = Resources.FirstWithType(resource.Type);
+            Slot slot = Resources.FirstWithType(resource.Type);
             if (slot == null)
+            {
                 slot = Resources.FirstFreeSlot();
-                
+            }
+
             if (slot == null)
+            {
                 throw new Exception("Resources are Full");
-                
+            }
+
             slot.SetItem(resource);
-            OnLootAdded.Execute();
+            OnBagItemsChanged.Execute();
         }
 
         public void AddEquipment(Equipment equipment)
         {
-            var slot = Equipment.FirstWithType(equipment.Type);
+            Slot slot = Equipment.FirstWithType(equipment.Type);
             if (slot == null)
+            {
                 slot = Equipment.FirstFreeSlot();
-                
+            }
+
             if (slot == null)
+            {
                 throw new Exception("Equipments are Full");
-                
+            }
+
             slot.SetItem(equipment);
-            OnLootAdded.Execute();
+            OnBagItemsChanged.Execute();
         }
 
         public void AddLoot(Loot loot)
@@ -120,6 +135,14 @@ namespace Models
                 AddEquipment(equipment);
         }
 
+        public int GetSummedItemValue()
+        {
+            int itemValueSum = allSlots
+                .Where(slot => slot.IsOccupied)
+                .Sum(slot => slot.Item.Value.Value * slot.Item.Value.Stack.Value);
+            return itemValueSum;
+        }
+
         public void RemoveGold(int gold)
         {
             Gold.Value -= gold;
@@ -127,18 +150,25 @@ namespace Models
 
         public void RemoveItem(ItemType type, int amount = 1)
         {
-            var temp = Items.FirstWithType(type);
+            Slot temp = Items.FirstWithType(type);
 
             if (temp == null)
+            {
                 temp = Mods.FirstWithType(type);
-            
+            }
+
             if (temp == null)
+            {
                 temp = Resources.FirstWithType(type);
-            
+            }
+
             if (temp == null)
+            {
                 throw new Exception("Item not in Bag");
-            
+            }
+
             temp.RemoveAmount(amount);
+            OnBagItemsChanged.Execute();
         }
     }
 }

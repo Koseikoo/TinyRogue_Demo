@@ -136,14 +136,14 @@ namespace Game
             for (int i = 0; i < tiles.Count; i++)
             {
                 attackTiles.Add(tiles[i]);
-                Unit unit = tiles[i].Unit.Value;
+                GameUnit gameUnit = tiles[i].Unit.Value;
                 
-                if(unit is Player)
+                if(gameUnit is Player)
                 {
                     continue;
                 }
 
-                if (unit != null && (unit.Health.Value > attackDamage || unit.IsInvincible.Value))
+                if (gameUnit != null && (gameUnit.Health.Value > attackDamage || gameUnit.IsInvincible.Value))
                 {
                     endTile = tiles[i];
                     bounceBack = true;

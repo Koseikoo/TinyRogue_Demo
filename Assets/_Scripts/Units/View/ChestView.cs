@@ -5,11 +5,11 @@ namespace Views
 {
     public class ChestView : MonoBehaviour
     {
-        private Unit _unit;
+        private GameUnit _gameUnit;
 
-        public void Initialize(Unit unit)
+        public void Initialize(GameUnit gameUnit)
         {
-            _unit = unit;
+            _gameUnit = gameUnit;
             
             
         }

@@ -7,8 +7,6 @@ using UniRx;
 using UnityEngine;
 using Zenject;
 
-using Unit = Models.Unit;
-
 namespace Views
 {
     public class SegmentView : MonoBehaviour
@@ -53,7 +51,9 @@ namespace Views
         private void OnDrawGizmos()
         {
             if(Application.isEditor)
+            {
                 Gizmos.DrawWireSphere(transform.position + (Vector3.up * 2), Size * Island.TileDistance);
+            }
         }
         
         private void CompleteSegmentAnimation()

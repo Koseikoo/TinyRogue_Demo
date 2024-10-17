@@ -37,18 +37,18 @@ namespace Factories
             return view;
         }
         
-        public UnitUIFactory CreateUI(Unit unit, Transform unitVisual)
+        public UnitUIFactory CreateUI(GameUnit gameUnit, Transform unitVisual)
         {
             
             _currentUnitUI = _container.InstantiatePrefab(_unitUIPrefab, _unitUICanvas).GetComponent<UnitUIView>();
-            _currentUnitUI.Initialize(unit, unitVisual);
+            _currentUnitUI.Initialize(gameUnit, unitVisual);
             return this;
         }
 
-        public UnitUIFactory AddHealth(Unit unit)
+        public UnitUIFactory AddHealth(GameUnit gameUnit)
         {
             UnitHealthUIView healthUI = _container.InstantiatePrefab(_unitHealthUIPrefab, _currentUnitUI.transform).GetComponent<UnitHealthUIView>();
-            healthUI.Initialize(unit);
+            healthUI.Initialize(gameUnit);
             return this;
         }
 

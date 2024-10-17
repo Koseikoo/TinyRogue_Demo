@@ -15,12 +15,12 @@ public enum TileSelectionType
 
 public class TileSelection
 {
-    public Models.Unit Unit;
+    public Models.GameUnit GameUnit;
     public TileSelectionType Type;
     
-    public TileSelection(Models.Unit unit, TileSelectionType type)
+    public TileSelection(Models.GameUnit gameUnit, TileSelectionType type)
     {
-        Unit = unit;
+        GameUnit = gameUnit;
         Type = type;
     }
 }
@@ -37,7 +37,7 @@ namespace Models
         public Vector3 FlatPosition;
         public int HeightLevel;
         public List<Tile> Neighbours = new();
-        public ReactiveProperty<Unit> Unit = new();
+        public ReactiveProperty<GameUnit> Unit = new();
 
         public bool IsSegmentTile;
         public bool IsWeak;
@@ -51,8 +51,8 @@ namespace Models
         private Ship _ship;
         
         private IDisposable _turnSubscription;
-        public event Action<Unit> OnMoveTo;
-        private List<Action<Unit>> _singleExecutionFunctions = new();
+        public event Action<GameUnit> OnMoveTo;
+        private List<Action<GameUnit>> _singleExecutionFunctions = new();
 
         // Visual Properties
 
@@ -101,32 +101,32 @@ namespace Models
             _ship = ship;
         }
 
-        public void AddMoveToLogic(Action<Unit> moveToAction)
+        public void AddMoveToLogic(Action<GameUnit> moveToAction)
         {
             OnMoveTo += moveToAction;
         }
 
-        public void AddSingleExecutionLogic(Action<Unit> moveToAction)
+        public void AddSingleExecutionLogic(Action<GameUnit> moveToAction)
         {
             OnMoveTo += moveToAction;
             _singleExecutionFunctions.Add(moveToAction);
         }
 
-        public void MoveUnit(Unit unit)
+        public void MoveUnit(GameUnit gameUnit)
         {
-            if (unit.Tile.Value != null)
+            if (gameUnit.Tile.Value != null)
             {
-                unit.Tile.Value.RemoveUnit();
+                gameUnit.Tile.Value.RemoveUnit();
             }
 
-            unit.Tile.Value = this;
-            Unit.Value = unit;
+            gameUnit.Tile.Value = this;
+            Unit.Value = gameUnit;
         }
 
-        public void MoveUnitWithAction(Unit unit)
+        public void MoveUnitWithAction(GameUnit gameUnit)
         {
-            MoveUnit(unit);
-            OnMoveTo?.Invoke(unit);
+            MoveUnit(gameUnit);
+            OnMoveTo?.Invoke(gameUnit);
             RemoveSingleExecutionActions();
         }
 
@@ -141,7 +141,7 @@ namespace Models
 
         public void AddSelector(TileSelection selection)
         {
-            TileSelection previousSelection = Selections.FirstOrDefault(s => s.Unit == selection.Unit);
+            TileSelection previousSelection = Selections.FirstOrDefault(s => s.GameUnit == selection.GameUnit);
             if(previousSelection != null && previousSelection.Type == selection.Type)
             {
                 return;
@@ -150,10 +150,10 @@ namespace Models
             Selections.Add(selection);
         }
 
-        public void RemoveSelector(Unit unit, TileSelectionType type = TileSelectionType.None)
+        public void RemoveSelector(GameUnit gameUnit, TileSelectionType type = TileSelectionType.None)
         {
             List<TileSelection> selectionsToRemove =
-                Selections.Where(s => s.Unit == unit && (type == TileSelectionType.None || s.Type == type)).ToList();
+                Selections.Where(s => s.GameUnit == gameUnit && (type == TileSelectionType.None || s.Type == type)).ToList();
             foreach (TileSelection selection in selectionsToRemove)
             {
                 Selections.Remove(selection);
@@ -167,7 +167,7 @@ namespace Models
 
         private void RemoveSingleExecutionActions()
         {
-            foreach (Action<Unit> func in _singleExecutionFunctions)
+            foreach (Action<GameUnit> func in _singleExecutionFunctions)
             {
                 OnMoveTo -= func;
             }

@@ -31,7 +31,7 @@ namespace Views
                 return;
             }
 
-            _playerBag.OnLootAdded.Subscribe(_ => Render(_recipe)).AddTo(this);
+            //_playerBag.OnLootAdded.Subscribe(_ => Render(_recipe)).AddTo(this);
             _recipe.CraftProgress01.Where(p => p >= 1).Subscribe(_ => CraftItem()).AddTo(this);
             
             Render(recipe);

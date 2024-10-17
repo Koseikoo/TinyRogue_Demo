@@ -6,10 +6,10 @@ using AnimationState = Models.AnimationState;
 
 public static class EnemyHelper
 {
-    public static void AttackUnit(this Enemy enemy, Unit unit)
+    public static void AttackUnit(this Enemy enemy, GameUnit gameUnit)
     {
-        Vector3 attackDirection = unit.Tile.Value.FlatPosition - enemy.Tile.Value.FlatPosition;
-        unit.Attack(enemy.ModSlots.GetMods(), attackDirection, enemy);
+        Vector3 attackDirection = gameUnit.Tile.Value.FlatPosition - enemy.Tile.Value.FlatPosition;
+        gameUnit.Attack(enemy.ModSlots.GetMods(), attackDirection, enemy);
     }
     
     public static void TryAttackTarget(this Enemy enemy, List<Tile> attackPath, bool damageAllTiles = false)
@@ -42,11 +42,11 @@ public static class EnemyHelper
         return false;
     }
     
-    public static bool HasUnit(this List<Tile> path, Unit unit)
+    public static bool HasUnit(this List<Tile> path, GameUnit gameUnit)
     {
         for (int i = 0; i < path.Count; i++)
         {
-            if (path[i].Unit.Value == unit)
+            if (path[i].Unit.Value == gameUnit)
             {
                 return true;
             }

@@ -8,10 +8,10 @@ namespace Models
     
     public abstract class StatusEffect
     {
-        protected Unit _target;
-        protected Unit _caster;
+        protected GameUnit _target;
+        protected GameUnit _caster;
         
-        public StatusEffect(Unit target, Unit caster)
+        public StatusEffect(GameUnit target, GameUnit caster)
         {
             _target = target;
             _caster = caster;

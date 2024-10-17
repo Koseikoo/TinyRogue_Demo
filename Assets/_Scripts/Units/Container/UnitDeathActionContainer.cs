@@ -17,7 +17,7 @@ namespace Container
         {
             _unitDeathActions[UnitType.Grave] = tile =>
             {
-                var enemy = _unitFactory.CreateEnemy(_unitContainer.GetEnemyDefinition(UnitType.SpecterEnemy), tile);
+                Enemy enemy = _unitFactory.CreateEnemy(_unitContainer.GetEnemyDefinition(UnitType.SpecterEnemy), tile);
             };
 
             _unitDeathActions[UnitType.IslandHeart] = tile =>
@@ -26,11 +26,13 @@ namespace Container
             };
         }
 
-        public void SetDeathActionFor(Unit unit)
+        public void SetDeathActionFor(GameUnit gameUnit)
         {
-            Action<Tile> action = _unitDeathActions.ContainsKey(unit.Type) ? _unitDeathActions[unit.Type] : null;
+            Action<Tile> action = _unitDeathActions.ContainsKey(gameUnit.Type) ? _unitDeathActions[gameUnit.Type] : null;
             if(action != null)
-                unit.DeathActions.Add(action);
+            {
+                gameUnit.DeathActions.Add(action);
+            }
         }
     }
 }

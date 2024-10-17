@@ -95,7 +95,7 @@ namespace Models
             }
         }
 
-        public override void Attack(IEnumerable<Mod> mods, Vector3 attackVector, Unit attacker = null)
+        public override void Attack(IEnumerable<Mod> mods, Vector3 attackVector, GameUnit attacker = null)
         {
             base.Attack(mods, attackVector, attacker);
             _damaged = true;
