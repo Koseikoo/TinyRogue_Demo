@@ -466,6 +466,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7ec67412b474075a327a652ed3420e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wavesPerIsland: 2
   playerDefinition:
     Unit:
       name: 
@@ -474,6 +475,7 @@ MonoBehaviour:
       MaxHealth: 3
       Invincible: 0
       DropXp: 0
+      ItemsToDrop: []
 --- !u!1 &682528979
 GameObject:
   m_ObjectHideFlags: 0
