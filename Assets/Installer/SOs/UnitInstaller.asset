@@ -70,7 +70,7 @@ MonoBehaviour:
       DropChance: 80
     AttackRange: 1
     ScanRange: 5
-    TurnDelay: 1
+    TurnDelay: 2
     Mods:
     - ItemDefinition:
         Type: 0

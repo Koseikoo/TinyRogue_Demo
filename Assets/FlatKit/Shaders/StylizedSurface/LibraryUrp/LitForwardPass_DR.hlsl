@@ -171,7 +171,7 @@ half4 StylizedPassFragment(Varyings input) : SV_Target
     InitializeInputData(input, surfaceData.normalTS, inputData);
 
 #if VERSION_GREATER_EQUAL(12, 1)
-    SETUP_DEBUG_TEXTURE_DATA(inputData, input.uv, _BaseMap);
+    SETUP_DEBUG_TEXTURE_DATA(inputData, UNDO_TRANSFORM_TEX(input.uv, _BaseMap));
 #endif
 
 #ifdef _DBUFFER
